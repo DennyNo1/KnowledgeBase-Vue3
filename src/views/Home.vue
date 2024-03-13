@@ -3,14 +3,16 @@ import Menu from "@/components/Menu.vue";
 import { RouterView } from "vue-router";
 import Aside from "@/components/Aside.vue";
 import Footer from "@/components/Footer.vue";
-import Login from "@/views/Login.vue";
+import Login from "@/components/Login.vue";
 </script>
 
 <template>
   <div class="common-layout">
     <el-container>
       <el-header>
+        
         <Menu />
+        
       </el-header>
       <el-container>
         <el-aside width="25vw">

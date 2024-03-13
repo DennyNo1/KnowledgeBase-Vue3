@@ -241,7 +241,7 @@ function handleItemClick(index) {
           <el-menu-item
             index="video#commend"
             @click="handleItemClick('commend')"
-            >推荐</el-menu-item
+            >热门知识</el-menu-item
           >
           <el-menu-item
             index="video#business"
@@ -256,7 +256,7 @@ function handleItemClick(index) {
           <el-menu-item
             index="video#manager"
             @click="handleItemClick('manager')"
-            >客户经理</el-menu-item
+            >政企客户经理</el-menu-item
           >
           <el-menu-item
             index="video#commissioner"
@@ -272,6 +272,11 @@ function handleItemClick(index) {
             index="video#distinct"
             @click="handleItemClick('distinct')"
             >片区长</el-menu-item
+          >
+          <el-menu-item
+            index="video#distinct"
+            @click="handleItemClick('vipManger')"
+            >VIP客户经理</el-menu-item
           >
         </el-menu>
       </el-card>

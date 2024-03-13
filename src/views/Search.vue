@@ -1,18 +1,16 @@
 <script setup>
-
-import { ref } from "vue"
-import { Search } from "@element-plus/icons-vue"
+import { ref } from "vue";
+import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 
-const searchInput = ref('')
-const select = ref('')
-const router = useRouter()
+const searchInput = ref("");
+const select = ref("");
+const router = useRouter();
 
 function submitSearch() {
   // 默认搜索视频页面
-  router.push(`/${select.value || 'video'}?search=${searchInput.value}`)
+  router.push(`/${select.value || "video"}?search=${searchInput.value}`);
 }
-
 </script>
 
 <template>
@@ -22,30 +20,32 @@ function submitSearch() {
     </el-row>
     <el-row class="sub-container">
       <el-input
-          v-model="searchInput"
-          placeholder="请输入想搜索的内容"
-          class="input-with-select"
-          size="large"
-          @keyup.enter="submitSearch"
+        v-model="searchInput"
+        placeholder="请输入想搜索的内容"
+        class="input-with-select"
+        size="large"
+        @keyup.enter="submitSearch"
       >
         <template #prepend>
           <el-button :icon="Search" @click="submitSearch" />
         </template>
         <template #append>
-          <el-select v-model="select" placeholder="选择专栏" style="width: 115px;" >
+          <el-select
+            v-model="select"
+            placeholder="选择专栏"
+            style="width: 115px"
+          >
             <el-option label="视频" value="video" />
-            <el-option label="案例" value="passage" />
+            <el-option label="案例" value="article" />
             <el-option label="问答" value="question" />
           </el-select>
         </template>
       </el-input>
     </el-row>
   </el-row>
-
 </template>
 
 <style scoped>
-
 .el-text {
   font-size: 60px;
 }
@@ -75,5 +75,4 @@ function submitSearch() {
 .input-with-select .el-input-group__prepend {
   background-color: var(--el-fill-color-blank);
 }
-
 </style>

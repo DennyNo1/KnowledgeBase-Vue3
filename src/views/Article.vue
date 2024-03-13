@@ -109,10 +109,10 @@ let pageSize = 12;
 const totalPage = ref(1);
 
 // onMounted(() => {
-//   getPassages()
+//   getarticles()
 // })
 
-async function getPassages() {
+async function getarticles() {
   try {
     const response = await someArticles(page, pageSize, queryName);
     // console.log(response.data);
@@ -126,20 +126,20 @@ async function getPassages() {
 function handleClick(item) {
   // console.log('点击了卡片')
   // console.log(item)
-  router.push(`/passage-page?id=${item.article.id}`);
+  router.push(`/article-page?id=${item.article.id}`);
 }
 
 function handleCurrentChange(currentPage) {
   // 获取点击的页码
   console.log(currentPage);
   page = currentPage;
-  getPassages();
+  getarticles();
 }
 
 function handleItemClick(index) {
   if (index !== queryName) {
     queryName = index;
-    getPassages();
+    getarticles();
   }
 }
 </script>
@@ -150,48 +150,53 @@ function handleItemClick(index) {
     <el-col :span="20">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
         <el-menu
-          :default-active="`passage${route.hash}`"
+          :default-active="`article${route.hash}`"
           class="el-menu-demo"
           mode="horizontal"
           router
         >
-          <el-menu-item index="passage" @click="handleItemClick('')"
+          <el-menu-item index="article" @click="handleItemClick('')"
             >默认</el-menu-item
           >
           <el-menu-item
-            index="passage#commend"
+            index="article#commend"
             @click="handleItemClick('commend')"
-            >推荐</el-menu-item
+            >热门知识</el-menu-item
           >
           <el-menu-item
-            index="passage#business"
+            index="article#business"
             @click="handleItemClick('business')"
             >营业</el-menu-item
           >
           <el-menu-item
-            index="passage#operation"
+            index="article#operation"
             @click="handleItemClick('operation')"
             >装维</el-menu-item
           >
           <el-menu-item
-            index="passage#manager"
+            index="article#manager"
             @click="handleItemClick('manager')"
-            >客户经理</el-menu-item
+            >政企客户经理</el-menu-item
           >
           <el-menu-item
-            index="passage#commissioner"
+            index="article#commissioner"
             @click="handleItemClick('commissioner')"
             >客经专员</el-menu-item
           >
           <el-menu-item
-            index="passage#director"
+            index="article#director"
             @click="handleItemClick('director')"
             >支局长</el-menu-item
           >
           <el-menu-item
-            index="passage#distinct"
+            index="article#distinct"
             @click="handleItemClick('distinct')"
             >片区长</el-menu-item
+          >
+          <el-menu-item
+            index="article#distinct"
+            @click="handleItemClick('vipManager')"
+            >VIP客户经理</el-menu-item
           >
         </el-menu>
       </el-card>

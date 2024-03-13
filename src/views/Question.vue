@@ -103,7 +103,7 @@ function handleItemClick(index) {
           <el-menu-item
             index="question#commend"
             @click="handleItemClick('commend')"
-            >推荐</el-menu-item
+            >热门知识</el-menu-item
           >
           <el-menu-item
             index="question#business"
@@ -118,7 +118,7 @@ function handleItemClick(index) {
           <el-menu-item
             index="question#manager"
             @click="handleItemClick('manager')"
-            >客户经理</el-menu-item
+            >政企客户经理</el-menu-item
           >
           <el-menu-item
             index="question#commissioner"
@@ -134,6 +134,11 @@ function handleItemClick(index) {
             index="question#distinct"
             @click="handleItemClick('distinct')"
             >片区长</el-menu-item
+          >
+          <el-menu-item
+            index="question#manager"
+            @click="handleItemClick('vipManager')"
+            >VIP客户经理</el-menu-item
           >
         </el-menu>
       </el-card>

@@ -239,7 +239,7 @@ function getDuration(date) {
   <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
-      <el-text class="passage" v-for="t in question.main"> {{ t }}</el-text>
+      <el-text class="article" v-for="t in question.main"> {{ t }}</el-text>
       <el-divider style="margin-top: 30px" />
     </el-col>
     <el-col :span="4"></el-col>
@@ -256,7 +256,7 @@ function getDuration(date) {
   <el-row>
     <el-col :span="3"></el-col>
     <el-col :span="17">
-      <!-- <div class="passage">
+      <!-- <div class="article">
           <el-text v-for="t in question.text"> {{ t }} </el-text>
       </div>
       <el-divider /> -->
@@ -405,7 +405,7 @@ function getDuration(date) {
   margin-bottom: 0;
 }
 
-.passage {
+.article {
   display: block; /* 将 el-text 设置为块级元素 */
   margin-bottom: 10px; /* 添加下外边距，增加各段落之间的间距 */
   text-indent: 2em; /* 添加文本缩进，每段开头空两个字符的宽度 */
@@ -478,3 +478,4 @@ function getDuration(date) {
   flex-grow: 1;
 }
 </style>
+@/store/login.js

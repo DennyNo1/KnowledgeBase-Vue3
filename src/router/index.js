@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Video from "@/views/Video.vue";
 import Search from "@/views/Search.vue";
+import Register from "@/views/Register.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -21,9 +22,9 @@ const router = createRouter({
           component: Video,
         },
         {
-          path: "/passage",
-          name: "passage",
-          component: () => import("@/views/Passage.vue"),
+          path: "/article",
+          name: "article",
+          component: () => import("@/views/Article.vue"),
         },
         {
           path: "/question",
@@ -31,9 +32,9 @@ const router = createRouter({
           component: () => import("@/views/Question.vue"),
         },
         {
-          path: "/passage-page",
-          name: "passage-page",
-          component: () => import("@/views/PassagePage.vue"),
+          path: "/article-page",
+          name: "article-page",
+          component: () => import("@/views/ArticlePage.vue"),
         },
         {
           path: "/question-page",
@@ -45,10 +46,15 @@ const router = createRouter({
           name: "video-page",
           component: () => import("@/views/VideoPage.vue"),
         },
-        {
-          path: "/login",
-          name: "login",
-          component: () => import("@/views/Login.vue"),
+        // {
+        //   path: "/login",
+        //   name: "login",
+        //   component: () => import("@/views/Login.vue"),
+        // },
+                {
+          path: "/register",
+          name: "register",
+          component: () => import("@/views/Register.vue"),
         },
       ],
     },

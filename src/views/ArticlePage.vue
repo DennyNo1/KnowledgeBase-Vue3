@@ -16,10 +16,10 @@ function goBack() {
 }
 
 // onMounted(() => {
-//   getPassage()
+//   getarticle()
 // })
 
-const passage = ref({
+const article = ref({
   id: 1,
   type: "装维",
   uploaderId: 2,
@@ -51,12 +51,12 @@ const id = route.query.id || 1;
 const store = useLoginStore();
 const { userInfo } = storeToRefs(store);
 
-async function getPassage() {
+async function getarticle() {
   try {
     const response = await oneArticle(id, userInfo.value.userId);
-    passage.value = response.data[0];
+    article.value = response.data[0];
     // 对文章数据进行分段
-    passage.value.content = passage.value.content.split("\r\n\r\n");
+    article.value.content = article.value.content.split("\r\n\r\n");
     commentData.value = response.data[1];
   } catch (error) {
     console.log("请求失败！", error);
@@ -71,26 +71,26 @@ async function getPassage() {
       <el-page-header :icon="ArrowLeft" @back="goBack">
         <template #content>
           <!--          <span class="text-large"> {{ description.tittle }} </span>-->
-          <h2>{{ passage.title }}</h2>
+          <h2>{{ article.title }}</h2>
         </template>
       </el-page-header>
       <br />
       <el-descriptions title="文章信息" :column="4">
         <el-descriptions-item label="发布时间">
-          {{ dayjs(passage.date).format("YYYY-MM-DD") }}
+          {{ dayjs(article.date).format("YYYY-MM-DD") }}
         </el-descriptions-item>
         <el-descriptions-item label="作者">
-          {{ passage.author }}
+          {{ article.author }}
         </el-descriptions-item>
         <el-descriptions-item label="部门">
-          {{ passage.department }}
+          {{ article.department }}
         </el-descriptions-item>
         <el-descriptions-item label="分类">
-          <el-tag size="small"> {{ passage.sort }} </el-tag>
+          <el-tag size="small"> {{ article.sort }} </el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="知识标签">
           <el-tag
-            v-for="t in passage.tag"
+            v-for="t in article.tag"
             :key="t.label"
             effect="plain"
             :type="t.type"
@@ -107,7 +107,7 @@ async function getPassage() {
   <el-row style="margin-top: 30px; margin-bottom: 10px">
     <el-col :span="4" />
     <el-col :span="16">
-      <el-text class="passage" v-for="t in passage.content"> {{ t }} </el-text>
+      <el-text class="article" v-for="t in article.content"> {{ t }} </el-text>
       <el-divider style="margin-top: 30px" />
     </el-col>
     <el-col :span="4" />
@@ -131,7 +131,7 @@ async function getPassage() {
 }
 */
 
-.passage {
+.article {
   display: block; /* 将 el-text 设置为块级元素 */
   margin-bottom: 10px; /* 添加下外边距，增加各段落之间的间距 */
   text-indent: 2em; /* 添加文本缩进，每段开头空两个字符的宽度 */
@@ -151,3 +151,4 @@ async function getPassage() {
   text-indent: 2em; /* 添加文本缩进，每段开头空两个字符的宽度 */
 }
 </style>
+@/store/login.js
