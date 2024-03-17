@@ -13,8 +13,13 @@ import 'element-plus/dist/index.css'
 // import 'element-ui/lib/theme-chalk/index.scss'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+//pinia持久化。做的简单点，这次就不用localStorage的持久化了。
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
 
 const pinia = createPinia()
+
+pinia.use(piniaPluginPersistedstate)
 const app = createApp(App)
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

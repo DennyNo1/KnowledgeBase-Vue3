@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 import { useLoginStore } from "@/store/login.js";
 
 const request = axios.create({
-  // baseURL: 'http://192.168.1.137:8088',
+  
   baseURL: "http://localhost:8088",
   timeout: 10000,
   // headers: {

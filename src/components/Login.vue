@@ -1,216 +1,73 @@
 <script setup>
 import { ref, reactive } from "vue";
-import { useRouter } from 'vue-router';//用于页面跳转
+import { useRouter } from "vue-router"; //用于页面跳转
 import { useLoginStore } from "@/store/login.js";
 import { storeToRefs } from "pinia";
-import { login as userLogin } from "@/api/knowledgeBase.js";
-import { User, Lock,Iphone, OfficeBuilding,Location } from '@element-plus/icons-vue'
-import { ArrowDown } from '@element-plus/icons-vue'
-import { userRegisterService } from "@/api/user";
 
+import {
+  User,
+  Lock,
+  Iphone,
+  OfficeBuilding,
+  Location,
+  UserFilled,
+} from "@element-plus/icons-vue";
+import { ArrowDown } from "@element-plus/icons-vue";
+import { userRegisterService,userLoginrService } from "@/api/user";
+import { ElMessage } from "element-plus";
 
-
-const loginStore=useLoginStore()
-const isLogin=ref(true)
+const loginStore = useLoginStore();
+const isLogin = ref(true);
 const { userInfo, isLoggedIn, isOpen, cookie } = storeToRefs(loginStore);
 
+// // 获取router实例
+// const router = useRouter();
 
-    // // 获取router实例
-    // const router = useRouter();
-    
-    // 获取login仓库实例
+// 获取login仓库实例
 
+// 登录表单切换到注册表单
+function navigateToRegister() {
+  isLogin.value = false;
+}
 
-    // 登录表单切换到注册表单
-    function navigateToRegister() {
-      
-      isLogin.value=false
-    }
-
-
-
-
-
-// const centerDialogVisible = ref(isOpen)
-
-//注册表单的数据
-const registerForm =reactive(
-  {
-    username:'',
-    password:'',
-    repassword:'',
-    phone:'',
-    location:'',
-    department:'',
-  }
-)
-
-// registerForm只是存储数据的对象，而ruleFormRef代表el-form对象
-const registerFormRef=ref()
-
-
-//注册表单的验证规则
-const registerRules=reactive(
-  {
-    username: [
-    { required: true, message: "用户名不能为空！", trigger: "blur" },
-    {
-      min: 3,
-      max: 11,
-      message: "用户名的长度需为3-11个字符！",
-      trigger: "blur",
-    },
-  ],  
-  password: [
-    { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 6, max: 20, message: "密码长度为6-20个字符", trigger: "blur" },
-    {
-      validator: (rule, value, callback) => {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,20}$/;
-        if (regex.test(value)) {
-          callback();
-        } else {
-          callback(
-            new Error("密码必须包含至少一个大写字母、一个小写字母和一个数字")
-          );
-        }
-      },
-      trigger: "blur",
-    },
-  ],
-  repassword:[
-  { required: true, message: "请再次输入密码", trigger: "blur" },
-  { min: 6, max: 20, message: "密码长度为6-20个字符", trigger: "blur" },
-  {
-    validator:(rule, value, callback)=>{
-      if(value!=registerForm.password)
-      {
-        callback(new Error("两次输入的密码不一致，请重新输入"))
-      }
-    }
-  }
-  
-  ],
-  phone:[
-    {required: true, message: "请输入手机号", trigger: "blur"},
-    {
-      validator: (rule, value, callback) => {
-      const regex =/^(13[0-9]|14[5,7]|15[0-3,5-9]|16[6]|17[0-8]|18[0-9]|19[8-9])\d{8}$/
-      if (regex.test(value)) {
-          callback();
-        } else {
-          callback(
-            new Error("请输入正确的手机号")
-          );
-        }
-    }
-  }
-  ],
-  location:[
-  { required: true, message: "请选择所属市区", trigger: "blur" },
-
-  ],
-  department:[ 
-    { required: true, message: "请输入所属部门", trigger: "blur" },
-  ]
-  
-  }
-)
-// 点击注册按钮的验证、报错、处理、成功提交等逻辑
-async function handleRegister() {
-  registerFormRef.value.validate((valid, errors) => {
-    if (valid) {
-      // 验证通过，执行登录或注册逻辑
-      register()
-    } else {
-      console.log('表单验证错误：', errors);
-      // 显示错误信息或提示用户
-    }
+function navigateToLogin() {
+  //先打开登录页面
+  isLogin.value = true;
+  //清空注册表单
+  Object.keys(formModel).forEach((key) => {
+    formModel[key] = "";
   });
 }
 
-const register = async () => {
-
-  await userRegisterService(formModel.value)
-  ElMessage.success('注册成功')
-  loginStore.isOpen=false
-}
-
-function navigateToLogin(){
-      isLogin.value=true
-      Object.keys(registerForm).forEach(key => {
-  registerForm[key] = '';
-});
-    }
-
-
-
-
-
-
-
-
 //登录表单的数据
-const form = ref({
+const loginForm = ref({
   username: "",
   password: "",
   // phone: "",
   // validCode: "",
 });
 
-
 const type1 = ref("primary");
 const type2 = ref("");
 const usePassword = ref(true);
 
 // 登录表单的对象
-const formRef = ref();
+const loginFormRef = ref();
 
-const rules = reactive({
+const loginRules = reactive({
   username: [
     { required: true, message: "用户名不能为空！", trigger: "blur" },
-    {
-      min: 3,
-      max: 11,
-      message: "用户名的长度需为3-11个字符！",
-      trigger: "blur",
-    },
+    { min: 5, max: 10, message: "用户名必须是 5-10位 的字符", trigger: "blur" },
   ],
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 6, max: 20, message: "密码长度为6-20个字符", trigger: "blur" },
     {
-      validator: (rule, value, callback) => {
-        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{6,20}$/;
-        if (regex.test(value)) {
-          callback();
-        } else {
-          callback(
-            new Error("密码必须包含至少一个大写字母、一个小写字母和一个数字")
-          );
-        }
-      },
+      pattern: /^\S{6,15}$/,
+      message: "密码必须是 6-15位 的非空字符",
       trigger: "blur",
     },
-    
   ],
-  
-  // phone: [
-  //   { required: true, message: "手机号不能为空！", trigger: "blur" },
-  //   {
-  //     validator: (rule, value, callback) => {
-  //       const regex =
-  //         /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/;
-  //       if (regex.test(value)) {
-  //         callback();
-  //       } else {
-  //         callback(new Error("请输入正确的手机号"));
-  //       }
-  //     },
-  //     trigger: "blur",
-  //   },
-  // ],
-  // validCode: [{ required: true, message: "验证码不能为空！", trigger: "blur" }],
+
 });
 
 function enablePassword() {
@@ -219,98 +76,172 @@ function enablePassword() {
   type2.value = "";
 }
 
-function enableMessage() {
-  usePassword.value = false;
-  type1.value = "";
-  type2.value = "primary";
-}
+//登录按钮
+const login = async () => {
+  // 注册成功之前，先进行校验，校验成功 → 请求，校验失败 → 自动提示
+  await loginFormRef.value.validate();
+  const res=await userLoginrService(loginForm.value);
+  //登录失败
+  if(res.code!=200)
+  {
+    ElMessage.error(res.msg)
+  }
+  //登录成功
+  else {
+    ElMessage.success(res.msg)
+    //关闭窗口。数据应该不用清楚吧。
+    loginStore.isOpen=false
+    //存用户信息到pinia
+    loginStore.userInfo=res.data
+    loginStore.isLoggedIn=true
+    
+  }
 
-// function register(formRef) {
-//   if (!formRef) return;
-//   formRef.validate((valid) => {
-//     if (valid) {
-//       if (usePassword.value) {
-//         // 使用账号密码注册
-//       } else {
-//         // 使用短信验证码注册
-//       }
-//     }
-//   });
-//   // isOpen.value = false;
-// }
+};
 
-function login(formRef) {
-  if (!formRef) return;
-  formRef.validate((valid) => {
-    if (valid) {
-      if (usePassword.value) {
-        // 使用账号密码登录
-        userLogin(form.value.username, form.value.password).then((result) => {
-          isLoggedIn.value = true;
-          isOpen.value = false;
-          userInfo.value.userId = result.data.id;
-          userInfo.value.username = form.value.username;
-          userInfo.value.nickname = result.data.nickName;
-          userInfo.value.phone = result.data.phone;
-          userInfo.value.role = result.data.role;
-          userInfo.value.location = result.data.location;
-          userInfo.value.department = result.data.department;
-          cookie.value = result.data.cookie;
-          console.log(store);
-        });
-      } else {
-        // 使用短信验证码登录
-      }
-    }
-  });
-  // isOpen.value = false;
-}
+
+
+
+
+
+
+
+
+
+//注册表单的对象、变量、函数
+const form = ref();
+// 整个的用于提交的form数据对象
+const formModel = ref({
+  username: "",
+  password: "",
+  repassword: "",
+  nickName: "",
+  phone: "",
+  location: "",
+  department: "",
+});
+// 整个表单的校验规则
+// 1. 非空校验 required: true      message消息提示，  trigger触发校验的时机 blur change
+// 2. 长度校验 min:xx, max: xx
+// 3. 正则校验 pattern: 正则规则    \S 非空字符
+// 4. 自定义校验 => 自己写逻辑校验 (校验函数)
+//    validator: (rule, value, callback)
+//    (1) rule  当前校验规则相关的信息
+//    (2) value 所校验的表单元素目前的表单值
+//    (3) callback 无论成功还是失败，都需要 callback 回调
+//        - callback() 校验成功
+//        - callback(new Error(错误信息)) 校验失败
+const rules = {
+  // 正常来说，这里还有一个用户名重复检测
+  username: [
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { min: 5, max: 10, message: "用户名必须是 5-10位 的字符", trigger: "blur" },
+  ],
+  password: [
+    { required: true, message: "请输入密码", trigger: "blur" },
+    {
+      pattern: /^\S{6,15}$/,
+      message: "密码必须是 6-15位 的非空字符",
+      trigger: "blur",
+    },
+  ],
+  repassword: [
+    { required: true, message: "请输入密码", trigger: "blur" },
+    {
+      pattern: /^\S{6,15}$/,
+      message: "密码必须是 6-15位 的非空字符",
+      trigger: "blur",
+    },
+    {
+      validator: (rule, value, callback) => {
+        // 判断 value 和 当前 form 中收集的 password 是否一致
+        if (value !== formModel.value.password) {
+          callback(new Error("两次输入密码不一致"));
+        } else {
+          callback(); // 就算校验成功，也需要callback
+        }
+      },
+      trigger: "blur",
+    },
+  ],
+  nickName: [{ required: true, message: "请输入昵称", trigger: "blur" }],
+  phone: [
+    { required: true, message: "请输入手机号", trigger: "blur" },
+    {
+      validator: (rule, value, callback) => {
+        const regex =
+          /^((13[0-9])|(14[5,7])|(15[^4])|(17[0-8])|(18[0-9])|166|198|199|(147))\d{8}$/;
+        if (regex.test(value)) {
+          callback();
+        } else {
+          callback(new Error("请输入正确的手机号"));
+        }
+      },
+      trigger: "blur",
+    },
+  ],
+  location: [{ required: true, message: "请选择市区公司", trigger: "blur" }],
+  department: [{ required: true, message: "请输入部门", trigger: "blur" }],
+};
+
+const register = async () => {
+  // 注册成功之前，先进行校验，校验成功 → 请求，校验失败 → 自动提示
+  await form.value.validate();
+  await userRegisterService(formModel.value);
+  ElMessage.success("注册成功");
+  loginStore.isOpen = false;
+  navigateToLogin;
+};
 </script>
-
-
-
 
 <!-- 模板 -->
 <template>
-  
-
-
-
-
-  <el-dialog v-model="isOpen" width="30%" style="border-radius: 0.75rem" center @close="navigateToLogin">  
-
-<!--登录表单-->
-    <div v-if="isLogin" class="login">
-      <div class="head">
-        <!--这是空格-->&nbsp;&nbsp;&nbsp;
-        <el-text size="large" tag="b" @click="enablePassword" :type="type1" 
-          >账号密码登录</el-text
-        >
+  <el-dialog
+    v-model="isOpen"
+    width="30%"
+    style="border-radius: 0.75rem"
+    center
+    @close="navigateToLogin"
+  >
+    <!--登录表单-->
+    <el-form
+      v-if="isLogin"
+      class="form"
+      :model="loginForm"
+      :rules="loginRules"
+      ref="loginFormRef"
+      size="large"
+      autocomplete="off"
+    >
+        <div class="head">
+          <el-text size="large" tag="b" @click="enablePassword" :type="type1"
+            >账号密码登录</el-text
+          >
+        </div>
+      
+      <!--账号密码登录-->
+     
         
-        <!-- <el-text size="large" tag="b">|</el-text>
-        &nbsp;&nbsp;&nbsp;
-        <el-text size="large" tag="b" @click="enableMessage" :type="type2"
-          >短信登录</el-text
-        > -->
-      </div>
+          <el-form-item  prop="username">
+            <el-input
+              :prefix-icon="User"
+              v-model="loginForm.username"
+              placeholder="请输入用户名"
+            ></el-input>
+          </el-form-item>
 
-    
-  <!--账号密码登录-->
-    <div v-if="usePassword" class="inp">
-      <el-form ref="formRef" :rules="rules" status-icon :model="form">
+          <el-form-item  prop="password">
+            <el-input
+              :prefix-icon="Lock"
+              v-model="loginForm.password"
+              show-password
+              placeholder="请输入密码"
+            ></el-input>
+          </el-form-item>
         
-        <el-form-item class="login-form" prop="username"  >
-          <el-input :prefix-icon="User" v-model="form.username" placeholder="请输入用户名" ></el-input>
-        </el-form-item>
-        
-        <el-form-item class="login-form" prop="password" >
-          <el-input :prefix-icon="Lock"v-model="form.password" show-password placeholder="请输入密码" ></el-input>
-        </el-form-item>
-        
-      </el-form>
-    </div>
-    <!--手机号登录-->
-    <!-- <div v-else class="login">
+      
+      <!--手机号登录-->
+      <!-- <div v-else class="login">
       <el-form ref="formRef" :rules="rules" status-icon :model="form">
         <el-form-item label="手机号" prop="phone">
           <el-input v-model="form.phone" />
@@ -320,79 +251,121 @@ function login(formRef) {
         </el-form-item>
       </el-form>
     </div> -->
-    
-    <!--登录表单底部-->
+
+      <!--登录表单底部-->
 
       <div class="dialog-footer">
-        <el-button type="primary" size="large" @click="login(formRef)" :style="{ width: '100%' }">登录</el-button>
+        <el-button
+          type="primary"
+          size="large"
+          @click="login"
+          :style="{ width: '100%' }"
+          >登录</el-button
+        >
       </div>
-      
+
       <div class="navigate-to-register">
-      <el-link type="primary" @click="navigateToRegister" :underline="focusState" @focus="handleFocus" @blur="handleBlur" >没有账号？点击注册</el-link>
+        <el-link
+          type="primary"
+          @click="navigateToRegister"
+          :underline="focusState"
+          @focus="handleFocus"
+          @blur="handleBlur"
+          >没有账号？点击注册</el-link
+        >
       </div>
+    </el-form>
 
-    </div>
+    <!--注册表单-->
+    <el-form
+      :model="formModel"
+      :rules="rules"
+      ref="form"
+      size="large"
+      autocomplete="off"
+      v-else
+      class="form"
+    >
+      <div class="head">
+        <el-text size="large" tag="b" :type="type1">新用户注册</el-text>
+      </div>
+      <el-form-item prop="username">
+        <el-input
+          v-model="formModel.username"
+          :prefix-icon="User"
+          placeholder="请输入用户名"
+        ></el-input>
+      </el-form-item>
+      <el-form-item prop="password">
+        <el-input
+          v-model="formModel.password"
+          :prefix-icon="Lock"
+          type="password"
+          placeholder="请输入密码"
+          show-password
+        ></el-input>
+      </el-form-item>
+      <el-form-item prop="repassword">
+        <el-input
+          v-model="formModel.repassword"
+          :prefix-icon="Lock"
+          type="password"
+          placeholder="请输入再次密码"
+          show-password
+        ></el-input>
+      </el-form-item>
+      <el-form-item prop="nickName">
+        <el-input
+          v-model="formModel.nickName"
+          :prefix-icon="UserFilled"
+          placeholder="请输入昵称"
+        ></el-input>
+      </el-form-item>
+      <el-form-item prop="phone">
+        <el-input
+          v-model="formModel.phone"
+          :prefix-icon="Iphone"
+          placeholder="请输入手机号"
+        ></el-input>
+      </el-form-item>
+      <el-form-item prop="location">
+        <el-select v-model="formModel.location" placeholder="请选择市区公司">
+          <el-option lable="市公司" value="市公司"></el-option>
+          <el-option lable="定海区" value="定海区"></el-option
+          ><el-option lable="普陀区" value="普陀区"></el-option
+          ><el-option lable="岱山县" value="岱山县"></el-option>
+          <el-option lable="嵊泗县" value="嵊泗县"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="department">
+        <el-input
+          v-model="formModel.department"
+          :prefix-icon="OfficeBuilding"
+          placeholder="请输入部门"
+        ></el-input>
+      </el-form-item>
 
- <!--注册表单-->
-    <div v-else class="register">
-      <!-- 当表单提交时，执行 handleSubmit 函数，并且阻止页面的刷新或重定向等默认表单提交动作。这样你就可以在 handleSubmit 函数内部自定义提交逻辑，比如进行表单验证、异步提交数据给服务器等操作。 -->
-      <el-form ref="registerFormRef" :rules="registerRules"  :model="registerForm"><!--:moudel绑定的是存储数据的对象，：ref指向表单本身的对象-->
-        <el-text size="large" tag="b"  :type="type1" class="register-title">新用户注册</el-text>
-        <!--prop 属性用于绑定表单域（form item）与 Vue 实例中的数据属性。它主要用于表单验证时关联到具体的模型字段。-->
-          <el-form-item prop="username">
-          <el-input :prefix-icon="User"placeholder="请输入用户名" v-model="registerForm.username"></el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input :prefix-icon="Lock"placeholder="请输入密码" v-model="registerForm.password" show-password></el-input>
-        </el-form-item>
-        <el-form-item prop="repassword">
-          <el-input :prefix-icon="Lock" placeholder="请再次输入密码" v-model="registerForm.repassword" show-password></el-input>
-        </el-form-item>
-        <el-form-item prop="phone">
-          <el-input :prefix-icon="Iphone" placeholder="请输入手机号" v-model="registerForm.phone"></el-input>
-        </el-form-item>
-        <el-form-item prop="location">
-          <el-select :prefix-icon="Location"  placeholder="请选择市区" v-model="registerForm.location">
-            <el-option label="市公司" value="市公司" />
-            <el-option label="定海区" value="定海区" />
-            <el-option label="普陀区" value="普陀区" />
-            <el-option label="岱山区" value="岱山区" />
-            <el-option label="嵊泗区" value="嵊泗区" />
-          </el-select>
-        </el-form-item>
-        <el-form-item prop="department">
-          <el-input :prefix-icon="OfficeBuilding" placeholder="请输入部门" v-model="registerForm.department"></el-input>
-        </el-form-item>
-      
-
-        <el-form-item>
-          <el-button type="primary" size="large" :style="{ width: '100%' }" @click="handleRegister">注册</el-button>
-
-          
-        </el-form-item>
-      </el-form>
-
-        <div class="navigateToLogin">
-            <el-link @click="navigateToLogin" >返回</el-link>
-          </div>
-
-
-   
-    </div>
-    
-   
-      
-    
-
-    
-
-
+      <el-form-item>
+        <el-button
+          @click="register"
+          class="button"
+          type="primary"
+          auto-insert-space
+          :style="{ width: '100%' }"
+        >
+          注册
+        </el-button>
+      </el-form-item>
+      <div class="return">
+        <el-link type="info" :underline="false" @click="navigateToLogin">
+          返回
+        </el-link>
+      </div>
+    </el-form>
   </el-dialog>
 </template>
 
 <style scoped>
-
-
 .el-text--large {
   font-size: 22px; /* 调整为适合的大小 */
 }
@@ -402,58 +375,37 @@ function login(formRef) {
   user-select: none;
 }
 
-.login {
-  width: 80%;
-  margin: auto;
-}
 .login-form {
   margin-top: 20px; /* 调整间距 */
   display: flex;
   justify-content: center;
 }
 
-.head {
-  margin-top: 20px; /* 调整间距 */
-  display: flex;
-  justify-content: center;
-}
-.navigate-to-register{
+
+.navigate-to-register {
   margin-top: 20px; /* 调整间距 */
   display: flex;
   justify-content: right;
 }
-.dialog-footer{
+.dialog-footer {
   margin-top: 20px; /* 调整间距 */
   display: flex;
   justify-content: center;
 }
-.register {
+.form {
   width: 80%;
   margin: auto;
 }
-.register-title {
-  margin-top: 20px; /* 调整间距 */
+
+.head {
   display: flex;
   justify-content: center;
+  margin-bottom: 20px;
 }
-.register-item{
-  margin-top: 20px; /* 调整间距 */
-  display: flex;
-  justify-content: center;
-}
-.el-form-item {
-  margin-top: 20px; /* 调整间距 */
-  display: flex;
-  justify-content: center;
-}
-.navigateToLogin{
+
+.return {
   margin-top: 20px; /* 调整间距 */
   display: flex;
   justify-content: right;
 }
-
-
-
-
-
 </style>

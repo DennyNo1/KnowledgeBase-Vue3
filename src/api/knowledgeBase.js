@@ -21,13 +21,18 @@ import request from '@/utils/request'
 export async function login(username, password) {
     return await request({
         method: 'POST',
-        url: '/login',
+        url: '/user/login',
         data: {
             username,
             password
         }
     })
 }
+
+
+
+
+
 
 // 获取单个文章数据
 // GET /article
