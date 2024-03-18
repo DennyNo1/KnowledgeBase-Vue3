@@ -36,8 +36,8 @@ function submitSearch() {
             style="width: 115px"
           >
             <el-option label="视频" value="video" />
-            <el-option label="案例" value="article" />
-            <el-option label="问答" value="question" />
+            <el-option label="课件" value="article" />
+            <el-option label="一线需求" value="question" />
           </el-select>
         </template>
       </el-input>

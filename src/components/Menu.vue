@@ -3,20 +3,20 @@ import { ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { useLoginStore } from "@/store/login";
+import Avatar from "@/components/Avatar.vue";
 
 const searchInput = ref("");
 const select = ref("");
 const router = useRouter();
-const loginStore=useLoginStore()
+const loginStore = useLoginStore();
 
 function submitSearch() {
   // 默认搜索视频页面
   router.push(`/${select.value || "video"}?search=${searchInput.value}`);
 }
-const showLogin=()=>{
-  loginStore.isOpen=true
-
-}
+const showLogin = () => {
+  loginStore.isOpen = true;
+};
 </script>
 
 <template>
@@ -56,19 +56,24 @@ const showLogin=()=>{
 
     <el-menu-item index="2" route="/article">课件</el-menu-item>
     <el-menu-item index="3" route="/question">一线需求</el-menu-item>
-    <el-menu-item ><el-button @click=showLogin type="primary">登录</el-button>
+
+    <el-menu-item v-if="loginStore.isLoggedIn">
+      <Avatar></Avatar>
     </el-menu-item>
-    
+    <el-menu-item v-else>
+      <el-button @click="showLogin" type="primary">登录</el-button>
+    </el-menu-item>
+
     <!-- <router-link to="/login" class="menu-login-item">
       <el-menu-item index="4">
     <el-button type="primary">登录</el-button>
   </el-menu-item>
 </router-link> -->
-    
+
     <!-- <el-menu-item index="-1"  class="menu-login-item" @click="handleLogin">
       <el-button type="primary" >登录</el-button>
     </el-menu-item>-->
-  </el-menu> 
+  </el-menu>
 </template>
 
 <!-- <script>
