@@ -4,8 +4,27 @@ import { someVideos } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { userVideoListService } from "@/api/video";
+import { useLoginStore } from "@/store/login.js";
+
+import { ElMessage } from "element-plus";
 
 const videos = ref(); //默认的视频列表数据
+const showUpload=ref(false)
+//pinia
+const loginStore=useLoginStore()
+//判断是否打开上传弹窗
+const handleUpload=()=>{
+  if(loginStore.isLoggedIn)
+  {
+    showUpload.value=true
+  }
+  else{
+    ElMessage({
+    message: '登录后才能上传视频',
+    type: 'warning',
+  })
+  }
+}
 
 const router = useRouter();
 const route = useRoute();
@@ -70,7 +89,7 @@ function handleItemClick(index) {
 <template>
   <el-row>
     <el-col :span="2" />
-    <el-col :span="22">
+    <el-col :span="19">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
         <el-menu
           :default-active="`video${route.hash}`"
@@ -116,23 +135,27 @@ function handleItemClick(index) {
             @click="handleItemClick('distinct')"
             >片区长</el-menu-item
           >
+
           <el-menu-item
             index="video#distinct"
             @click="handleItemClick('vipManger')"
-            >VIP客户经理</el-menu-item
+            >VIP客户经理
+            </el-menu-item
           >
-          <!-- el-col在这里就可以理解成空格 -->
-          <el-col :span="8" />
-      <el-menu-item><el-button type="primary" size="large">
-            上传视频<el-icon class="el-icon--right"><Upload /></el-icon>
-          </el-button></el-menu-item>
           
-        </el-menu>
-      </el-card>
-    </el-col>
 
-    <el-col :span="2"> </el-col>
+        </el-menu>
+
+
+      </el-card>
+
+    </el-col>
+    <el-col :span="1" />
+    <el-button type="primary" size="large" class="upload-button" @click="handleUpload">
+            上传视频<el-icon class="el-icon--right"><Upload /></el-icon>
+        </el-button>
   </el-row>
+  
   <el-row>
     <el-col :span="2" />
     <el-space :size="20" wrap class="space">
@@ -194,6 +217,15 @@ function handleItemClick(index) {
       background
     />
   </el-row>
+  <!-- 上传文件的登录弹窗表单 -->
+  <el-dialog
+    v-model="showUpload"
+    width="30%"
+    style="border-radius: 0.75rem"
+    center
+    >
+    
+    </el-dialog>
 </template>
 
 <style scoped>
