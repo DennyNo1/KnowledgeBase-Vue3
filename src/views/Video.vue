@@ -1,5 +1,5 @@
-<script setup>
-import { onMounted, ref } from "vue";
+<script setup lang="ts">
+import { onMounted, ref,reactive } from "vue";
 import { someVideos } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
@@ -7,24 +7,24 @@ import { userVideoListService } from "@/api/video";
 import { useLoginStore } from "@/store/login.js";
 
 import { ElMessage } from "element-plus";
+import { genFileId } from "element-plus";
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 
 const videos = ref(); //默认的视频列表数据
-const showUpload=ref(false)
+const showUpload = ref(false);
 //pinia
-const loginStore=useLoginStore()
+const loginStore = useLoginStore();
 //判断是否打开上传弹窗
-const handleUpload=()=>{
-  if(loginStore.isLoggedIn)
-  {
-    showUpload.value=true
-  }
-  else{
+const handleUpload = () => {
+  if (loginStore.isLoggedIn) {
+    showUpload.value = true;
+  } else {
     ElMessage({
-    message: '登录后才能上传视频',
-    type: 'warning',
-  })
+      message: "登录后才能上传视频",
+      type: "warning",
+    });
   }
-}
+};
 
 const router = useRouter();
 const route = useRoute();
@@ -76,14 +76,63 @@ function handleItemClick(index) {
   }
 }
 
-// const currentPage = ref(route.query.page === null ? 1 : parseInt(route.query.page))
-// console.log(route.query.page);
-// console.log(currentPage.value);
-// console.log(route.query.page ? route.query.page.toNumber() : 1);
+//上传视频的对象
+const upload = ref<UploadInstance>();
 
-// console.log(route.query.id); // 123
-// console.log(route.query.name); // John Doe
-// console.log(currentPage.value);
+//处理上传文件数超过1的函数
+const handleExceed: UploadProps["onExceed"] = (files) => {
+  upload.value!.clearFiles();
+  const file = files[0] as UploadRawFile;
+  file.uid = genFileId();
+  upload.value!.handleStart(file);
+};
+
+const submitUpload = async () => {
+  await upload.value.submit();
+};
+
+// 处理上传成功的函数
+async function handleUploadSuccess(response) {
+  console.log("上传成功:", response);
+  // 在这里处理上传成功后的逻辑，比如更新文件列表、提示用户等
+  if (response.code == 400) ElMessage.error(response.msg);
+  else {
+    ElMessage.success(response.msg);
+    showUpload.value=false
+  }
+}
+//处理上传失败的函数
+async function handleUploadError(response) {
+  console.log("上传失败", response);
+  ElMessage.error('上传的文件大小超过限制或者服务器出错');
+}
+
+//上传视频表单的对象。这个主要用于表单验证。
+const videFormRef = ref();
+//上传视频的各个属性。这是传给后端的属性。
+const videoForm=ref(
+  {
+    type:"",
+    uploaderId:"",
+    title:"",
+    url:"",
+
+  }
+)
+//上传视频表单的验证规则
+const videoRules = reactive({
+  type: [
+    { required: true, message: "视频类型不可为空！", trigger: "blur" },
+    
+  ],
+  title: [
+    { required: true, message: "标题不可为空！", trigger: "blur" },
+    { min: 1, max: 50, message: "标题的长度为 1-50位 的字符", trigger: "blur" },
+
+  ],
+
+});
+
 </script>
 
 <template>
@@ -140,22 +189,21 @@ function handleItemClick(index) {
             index="video#distinct"
             @click="handleItemClick('vipManger')"
             >VIP客户经理
-            </el-menu-item
-          >
-          
-
+          </el-menu-item>
         </el-menu>
-
-
       </el-card>
-
     </el-col>
     <el-col :span="1" />
-    <el-button type="primary" size="large" class="upload-button" @click="handleUpload">
-            上传视频<el-icon class="el-icon--right"><Upload /></el-icon>
-        </el-button>
+    <el-button
+      type="primary"
+      size="large"
+      class="upload-button"
+      @click="handleUpload"
+    >
+      上传视频<el-icon class="el-icon--right"><Upload /></el-icon>
+    </el-button>
   </el-row>
-  
+
   <el-row>
     <el-col :span="2" />
     <el-space :size="20" wrap class="space">
@@ -223,9 +271,53 @@ function handleItemClick(index) {
     width="30%"
     style="border-radius: 0.75rem"
     center
-    >
-    
-    </el-dialog>
+  >
+    <el-form
+    :model="videoForm"
+    :rules="videoRules"
+    ref="videoFormRef">
+      <el-form-item prop="title"
+        ><el-input v-model="videoForm.title" placeholder="请输入上传的视频标题"> </el-input
+      ></el-form-item>
+      <el-form-item prop="type">
+        <el-select v-model="videoForm.type" placeholder="请选择上传的视频类型">
+          <el-option lable="营业" value="营业"></el-option>
+          <el-option lable="装维" value="装维"></el-option
+          ><el-option lable="政企客户经理" value="政企客户经理"></el-option
+          ><el-option lable="客经专员" value="客经专员"></el-option>
+          <el-option lable="支局长" value="支局长"></el-option>
+          <el-option lable="片区长" value="片区长"></el-option>
+          <el-option lable="VIP客户经理" value="VIP客户经理"></el-option>
+        </el-select>
+      </el-form-item>
+      <!--绑定如果上传成功的事件-->
+      <el-upload
+        ref="upload"
+        class="upload-demo"
+        action="http://localhost:8088/video/upload"
+        :limit="1"
+        :on-exceed="handleExceed"
+        :auto-upload="false"
+        :on-success="handleUploadSuccess"
+        :on-error="handleUploadError"
+      >
+        
+          <el-button type="primary">选择文件</el-button>
+        
+        <el-button class="ml-3" type="success" @click="submitUpload">
+          上传到服务器
+        </el-button>
+        <template #tip>
+          <div class="el-upload__tip text-red">
+            只能上传一个文件。新上传文件会覆盖旧文件。上传的视频文件最大为512MB。
+          </div>
+        </template>
+      </el-upload>
+
+
+      
+    </el-form>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -254,5 +346,15 @@ function handleItemClick(index) {
 
 .flex-grow {
   flex-grow: 1;
+}
+
+.file-upload {
+  display: flex;
+  gap: 1rem;
+}
+
+.select-file-btn,
+.upload-btn {
+  cursor: pointer;
 }
 </style>
