@@ -26,11 +26,11 @@ const loginStore=useLoginStore()
       <el-dropdown-menu class="custom-dropdown-menu">
         <el-dropdown-item 
           class="custom-dropdown-item"
-          >市区公司 {{loginStore.userInfo.location}}</el-dropdown-item
+          >市区公司：{{loginStore.userInfo.location}}</el-dropdown-item
         >
         <el-dropdown-item 
           class="custom-dropdown-item"
-          >部门 {{loginStore.userInfo.department}}</el-dropdown-item
+          >部门：{{loginStore.userInfo.department}}</el-dropdown-item
         >
       </el-dropdown-menu>
     </template>

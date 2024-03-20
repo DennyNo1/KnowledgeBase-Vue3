@@ -94,6 +94,7 @@ const login = async () => {
     //存用户信息到pinia
     loginStore.userInfo=res.data
     loginStore.isLoggedIn=true
+    console.log( loginStore.userInfo)
     
   }
 

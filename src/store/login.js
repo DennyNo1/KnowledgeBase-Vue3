@@ -19,7 +19,7 @@ import { ref } from "vue"; // 从Vue库中导入ref函数，用来创建响应�
 export const useLoginStore = defineStore('loginStore', () => {
     // 创建一个响应式的userInfo对象，存储用户信息，初始值为各个属性为空字符串或默认值
     const userInfo = ref({
-        userId: '',
+        id: '',
         username: '',
         nickname: '',
         phone: '',
