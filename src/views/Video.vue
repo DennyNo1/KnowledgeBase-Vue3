@@ -68,6 +68,7 @@ async function getVideos(
     );
     console.log(response.data);
     videos.value = response.data["records"];
+    
     totalPage.value = response.data.total;
     console.log(totalPage.value);
   } catch (error) {

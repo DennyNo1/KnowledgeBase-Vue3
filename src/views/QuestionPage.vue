@@ -6,7 +6,7 @@ import HeartFilled from "@/components/icons/HeartFilled.vue";
 import RichText from "@/components/RichText.vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
-import { useLoginStore } from "@/stores/login.js";
+import { useLoginStore } from "@/store/login.js";
 import { oneQuestion } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import * as duration from "dayjs/plugin/duration";
