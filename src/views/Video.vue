@@ -8,7 +8,7 @@ import { useLoginStore } from "@/store/login.js";
 
 import { ElMessage } from "element-plus";
 import { genFileId } from "element-plus";
-import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import type { MessageParamsWithType, UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 
 //默认的视频列表数据
 const videos = ref(); 
@@ -39,12 +39,12 @@ onMounted(() => {
   getVideos("1", "12", null, null);
 });
 
-function handleClick(v) {
+function handleClick(v: { video: { id: any; }; }) {
   // console.log(v);
   router.push(`/video-page?id=${v.video.id}`);
 }
 
-function handleCurrentChange(currentPage) {
+function handleCurrentChange(currentPage: any) {
   // // 获取点击的页码
   // console.log(currentPage);
   // page = currentPage;
@@ -55,8 +55,8 @@ function handleCurrentChange(currentPage) {
 async function getVideos(
   page: string,
   pageSize: string,
-  queryName: null,
-  type: null
+  queryName: String,
+  type: String
 ) {
   try {
     console.log("t");
@@ -76,11 +76,8 @@ async function getVideos(
   }
 }
 
-function handleItemClick(index) {
-  // if (index !== queryName) {
-  //   queryName = index;
-  //   getVideos();
-  // }
+function handleItemClick(type: String) {
+  getVideos('1','12',null,type)
 }
 
 //视频上传！！！
@@ -104,7 +101,7 @@ const submitUpload = async () => {
 };
 
 // 处理上传成功的函数
-async function handleUploadSuccess(response) {
+async function handleUploadSuccess(response: { code: number; msg: MessageParamsWithType; data: string; }) {
   console.log("上传成功:", response);
   // 在这里处理上传成功后的逻辑，比如更新文件列表、提示用户等
   if (response.code == 400) ElMessage.error(response.msg);
@@ -123,7 +120,7 @@ async function handleUploadSuccess(response) {
   console.log("clear!");
 }
 //处理上传失败的函数
-async function handleUploadError(response) {
+async function handleUploadError(response: any) {
   console.log("上传失败", response);
   ElMessage.error("上传的文件大小超过限制或者服务器出错");
   clearForm();
@@ -175,48 +172,48 @@ const clearForm = () => {
           mode="horizontal"
           router
         >
-          <el-menu-item index="video" @click="handleItemClick('')"
+          <el-menu-item index="video" @click="handleItemClick(null)"
             >默认</el-menu-item
           >
           <el-menu-item
             index="video#commend"
-            @click="handleItemClick('commend')"
+            @click="handleItemClick('热门知识')"
             >热门知识</el-menu-item
           >
           <el-menu-item
             index="video#business"
-            @click="handleItemClick('business')"
+            @click="handleItemClick('营业')"
             >营业</el-menu-item
           >
           <el-menu-item
             index="video#operation"
-            @click="handleItemClick('operation')"
+            @click="handleItemClick('装维')"
             >装维</el-menu-item
           >
           <el-menu-item
             index="video#manager"
-            @click="handleItemClick('manager')"
+            @click="handleItemClick('政企客户经理')"
             >政企客户经理</el-menu-item
           >
           <el-menu-item
             index="video#commissioner"
-            @click="handleItemClick('commissioner')"
+            @click="handleItemClick('客经专员')"
             >客经专员</el-menu-item
           >
           <el-menu-item
             index="video#director"
-            @click="handleItemClick('director')"
+            @click="handleItemClick('支局长')"
             >支局长</el-menu-item
           >
           <el-menu-item
             index="video#distinct"
-            @click="handleItemClick('distinct')"
+            @click="handleItemClick('片区长')"
             >片区长</el-menu-item
           >
 
           <el-menu-item
             index="video#distinct"
-            @click="handleItemClick('vipManger')"
+            @click="handleItemClick('VIP客户经理')"
             >VIP客户经理
           </el-menu-item>
         </el-menu>
@@ -242,7 +239,7 @@ const clearForm = () => {
           :body-style="{ padding: '0px' }"
           shadow="hover"
           class="video-card"
-          @click="handleClick(v)"
+          
         >
           <!-- 获取单个视频 -->
           <!--        封面视频-->
@@ -257,15 +254,15 @@ const clearForm = () => {
             </p>
           </video>
           <div style="padding: 14px">
-            <el-text size="large" tag="b" line-clamp="2" class="hover-effect">
+            <el-text size="large" tag="b" line-clamp="2" class="hover-effect" @click="handleClick(v)">
               {{ v.video.title }}
             </el-text>
             <el-row style="margin-top: 10px">
               <el-col :span="12"
-                ><el-text>发布人：{{ v.nickName }}</el-text></el-col
+                ><el-text>发布人：{{ v.user.nickName }}</el-text></el-col
               >
               <el-col :span="12"
-                ><el-text>部门：{{ v.department }}</el-text></el-col
+                ><el-text>部门：{{ v.user.department }}</el-text></el-col
               >
             </el-row>
             <el-row style="margin-top: 8px">

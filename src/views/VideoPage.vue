@@ -14,16 +14,16 @@ const loginStore = useLoginStore();
 const videoData = ref({});
 //视频上传者的数据
 const uploaderData = ref({});
-const videoId=ref()
+const videoId = ref();
 const route = useRoute();
 
 async function getOneVideo() {
   // 使用 useRoute 获取当前路由实例
-  
+
   // 从路由查询参数中获取 id
-  
+
   videoId.value = route.query.id;
-  console.log(videoId.value);//类型是Number
+  console.log(videoId.value); //类型是Number
 
   try {
     const response = await userOneVideoService(videoId.value, null);
@@ -39,7 +39,6 @@ async function getOneVideo() {
 
 onMounted(() => {
   getOneVideo();
-  
 });
 
 const router = useRouter();
@@ -66,20 +65,13 @@ const { userInfo } = storeToRefs(store);
 //   }
 // ])
 
-
-
-
-
-
-
 function goBack() {
   // console.log(videoData.value.url)
   router.back();
 }
 
 //作为父组件，传给子组件comment.vue的变量。videoId在上面已经定义了
-const belongType=ref('video')
-
+const belongType = ref("video");
 </script>
 
 <template>
@@ -89,14 +81,13 @@ const belongType=ref('video')
       <div class="header-content">
         <el-button type="text" @click="goBack">返回</el-button>
         <h2 class="title">{{ videoData.title }}</h2>
-        
-          <div class="meta-info">
-            <span>上传者：{{ uploaderData.nickName }}</span>
-          </div>
-          <div class="meta-info">
-            <span>上传时间：{{ videoData.date }}</span>
-          </div>
-        
+
+        <div class="meta-info">
+          <span>上传者：{{ uploaderData.nickName }}</span>
+        </div>
+        <div class="meta-info">
+          <span>上传时间：{{ videoData.date }}</span>
+        </div>
       </div>
     </el-col>
     <el-col :span="4" />
@@ -122,7 +113,7 @@ const belongType=ref('video')
     <el-col :span="4" />
     <el-col :span="16">
       <h3>评论</h3>
-      <Comment  :belongType="belongType" />
+      <Comment :belongType="belongType" />
     </el-col>
     <el-col :span="4" />
   </el-row>
@@ -141,4 +132,3 @@ const belongType=ref('video')
   margin-bottom: 5px;
 }
 </style>
-

@@ -3,69 +3,33 @@ import { onMounted, ref } from "vue";
 import { someQuestions } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
+import { userQuestionListService } from "@/api/question.js";
 
-const articleData = ref([
-  {
-    question: {
-      id: 8,
-      questionerId: 1,
-      date: "2024-01-24T09:55:00",
-      title:
-        "测试问题11111111111111111111111111111111111111111111111111111111111111111111111111111111",
-      content: null,
-      imageUrls: null,
-      videoUrls: null,
-    },
-    nickName: "张昊天",
-  },
-  {
-    question: {
-      id: 11,
-      questionerId: 1,
-      date: "2024-01-24T09:55:04",
-      title: "测试问题2",
-      content: null,
-      imageUrls: null,
-      videoUrls: null,
-    },
-    nickName: "张昊天",
-  },
-  {
-    question: {
-      id: 21,
-      questionerId: 2,
-      date: "2024-01-24T09:55:06",
-      title: "测试问题3",
-      content: null,
-      imageUrls: null,
-      videoUrls: null,
-    },
-    nickName: "李松泽",
-  },
-]);
+const getQuestionList = async (page, pageSize, queryName, isChecked) => {
+  const response = await userQuestionListService(
+    page,
+    pageSize,
+    queryName,
+    isChecked
+  );
+  console.log(response.data);
+  articleData.value = response.data.records;
+  total.value=response.data.total
+  console.log(articleData.value.length)
+};
+onMounted(() => {
+  getQuestionList("1", "6", null, 1);
+});
+
+const articleData = ref();
+const total=ref()
 
 const router = useRouter();
 const route = useRoute();
 
-let page = 1;
 let queryName = route.hash.substring(1);
-let pageSize = 12;
+
 const totalPage = ref(1);
-
-async function getQuestions() {
-  try {
-    const response = await someQuestions(page, pageSize, queryName);
-    // console.log(response.data);
-    articleData.value = response.data["records"];
-    totalPage.value = response.data.total;
-  } catch (error) {
-    console.log("请求失败！", error);
-  }
-}
-
-// onMounted(() => {
-//   getQuestions()
-// })
 
 function handleClick(item) {
   router.push(`/question-page?id=${item.question.id}`);
@@ -74,8 +38,9 @@ function handleClick(item) {
 function handleCurrentChange(currentPage) {
   // 获取点击的页码
   console.log(currentPage);
-  page = currentPage;
-  getQuestions();
+  //获取当前页数
+  const page = currentPage;
+  getQuestionList(currentPage,"6",null,1)
 }
 
 function handleItemClick(index) {
@@ -151,13 +116,13 @@ function handleItemClick(index) {
       <el-row class="cards" v-for="item in articleData">
         <el-card class="box-card" shadow="hover" @click="handleClick(item)">
           <el-row>
-            <el-text size="large" tag="b" line-clamp="1">
+            <el-text size="large" tag="b" line-clamp="1" class="hover-effect">
               {{ item.question.title }}
             </el-text>
           </el-row>
           <el-row style="margin-top: 10px; align-items: center">
             <el-col :span="6">
-              <el-text>发布人： {{ item.question.questionerId }}</el-text>
+              <el-text>发布人： {{ item.nickName }}</el-text>
             </el-col>
             <el-col :span="6">
               <el-text>部门： {{ item.department }}</el-text>
@@ -174,10 +139,10 @@ function handleItemClick(index) {
               <!--              <div class="flex-grid" />-->
               <el-text>
                 <el-tag
-                  :type="item.question.solved ? 'success' : 'danger'"
+                  :type="item.question.isSolved ? 'success' : 'danger'"
                   round
                 >
-                  {{ item.question.solved ? "已解决" : "未解决" }}
+                  {{ item.question.isSolved ? "已解决" : "未解决" }}
                 </el-tag>
               </el-text>
             </el-col>
@@ -198,8 +163,9 @@ function handleItemClick(index) {
     <el-pagination
       background
       layout="prev, pager, next"
-      :page-count="totalPage"
+      :total="total"
       @current-change="handleCurrentChange"
+      :page-size="6"
     />
   </el-row>
 </template>
@@ -223,4 +189,8 @@ function handleItemClick(index) {
 .flex-grow {
   flex-grow: 1;
 }
+.el-text.hover-effect:hover {
+    color: #409eff; /* 天蓝色 */
+    cursor: pointer; /* 改变鼠标悬停时的样式为手型图标 */
+  }
 </style>

@@ -14,7 +14,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-dayjs.extend(duration);
+// dayjs.extend(duration);
 
 const valueHtml = ref("");
 const toolbarConfig = {};
@@ -190,18 +190,18 @@ async function getQuestion() {
 // }
 // test()
 
-function getDuration(date) {
-  const duration = dayjs.duration(dayjs().diff(dayjs(date)));
-  if (duration.asSeconds() < 60) {
-    return Math.floor(duration.asSeconds()) + " 秒前";
-  } else if (duration.asMinutes() < 60) {
-    return Math.floor(duration.asHours()) + " 分钟前";
-  } else if (duration.asHours() < 24) {
-    return Math.floor(duration.asHours()) + " 小时前";
-  } else {
-    return Math.floor(duration.asDays()) + " 天前";
-  }
-}
+// function getDuration(date) {
+//   const duration = dayjs.duration(dayjs().diff(dayjs(date)));
+//   if (duration.asSeconds() < 60) {
+//     return Math.floor(duration.asSeconds()) + " 秒前";
+//   } else if (duration.asMinutes() < 60) {
+//     return Math.floor(duration.asHours()) + " 分钟前";
+//   } else if (duration.asHours() < 24) {
+//     return Math.floor(duration.asHours()) + " 小时前";
+//   } else {
+//     return Math.floor(duration.asDays()) + " 天前";
+//   }
+// }
 </script>
 
 <template>
@@ -274,7 +274,7 @@ function getDuration(date) {
                 class="text-small"
                 style="color: var(--el-text-color-regular)"
               >
-                {{ getDuration(t.date) }}
+                <!-- {{ getDuration(t.date) }} -->
               </span>
               <el-tag v-if="t.user.tag">{{ t.user.tag }}</el-tag>
               <div class="flex-grow" />

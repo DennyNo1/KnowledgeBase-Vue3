@@ -9,9 +9,11 @@ import { useRoute, useRouter } from "vue-router";
 import {
   userCommentAndReplyService,
   useraddCommentService,
+  useraddReplyService,
 } from "@/api/comment";
 import avatar from "@/assets/default.png";
 import { useLoginStore } from "@/store/login";
+import dayjs from "dayjs";
 
 const route = useRoute();
 const props = defineProps({
@@ -41,7 +43,9 @@ async function getCommentAndReply() {
   }
 }
 
+//所有的评论框，都是绑定这个
 const textarea = ref("");
+const replyBox=ref("")
 
 // const commentData = ref([
 //   {
@@ -138,12 +142,55 @@ async function commit() {
       );
       //刷新页面
       await getCommentAndReply();
+      textarea.value=''
     }
   }
 }
 
+const secondReplyName = ref('123');
+
+// 关闭其他评论框并且刷新要回复的对象的名字
+function clickReply(item,replyName) {
+  //关闭其他评论就是遍历
+  for (const i of commentData.value) {
+    if (i.comment.id != item.comment.id) 
+    {
+      i.Open=false
+    }
+  }
+  item.Open=!item.Open
+  secondReplyName.value=replyName
+  console.log(secondReplyName.value)
+}
+
 //提交回复
-async function commitReply(){}
+async function reply(commentId) {
+  if (!loginStore.isLoggedIn) {
+    ElMessage({
+      message: "登录后才能回复",
+      type: "warning",
+    });
+  } else {
+    //不能提交空评论
+    if (replyBox.value == "") {
+      ElMessage({
+        message: "请输入回复",
+        type: "warning",
+      });
+    } else {
+      useraddReplyService(
+        replyBox.value,
+        loginStore.userInfo.id,
+        commentId,
+        secondReplyName.value
+      );
+      //刷新页面
+      await getCommentAndReply();
+      //提交完清空回复框
+      replyBox.value=''
+    }
+  }
+}
 
 function toggleLike(item) {
   // console.log(item);
@@ -180,23 +227,31 @@ function toggleLike(item) {
           :icon="item.liked ? HeartFilled : Heart"
         >
         </el-button>
-        <!-- 回复按钮 -->
+        <!-- 对评论的回复，传一个空回复名过去 -->
         <el-button
           type="primary"
           text
-          @click="item.commentOpen = !item.commentOpen"
+          @click="clickReply(item,null)"
           :icon="item.commentOpen ? CommentFilled : Comment"
         >
-          回复
+          回复1
         </el-button>
       </div>
       <el-row class="mb-4">
         <el-col :span="1" />
         <el-col :span="23"> {{ item.comment.content }} </el-col>
       </el-row>
+      <el-row class="mb-5">
+        <el-col :span="21" />
+        <span class="timestamp">{{ item.comment.date }}</span>
+      </el-row>
+
+      <div class="flex-grow" />
+
       <el-row>
         <el-col :span="1" />
-        <el-col :span="23">
+        <el-col :span="22">
+
           <!-- 回复行 -->
           <el-card
             v-for="replyData in item.replyDTOList"
@@ -205,8 +260,15 @@ function toggleLike(item) {
           >
             <div class="subReplHeader">
               <el-avatar class="mr-2" :size="24" :src="avatar" />
-              <span class="text-med"> {{ replyData.user.nickName }} </span>
+              <span class="text-med"> {{ replyData.user.nickName }}</span>
+              &nbsp;
+              <span
+                class="text-med"
+                v-if="replyData.reply.secondReplyName != null"
+                >回复 {{ replyData.reply.secondReplyName }}</span
+              >
               <div class="flex-grow" />
+              <!-- 点赞 -->
               <el-button
                 type="primary"
                 text
@@ -214,6 +276,15 @@ function toggleLike(item) {
                 :icon="false ? HeartFilled : Heart"
               >
                 {{ replyData.commend }}
+              </el-button>
+              <!-- 对回复的回复 -->
+              <el-button
+                type="primary"
+                text
+                @click=clickReply(item,replyData.user.nickName)
+                :icon="item.commentOpen ? CommentFilled : Comment"
+              >
+                回复2
               </el-button>
             </div>
             <el-row>
@@ -224,19 +295,25 @@ function toggleLike(item) {
                 </el-text>
               </el-col>
             </el-row>
+            <el-row class="mb-5">
+              <el-col :span="20" />
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <span class="timestamp">{{ replyData.reply.date }}</span>
+            </el-row>
           </el-card>
         </el-col>
       </el-row>
-      <!-- 提交新评论框 -->
-      <el-row v-show="item.commentOpen">
-        <el-col :span="2" />
-        <el-col :span="21">
+      
+      <!-- 提交新回复框 -->
+      <el-row v-show="item.Open">
+        <el-col :span="1" />
+        <el-col :span="22">
           <el-row class="mt-6">
             <el-input
-              v-model="textarea"
+              v-model="replyBox"
               :rows="1"
               type="textarea"
-              placeholder="请输入你的评论..."
+              placeholder="请输入你的回复..."
               resize="none"
               maxlength="256"
               show-word-limit
@@ -245,13 +322,17 @@ function toggleLike(item) {
           </el-row>
           <el-row class="mt-4">
             <div class="flex-grow" />
-            <el-button type="primary" @click="commit">提交</el-button>
+            <el-button type="primary" @click="reply(item.comment.id)">提交</el-button>
           </el-row>
         </el-col>
         <el-col :span="1" />
       </el-row>
     </el-card>
   </el-row>
+
+
+
+  <!-- 提交新评论框 -->
   <el-row class="mt-8">
     <el-input
       v-model="textarea"
@@ -329,5 +410,8 @@ function toggleLike(item) {
 
 .flex-grow {
   flex-grow: 1;
+}
+.timestamp {
+  font-size: 12px;
 }
 </style>

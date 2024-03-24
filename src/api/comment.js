@@ -21,3 +21,16 @@ export async function useraddCommentService(belongType,belongId, userId, content
     },
   });
 }
+
+export async function useraddReplyService(content,userId, commentId, secondReplyName) {
+  return await request({
+    method: "POST",
+    url: "/reply/add",
+    data: {
+      content,
+      userId,
+      commentId,
+      secondReplyName,
+    },
+  });
+}
