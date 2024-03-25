@@ -5,13 +5,18 @@ import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { userVideoListService } from "@/api/video";
 import { useLoginStore } from "@/store/login.js";
-
+import { ChatLineRound, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { genFileId } from "element-plus";
-import type { MessageParamsWithType, UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import type {
+  MessageParamsWithType,
+  UploadInstance,
+  UploadProps,
+  UploadRawFile,
+} from "element-plus";
 
 //默认的视频列表数据
-const videos = ref(); 
+const videos = ref();
 const showUpload = ref(false);
 //pinia
 const loginStore = useLoginStore();
@@ -39,7 +44,7 @@ onMounted(() => {
   getVideos("1", "12", null, null);
 });
 
-function handleClick(v: { video: { id: any; }; }) {
+function handleClick(v: { video: { id: any } }) {
   // console.log(v);
   router.push(`/video-page?id=${v.video.id}`);
 }
@@ -68,7 +73,7 @@ async function getVideos(
     );
     console.log(response.data);
     videos.value = response.data["records"];
-    
+
     totalPage.value = response.data.total;
     console.log(totalPage.value);
   } catch (error) {
@@ -77,7 +82,7 @@ async function getVideos(
 }
 
 function handleItemClick(type: String) {
-  getVideos('1','12',null,type)
+  getVideos("1", "12", null, type);
 }
 
 //视频上传！！！
@@ -101,7 +106,11 @@ const submitUpload = async () => {
 };
 
 // 处理上传成功的函数
-async function handleUploadSuccess(response: { code: number; msg: MessageParamsWithType; data: string; }) {
+async function handleUploadSuccess(response: {
+  code: number;
+  msg: MessageParamsWithType;
+  data: string;
+}) {
   console.log("上传成功:", response);
   // 在这里处理上传成功后的逻辑，比如更新文件列表、提示用户等
   if (response.code == 400) ElMessage.error(response.msg);
@@ -157,14 +166,12 @@ const clearForm = () => {
 
   showUpload.value = false;
 };
-
-
 </script>
 
 <template>
   <el-row>
     <el-col :span="2" />
-    <el-col :span="19">
+    <el-col :span="20">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
         <el-menu
           :default-active="`video${route.hash}`"
@@ -180,14 +187,10 @@ const clearForm = () => {
             @click="handleItemClick('热门知识')"
             >热门知识</el-menu-item
           >
-          <el-menu-item
-            index="video#business"
-            @click="handleItemClick('营业')"
+          <el-menu-item index="video#business" @click="handleItemClick('营业')"
             >营业</el-menu-item
           >
-          <el-menu-item
-            index="video#operation"
-            @click="handleItemClick('装维')"
+          <el-menu-item index="video#operation" @click="handleItemClick('装维')"
             >装维</el-menu-item
           >
           <el-menu-item
@@ -219,7 +222,7 @@ const clearForm = () => {
         </el-menu>
       </el-card>
     </el-col>
-    <el-col :span="1" />
+    
     <el-button
       type="primary"
       size="large"
@@ -230,7 +233,7 @@ const clearForm = () => {
     </el-button>
   </el-row>
 
-  <el-row>
+  <!-- <el-row> 
     <el-col :span="2"></el-col>
     <el-col :span="20">
       <el-space :size="20" wrap class="space">
@@ -239,10 +242,8 @@ const clearForm = () => {
           :body-style="{ padding: '0px' }"
           shadow="hover"
           class="video-card"
-          
         >
-          <!-- 获取单个视频 -->
-          <!--        封面视频-->
+
           <video controls style="width: 100%" preload="metadata" >
             <source :src="v.video.url" type="video/mp4"  />
             <p>
@@ -266,15 +267,64 @@ const clearForm = () => {
               >
             </el-row>
             <el-row style="margin-top: 8px">
-              <div class="flex-grow" />
+              <div class="flex-grow" >
+            </div>
               <time class="description">{{
                 dayjs(v.video.date).format("YYYY-MM-DD HH:mm:ss")
-              }}</time>
+              }}
+              </time>
             </el-row>
           </div>
         </el-card>
       </el-space>
     </el-col>
+  </el-row> -->
+
+  <el-row>
+    <el-col :span="2" />
+    <el-col :span="20">
+      <el-row class="cards" v-for="item in videos">
+        <el-card class="box-card" shadow="hover" @click="handleClick(item)">
+          <el-row>
+            <el-text size="large" tag="b" line-clamp="1">
+              {{ item.video.title }}
+            </el-text>
+          </el-row>
+          <el-row style="margin-top: 10px; align-items: center">
+            <el-col :span="6">
+              <el-text>发布人： {{ item.user.nickName }}</el-text>
+            </el-col>
+            <el-col :span="6">
+              <el-text>部门： {{ item.user.department }}</el-text>
+            </el-col>
+            <el-col :span="8">
+              <el-text
+                >发布时间：
+                <time>{{
+                  dayjs(item.video.date).format("YYYY-MM-DD")
+                }}</time></el-text
+              >
+            </el-col>
+            <el-col :span="4">
+              <!--              <div class="flex-grid" /> 并不需要评论数--> 
+              <!-- <el-text>
+                <el-button text :icon="ChatLineRound">
+                  {{ item.article.commentCount }} 1
+                </el-button>
+                
+              </el-text> -->
+              <el-text>
+                <el-button text :icon="View">
+                  <!-- {{ item.article.clickCount }} -->1
+                </el-button>
+                <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
+              </el-text>
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-row>
+    </el-col>
+    <el-col :span="2" />
   </el-row>
 
   <!-- 分页控件 -->
@@ -332,8 +382,8 @@ const clearForm = () => {
         :on-success="handleUploadSuccess"
         :on-error="handleUploadError"
       >
-      <!-- 不写这个trigger，上传也会去选择文件 -->
-        <template #trigger> 
+        <!-- 不写这个trigger，上传也会去选择文件 -->
+        <template #trigger>
           <el-button type="primary">选择文件</el-button>
         </template>
         <el-button class="ml-3" type="success" @click="submitUpload">
@@ -379,12 +429,24 @@ const clearForm = () => {
 .upload-btn {
   cursor: pointer;
 }
-.ml-3{
+.ml-3 {
   margin-left: 5%;
 }
 .el-text.hover-effect:hover {
-    color: #409eff; /* 天蓝色 */
-    cursor: pointer; /* 改变鼠标悬停时的样式为手型图标 */
-  }
+  color: #409eff; /* 天蓝色 */
+  cursor: pointer; /* 改变鼠标悬停时的样式为手型图标 */
+}
 
+.cards {
+  margin-top: 15px;
+}
+
+.box-card {
+  width: 100%;
+  border-radius: 0.5rem;
+}
+.upload-button{
+  position: absolute;
+  right: 0px; /* 或者根据实际需求调整为合适的像素值 */
+}
 </style>

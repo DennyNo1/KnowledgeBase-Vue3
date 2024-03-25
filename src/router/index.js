@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home.vue";
 import Video from "@/views/Video.vue";
 import Search from "@/views/Search.vue";
+import CheckQuestion from "@/views/CheckQuestion.vue";
+import CheckQuestionPage from "@/views/CheckQuestionPage.vue";
+import CreateQuestion from "@/views/CreateQuestion.vue";
 
 
 
@@ -47,6 +50,18 @@ const router = createRouter({
           name: "video-page",
           component: () => import("@/views/VideoPage.vue"),
         },
+        {
+          path:"/question/check",
+          component:CheckQuestion
+        },
+        {
+          path: "/question-page/check",
+          component:CheckQuestionPage
+        },
+        {
+          path:"/question/create",
+          component:CreateQuestion
+        }
 
 
         // {

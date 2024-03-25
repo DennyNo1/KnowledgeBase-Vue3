@@ -203,6 +203,8 @@ function handleItemClick(index) {
     </el-col>
     <el-col :span="2" />
   </el-row>
+
+
   <el-row>
     <el-col :span="2" />
     <el-col :span="20">
@@ -249,6 +251,8 @@ function handleItemClick(index) {
     </el-col>
     <el-col :span="2" />
   </el-row>
+
+  
   <el-row
     style="
       display: flex;

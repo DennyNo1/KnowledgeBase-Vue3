@@ -76,22 +76,27 @@ const belongType = ref("video");
 
 <template>
   <el-row class="page-header">
+    
     <el-col :span="4" />
     <el-col :span="16">
-      <div class="header-content">
-        <el-button type="text" @click="goBack">返回</el-button>
+      <div class="header-content" >
+        <div></div>
+        <el-button class="back"  @click="goBack" size="large"  style="font-size: 18px;">返回</el-button>
         <h2 class="title">{{ videoData.title }}</h2>
 
         <div class="meta-info">
           <span>上传者：{{ uploaderData.nickName }}</span>
-        </div>
-        <div class="meta-info">
+          
+          <span>部门：{{ uploaderData.department }}</span>
+          
           <span>上传时间：{{ videoData.date }}</span>
         </div>
-      </div>
+        </div>
+
     </el-col>
     <el-col :span="4" />
   </el-row>
+  
   <el-row>
     <el-col :span="4" />
     <el-col :span="16">
@@ -129,6 +134,9 @@ const belongType = ref("video");
   color: #848484;
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
+.meta-info span:not(:last-child) {
+    margin-right: 10px; /* 调整此处的数值以适应您的需求 */
+  }
 </style>

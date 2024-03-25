@@ -4,6 +4,7 @@ import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { useLoginStore } from "@/store/login";
 import Avatar from "@/components/Avatar.vue";
+import { login } from "@/api/knowledgeBase";
 
 const searchInput = ref("");
 const select = ref("");
@@ -17,6 +18,18 @@ function submitSearch() {
 const showLogin = () => {
   loginStore.isOpen = true;
 };
+const isAdmin=()=>{
+  if(loginStore.isLoggedIn)
+ {
+  if(loginStore.userInfo.role=='admin')
+  {
+    return true
+  }
+  
+ }
+ return false
+
+}
 </script>
 
 <template>
@@ -56,6 +69,8 @@ const showLogin = () => {
 
     <el-menu-item index="2" route="/article">课件</el-menu-item>
     <el-menu-item index="3" route="/question">一线需求</el-menu-item>
+    <el-menu-item  index="4" route="/question/check" >一线需求审核</el-menu-item> 
+    <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->
 
     <el-menu-item v-if="loginStore.isLoggedIn">
       <Avatar></Avatar>

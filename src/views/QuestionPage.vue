@@ -22,7 +22,7 @@ const mode = "default"; // 或 'simple'
 const editorRef = ref();
 const question = ref({
   date: "2024-01-17T09:45:38",
-  title: "问答留言板",
+  title: "这是问题的标题",
   username: "用户1",
   place: "舟山电信",
   main: [
@@ -221,14 +221,14 @@ async function getQuestion() {
   <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
-      <el-descriptions title="问题信息">
-        <el-descriptions-item label="用户名">{{
+      <el-descriptions title="问题描述">
+        <el-descriptions-item label="用户昵称">{{
           question.username
         }}</el-descriptions-item>
         <el-descriptions-item label="创建日期">{{
           dayjs(question.date).format("YYYY-MM-DD")
         }}</el-descriptions-item>
-        <el-descriptions-item label="地点">{{
+        <el-descriptions-item label="部门">{{
           question.place
         }}</el-descriptions-item>
       </el-descriptions>

@@ -4,6 +4,8 @@ import { someQuestions } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { userQuestionListService } from "@/api/question.js";
+import { useLoginStore } from "@/store/login";
+import { ElMessage } from "element-plus";
 
 const getQuestionList = async (page, pageSize, queryName, isChecked) => {
   const response = await userQuestionListService(
@@ -13,23 +15,21 @@ const getQuestionList = async (page, pageSize, queryName, isChecked) => {
     isChecked
   );
   console.log(response.data);
-  articleData.value = response.data.records;
-  total.value=response.data.total
-  console.log(articleData.value.length)
+  questionData.value = response.data.records;
+  total.value = response.data.total;
+  console.log(articleData.value.length);
 };
 onMounted(() => {
   getQuestionList("1", "6", null, 1);
 });
 
-const articleData = ref();
-const total=ref()
+const questionData = ref();
+const total = ref();
 
 const router = useRouter();
 const route = useRoute();
 
 let queryName = route.hash.substring(1);
-
-const totalPage = ref(1);
 
 function handleClick(item) {
   router.push(`/question-page?id=${item.question.id}`);
@@ -40,13 +40,26 @@ function handleCurrentChange(currentPage) {
   console.log(currentPage);
   //获取当前页数
   const page = currentPage;
-  getQuestionList(currentPage,"6",null,1)
+  getQuestionList(currentPage, "6", null, 1);
 }
 
 function handleItemClick(index) {
   if (index !== queryName) {
     queryName = index;
     getQuestions();
+  }
+}
+
+const loginStore = useLoginStore();
+//点击提出需求按钮的逻辑
+function handleUpload(){
+  if (loginStore.isLoggedIn) {
+    router.push('/question/create')
+  } else {
+    ElMessage({
+      message: "登录后才能提出需求",
+      type: "warning",
+    });
   }
 }
 </script>
@@ -108,12 +121,22 @@ function handleItemClick(index) {
         </el-menu>
       </el-card>
     </el-col>
+
+    <el-button
+      type="primary"
+      size="large"
+      class="upload-button"
+      @click="handleUpload"
+    >
+      新建需求<el-icon><EditPen /></el-icon>
+    </el-button>
     <el-col :span="2" />
   </el-row>
+
   <el-row>
     <el-col :span="2" />
     <el-col :span="20">
-      <el-row class="cards" v-for="item in articleData">
+      <el-row class="cards" v-for="item in questionData">
         <el-card class="box-card" shadow="hover" @click="handleClick(item)">
           <el-row>
             <el-text size="large" tag="b" line-clamp="1" class="hover-effect">
@@ -190,7 +213,11 @@ function handleItemClick(index) {
   flex-grow: 1;
 }
 .el-text.hover-effect:hover {
-    color: #409eff; /* 天蓝色 */
-    cursor: pointer; /* 改变鼠标悬停时的样式为手型图标 */
-  }
+  color: #409eff; /* 天蓝色 */
+  cursor: pointer; /* 改变鼠标悬停时的样式为手型图标 */
+}
+.upload-button{
+  position: absolute;
+  right: 0px; /* 或者根据实际需求调整为合适的像素值 */
+}
 </style>

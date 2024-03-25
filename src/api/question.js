@@ -11,3 +11,6 @@ export async function userQuestionListService(page, pageSize, queryName, isCheck
     },
   });
 }
+
+export const userCheckService = ( questionId, isChecked ) =>
+  request.post("/question/check", { questionId, isChecked });
