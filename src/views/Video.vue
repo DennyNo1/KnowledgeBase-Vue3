@@ -222,7 +222,7 @@ const clearForm = () => {
         </el-menu>
       </el-card>
     </el-col>
-    
+
     <el-button
       type="primary"
       size="large"
@@ -286,9 +286,11 @@ const clearForm = () => {
       <el-row class="cards" v-for="item in videos">
         <el-card class="box-card" shadow="hover" @click="handleClick(item)">
           <el-row>
-            <el-text size="large" tag="b" line-clamp="1">
-              {{ item.video.title }}
-            </el-text>
+            <el-col :span="20">
+              <el-text size="large" tag="b" line-clamp="1">
+                {{ item.video.title }}
+              </el-text>
+            </el-col>
           </el-row>
           <el-row style="margin-top: 10px; align-items: center">
             <el-col :span="6">
@@ -297,7 +299,7 @@ const clearForm = () => {
             <el-col :span="6">
               <el-text>部门： {{ item.user.department }}</el-text>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-text
                 >发布时间：
                 <time>{{
@@ -306,7 +308,10 @@ const clearForm = () => {
               >
             </el-col>
             <el-col :span="4">
-              <!--              <div class="flex-grid" /> 并不需要评论数--> 
+              <el-text>类型： {{ item.video.type }}</el-text>
+            </el-col>
+            <el-col :span="2">
+              <!--              <div class="flex-grid" /> 并不需要评论数-->
               <!-- <el-text>
                 <el-button text :icon="ChatLineRound">
                   {{ item.article.commentCount }} 1
@@ -445,7 +450,7 @@ const clearForm = () => {
   width: 100%;
   border-radius: 0.5rem;
 }
-.upload-button{
+.upload-button {
   position: absolute;
   right: 0px; /* 或者根据实际需求调整为合适的像素值 */
 }

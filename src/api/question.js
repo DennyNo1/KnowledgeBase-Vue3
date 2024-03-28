@@ -1,16 +1,47 @@
 import request from "@/utils/request";
-export async function userQuestionListService(page, pageSize, queryName, isChecked) {
+
+
+export async function userOneQuestionService(
+  questionId,
+  
+
+) {
   return await request({
     method: "GET",
-    url: "/question/some",
+    url: "/question",
     params: {
-      page,
-      queryName,
-      pageSize,
-      isChecked,
+      questionId,
+     
+
     },
   });
 }
 
-export const userCheckService = ( questionId, isChecked ) =>
+export const userCheckService = (questionId, isChecked) =>
   request.post("/question/check", { questionId, isChecked });
+
+
+export const userQuestionAddService = (questionerId, title, content,type) =>
+  request.post("/question/add", { questionerId, title, content,type });
+
+
+
+  export async function userQuestionListService(
+    page,
+    pageSize,
+    queryName,
+    isChecked,
+    type
+  ) {
+    return await request({
+      method: "GET",
+      url: "/question/some",
+      params: {
+        page,
+        queryName,
+        pageSize,
+        isChecked,
+        type
+      },
+    });
+  }

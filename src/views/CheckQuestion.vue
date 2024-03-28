@@ -11,6 +11,7 @@ const questionData = ref();
 //符合条件的问题总数
 const total = ref();
 
+
 const getQuestionList = async (page, pageSize, queryName, isChecked) => {
   const response = await userQuestionListService(
     page,
@@ -24,7 +25,8 @@ const getQuestionList = async (page, pageSize, queryName, isChecked) => {
 };
 
 onMounted(() => {
-  getQuestionList("1", "6", null, 0);
+   // 提供默认值
+  getQuestionList("1", "6", null, route.query.isChecked);
 });
 
 const handleItemClick = (checkFlag) => {
@@ -45,12 +47,13 @@ function handleClick(item) {
           class="el-menu-demo"
           mode="horizontal"
           router
-          :default-active="'check'"
+          :default-active="'check?isChecked='+route.query.isChecked"
+         
         >
-          <el-menu-item index="check" @click="handleItemClick(0)"
+          <el-menu-item index="check?isChecked=0" @click="handleItemClick(0)"
             >待审核</el-menu-item
           >
-          <el-menu-item index="check#nopass" @click="handleItemClick(-1)">审核未通过</el-menu-item>
+          <el-menu-item index="check?isChecked=-1" @click="handleItemClick(-1)">审核未通过</el-menu-item>
         </el-menu>
       </el-card>
     </el-col>
@@ -69,12 +72,12 @@ function handleClick(item) {
           </el-row>
           <el-row style="margin-top: 10px; align-items: center">
             <el-col :span="6">
-              <el-text>发布人： {{ item.nickName }}</el-text>
+              <el-text>发布人： {{ item.user.nickName }}</el-text>
             </el-col>
             <el-col :span="6">
-              <el-text>部门： {{ item.department }}</el-text>
+              <el-text>部门： {{ item.user.department }}</el-text>
             </el-col>
-            <el-col :span="9">
+            <el-col :span="6">
               <el-text
                 >发布时间：
                 <time>{{
@@ -82,7 +85,10 @@ function handleClick(item) {
                 }}</time></el-text
               >
             </el-col>
-            <el-col :span="3">
+            <el-col :span="4">
+              <el-text>类型： {{ item.question.type }}</el-text>
+            </el-col>
+            <el-col :span="2">
               <!--              <div class="flex-grid" />-->
               <el-text>
                 <el-tag

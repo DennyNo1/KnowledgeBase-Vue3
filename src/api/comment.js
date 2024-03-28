@@ -1,11 +1,12 @@
 import request from "@/utils/request";
-export async function userCommentAndReplyService(belongType, belongId) {
+export async function userCommentAndReplyService(belongType, belongId,userId) {
   return await request({
     method: "GET",
     url: "/comment",
     params: {
       belongType,
       belongId,
+      userId
     },
   });
 }
@@ -34,3 +35,8 @@ export async function useraddReplyService(content,userId, commentId, secondReply
     },
   });
 }
+
+//点赞评论（回答）
+export const userLikeService = (userId,belongType,belongId) =>
+  request.post("/like", { userId, belongType, belongId });
+

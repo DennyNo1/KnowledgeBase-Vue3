@@ -1,26 +1,32 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { someQuestions } from "@/api/knowledgeBase.js";
+
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { userQuestionListService } from "@/api/question.js";
 import { useLoginStore } from "@/store/login";
 import { ElMessage } from "element-plus";
 
-const getQuestionList = async (page, pageSize, queryName, isChecked) => {
+const getQuestionList = async (page, pageSize, queryName, isChecked,type) => {
   const response = await userQuestionListService(
     page,
     pageSize,
     queryName,
-    isChecked
+    isChecked,
+    type,
   );
   console.log(response.data);
   questionData.value = response.data.records;
   total.value = response.data.total;
-  console.log(articleData.value.length);
+  
 };
 onMounted(() => {
-  getQuestionList("1", "6", null, 1);
+  if(route.query.type=='')
+  getQuestionList("1", "6", null, 1,null)
+  else{
+    getQuestionList("1", "6", null, 1,route.query.type);
+  }
+  
 });
 
 const questionData = ref();
@@ -43,10 +49,11 @@ function handleCurrentChange(currentPage) {
   getQuestionList(currentPage, "6", null, 1);
 }
 
-function handleItemClick(index) {
-  if (index !== queryName) {
-    queryName = index;
-    getQuestions();
+function handleItemClick(type) {
+  if(type=='')
+  getQuestionList("1", "6", null, 1,null)
+  else{
+    getQuestionList("1", "6", null, 1,type);
   }
 }
 
@@ -57,7 +64,7 @@ function handleUpload(){
     router.push('/question/create')
   } else {
     ElMessage({
-      message: "登录后才能提出需求",
+      message: "登录后才能新建需求",
       type: "warning",
     });
   }
@@ -70,52 +77,52 @@ function handleUpload(){
     <el-col :span="20">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
         <el-menu
-          :default-active="`question${route.hash}`"
+          :default-active="`question?type=`+route.query.type"
           class="el-menu-demo"
           mode="horizontal"
           router
         >
-          <el-menu-item index="question" @click="handleItemClick('')"
+          <el-menu-item index="question?type=" @click="handleItemClick('')"
             >默认</el-menu-item
           >
           <el-menu-item
-            index="question#commend"
-            @click="handleItemClick('commend')"
+            index="question?type=热门知识"
+            @click="handleItemClick('热门知识')"
             >热门知识</el-menu-item
           >
           <el-menu-item
-            index="question#business"
-            @click="handleItemClick('business')"
+            index="question?type=营业"
+            @click="handleItemClick('营业')"
             >营业</el-menu-item
           >
           <el-menu-item
-            index="question#operation"
-            @click="handleItemClick('operation')"
+            index="question?type=装维"
+            @click="handleItemClick('装维')"
             >装维</el-menu-item
           >
           <el-menu-item
-            index="question#manager"
-            @click="handleItemClick('manager')"
+            index="question?type=政企客户经理"
+            @click="handleItemClick('政企客户经理')"
             >政企客户经理</el-menu-item
           >
           <el-menu-item
-            index="question#commissioner"
-            @click="handleItemClick('commissioner')"
+            index="question?type=客经专员"
+            @click="handleItemClick('客经专员')"
             >客经专员</el-menu-item
           >
           <el-menu-item
-            index="question#director"
-            @click="handleItemClick('director')"
+            index="question?type=支局长"
+            @click="handleItemClick('支局长')"
             >支局长</el-menu-item
           >
           <el-menu-item
-            index="question#distinct"
-            @click="handleItemClick('distinct')"
+            index="question?type=片区长"
+            @click="handleItemClick('片区长')"
             >片区长</el-menu-item
           >
           <el-menu-item
-            index="question#manager"
-            @click="handleItemClick('vipManager')"
+            index="question?type=VIP客户经理"
+            @click="handleItemClick('VIP客户经理')"
             >VIP客户经理</el-menu-item
           >
         </el-menu>
@@ -145,12 +152,12 @@ function handleUpload(){
           </el-row>
           <el-row style="margin-top: 10px; align-items: center">
             <el-col :span="6">
-              <el-text>发布人： {{ item.nickName }}</el-text>
+              <el-text>发布人： {{ item.user.nickName }}</el-text>
             </el-col>
             <el-col :span="6">
-              <el-text>部门： {{ item.department }}</el-text>
+              <el-text>部门： {{ item.user.department }}</el-text>
             </el-col>
-            <el-col :span="9">
+            <el-col :span="6">
               <el-text
                 >发布时间：
                 <time>{{
@@ -158,7 +165,10 @@ function handleUpload(){
                 }}</time></el-text
               >
             </el-col>
-            <el-col :span="3">
+            <el-col :span="4">
+              <el-text>类型： {{ item.question.type }}</el-text>
+            </el-col>
+            <el-col :span="2">
               <!--              <div class="flex-grid" />-->
               <el-text>
                 <el-tag

@@ -14,6 +14,7 @@ import {
 import avatar from "@/assets/default.png";
 import { useLoginStore } from "@/store/login";
 import dayjs from "dayjs";
+import { watch } from 'vue'
 
 const route = useRoute();
 const props = defineProps({
@@ -23,6 +24,21 @@ const belongId = ref();
 const commentData = ref();
 const loginStore = useLoginStore();
 
+
+//监控store里的用户id
+watch(
+  () => loginStore.userInfo.id, 
+  (newId, oldId) => {
+    if (newId !== oldId) {
+     console.log(loginStore.userInfo.id)
+     //重新获取以下评论区的页面
+     getCommentAndReply();
+    }
+  },
+  { immediate: true } // 设置immediate为true，表示在监听开始时立即执行一次
+);
+
+
 onMounted(() => {
   console.log(props.belongType);
   getCommentAndReply();
@@ -30,11 +46,11 @@ onMounted(() => {
 //获取整个评论区
 async function getCommentAndReply() {
   belongId.value = route.query.id;
-
   try {
     const response = await userCommentAndReplyService(
       props.belongType,
-      belongId.value
+      belongId.value,
+      loginStore.userInfo.id
     );
     console.log(response);
     commentData.value = response.data;
@@ -47,76 +63,7 @@ async function getCommentAndReply() {
 const textarea = ref("");
 const replyBox=ref("")
 
-// const commentData = ref([
-//   {
-//     user: '用户1',
-//     avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//     content: '这是一条消息',
-//     commend: 0,
-//     isLiked: false,
-//     commentOpen: false,
-//     repl: [
-//       {
-//         user: '用户3',
-//         avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//         content: '这是另外一条消息',
-//         commend: 0,
-//         isLiked: false,
-//         commentOpen: false
-//       },
-//       {
-//         user: '用户4',
-//         avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//         content: '这是另外一条消息',
-//         commend: 0,
-//         isLiked: false,
-//         commentOpen: false
-//       },
-//       {
-//         user: '用户5',
-//         avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//         content: '这是另外一条消息',
-//         commend: 0,
-//         isLiked: false,
-//         commentOpen: false
-//       }
-//     ]
-//   },
-//   {
-//     user: '用户1',
-//     avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//     content: '这是一条消息',
-//     commend: 0,
-//     isLiked: false,
-//     commentOpen: false,
-//     repl: [
-//       {
-//         user: '用户3',
-//         avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//         content: '这是另外一条消息',
-//         commend: 0,
-//         isLiked: false,
-//         commentOpen: false
-//       },
-//       {
-//         user: '用户4',
-//         avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//         content: '这是另外一条消息',
-//         commend: 0,
-//         isLiked: false,
-//         commentOpen: false
-//       },
-//       {
-//         user: '用户5',
-//         avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-//         content: '这是另外一条消息',
-//         commend: 0,
-//         isLiked: false,
-//         commentOpen: false
-//       }
-//     ]
-//   }
-// ])
+
 
 //提交评论
 async function commit() {
@@ -220,13 +167,13 @@ function toggleLike(item) {
         <span class="text-large"> {{ item.user.nickName }} </span>
         <div class="flex-grow" />
         <!-- 点赞按钮 -->
-        <el-button
+        <!-- <el-button
           type="primary"
           text
           @click="toggleLike(item)"
           :icon="item.liked ? HeartFilled : Heart"
         >
-        </el-button>
+        </el-button> -->
         <!-- 对评论的回复，传一个空回复名过去 -->
         <el-button
           type="primary"
@@ -234,7 +181,7 @@ function toggleLike(item) {
           @click="clickReply(item,null)"
           :icon="item.commentOpen ? CommentFilled : Comment"
         >
-          回复1
+          回复评论
         </el-button>
       </div>
       <el-row class="mb-4">
@@ -269,14 +216,14 @@ function toggleLike(item) {
               >
               <div class="flex-grow" />
               <!-- 点赞 -->
-              <el-button
+              <!-- <el-button
                 type="primary"
                 text
                 @click="toggleLike(replyData)"
                 :icon="false ? HeartFilled : Heart"
               >
                 {{ replyData.commend }}
-              </el-button>
+              </el-button> -->
               <!-- 对回复的回复 -->
               <el-button
                 type="primary"
@@ -284,7 +231,7 @@ function toggleLike(item) {
                 @click=clickReply(item,replyData.user.nickName)
                 :icon="item.commentOpen ? CommentFilled : Comment"
               >
-                回复2
+                回复
               </el-button>
             </div>
             <el-row>
