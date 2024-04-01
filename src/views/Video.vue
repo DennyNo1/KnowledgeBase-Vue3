@@ -231,6 +231,7 @@ const clearForm = () => {
     >
       上传视频<el-icon class="el-icon--right"><Upload /></el-icon>
     </el-button>
+    <el-col :span="2" />
   </el-row>
 
   <!-- <el-row> 

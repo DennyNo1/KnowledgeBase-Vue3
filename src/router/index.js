@@ -5,6 +5,7 @@ import Search from "@/views/Search.vue";
 import CheckQuestion from "@/views/CheckQuestion.vue";
 import CheckQuestionPage from "@/views/CheckQuestionPage.vue";
 import CreateQuestion from "@/views/CreateQuestion.vue";
+import CreateArticle from "@/views/CreateArticle.vue";
 
 
 
@@ -61,6 +62,10 @@ const router = createRouter({
         {
           path:"/question/create",
           component:CreateQuestion
+        },
+        {
+          path:"/article/create",
+          component:CreateArticle
         }
 
 

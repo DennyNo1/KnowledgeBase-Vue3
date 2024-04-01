@@ -1,11 +1,13 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { ChatLineRound, View } from "@element-plus/icons-vue";
-
+import { ElMessage } from "element-plus";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import {userArticleListService} from '@/api/article.js'
+import { useLoginStore } from "@/store/login";
 
+const loginStore=useLoginStore()
 const articleData=ref({})
 async function getArticleList(page,pageSize,queryName,type){
   try{
@@ -157,6 +159,17 @@ function handleItemClick(index) {
     getarticles();
   }
 }
+
+function handleUpload(){
+  if (loginStore.isLoggedIn) {
+    router.push('/article/create')
+  } else {
+    ElMessage({
+      message: "登录后才能采编课件",
+      type: "warning",
+    });
+  }
+}
 </script>
 
 <template>
@@ -216,7 +229,15 @@ function handleItemClick(index) {
         </el-menu>
       </el-card>
     </el-col>
-    <el-col :span="2" />
+    
+    <el-button
+      type="primary"
+      size="large"
+      class="upload-button"
+      @click="handleUpload"
+    >
+      采编课件<el-icon><ZoomIn /></el-icon>
+    </el-button>
   </el-row>
 
 
@@ -304,5 +325,9 @@ function handleItemClick(index) {
 
 .flex-grow {
   flex-grow: 1;
+}
+.upload-button {
+  position: absolute;
+  right: 0px; /* 或者根据实际需求调整为合适的像素值 */
 }
 </style>
