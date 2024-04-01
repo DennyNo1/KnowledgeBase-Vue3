@@ -3,7 +3,7 @@ import { ArrowLeft } from "@element-plus/icons-vue";
 import { onMounted, ref } from "vue";
 import Comment from "@/components/Comment.vue";
 import { useRoute } from "vue-router";
-import { useLoginStore } from "@/stores/login.js";
+import { useLoginStore } from "@/store/login.js";
 import { storeToRefs } from "pinia";
 import { oneArticle } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";

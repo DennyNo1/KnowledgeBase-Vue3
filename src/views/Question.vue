@@ -45,8 +45,14 @@ function handleCurrentChange(currentPage) {
   // 获取点击的页码
   console.log(currentPage);
   //获取当前页数
-  const page = currentPage;
-  getQuestionList(currentPage, "6", null, 1);
+  if(route.query.type==''){
+    getQuestionList(currentPage, "6", null, 1,null);
+  }
+  else {
+    getQuestionList(currentPage, "6", null, 1,route.query.type);
+  }
+  
+  
 }
 
 function handleItemClick(type) {

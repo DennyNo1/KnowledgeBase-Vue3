@@ -41,7 +41,7 @@ let pageSize = 12;
 const totalPage = ref(1);
 
 onMounted(() => {
-  getVideos("1", "12", null, null);
+  getVideos("1", "6", null, null);
 });
 
 function handleClick(v: { video: { id: any } }) {
