@@ -1,11 +1,18 @@
-<script  setup lang="ts">
+<script setup lang="ts">
 import { ref } from "vue";
-import { ElForm, ElFormItem, ElInput, ElButton, ElMessage,ElMessageBox } from "element-plus";
+import {
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElButton,
+  ElMessage,
+  ElMessageBox,
+} from "element-plus";
 import { userQuestionAddService } from "@/api/question";
 import { useLoginStore } from "@/store/login";
 import { useRoute, useRouter } from "vue-router";
 
-import type { Action } from 'element-plus'
+import type { Action } from "element-plus";
 
 const router = useRouter();
 const questionAddService = userQuestionAddService();
@@ -13,7 +20,7 @@ const loginStore = useLoginStore();
 const question = ref({
   title: "",
   description: "",
-  type:""
+  type: "",
 });
 const formRef = ref();
 
@@ -37,16 +44,14 @@ const handleSubmit = async () => {
   question.value = {
     title: "",
     description: "",
-    type:"",
+    type: "",
   };
-  ElMessageBox.alert('您新建的需求已成功，等待管理员审核', '提示', {
+  ElMessageBox.alert("您新建的需求已成功，等待管理员审核", "提示", {
     // if you want to disable its autofocus
     // autofocus: false,
-    confirmButtonText: 'OK',
-    
-  })
+    confirmButtonText: "OK",
+  });
   goBack();
-
 };
 
 //提出需求的表单的标题和描述不能为空的规则
@@ -73,8 +78,8 @@ function goBack() {
         :rules="rules"
         ref="formRef"
       >
-        <el-form-item prop="type" label="类别" >
-          <el-select v-model="question.type" placeholder="请选择需求类别" >
+        <el-form-item prop="type" label="类别">
+          <el-select v-model="question.type" placeholder="请选择需求类别">
             <el-option lable="营业" value="营业"></el-option>
             <el-option lable="装维" value="装维"></el-option>
             <el-option lable="政企客户经理" value="政企客户经理"></el-option>
@@ -112,7 +117,10 @@ function goBack() {
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleSubmit">提交</el-button>
+          <el-button type="primary" @click="handleSubmit" size="large">提交</el-button>
+          <el-button @click="goBack" size="large" 
+            >返回</el-button
+          >
         </el-form-item>
       </el-form></el-col
     >
