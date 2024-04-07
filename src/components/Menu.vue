@@ -5,6 +5,15 @@ import { useRouter } from "vue-router";
 import { useLoginStore } from "@/store/login";
 import Avatar from "@/components/Avatar.vue";
 import { login } from "@/api/knowledgeBase";
+import {
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElButton,
+  ElMessage,
+  ElMessageBox,
+} from "element-plus";
+
 
 const searchInput = ref("");
 const select = ref("");
@@ -12,8 +21,25 @@ const router = useRouter();
 const loginStore = useLoginStore();
 
 function submitSearch() {
-  // 默认搜索视频页面
-  router.push(`/${select.value || "video"}?search=${searchInput.value}`);
+  // 必须选择专栏的种类
+  console.log(select.value)
+
+  if (select.value=="") {
+    ElMessage({
+      message: "选择专栏类别后才能进行搜索操作",
+      type: "warning",
+    });
+    return;
+  }
+  if (searchInput.value=="") {
+    ElMessage({
+      message: "请输入您的搜索内容",
+      type: "warning",
+    });
+    return;
+  }
+  router.push(`/${select.value }?type=默认&queryName=${searchInput.value}`);
+
 }
 const showLogin = () => {
   loginStore.isOpen = true;
@@ -53,7 +79,7 @@ const isAdmin=()=>{
         @keyup.enter="submitSearch"
       >
         <template #prepend>
-          <el-select v-model="select" placeholder="Select" style="width: 85px">
+          <el-select v-model="select" placeholder="选择专栏" style="width: 100px">
             <el-option label="视频" value="video" />
             <el-option label="课件" value="article" />
             <el-option label="一线需求" value="question" />
@@ -67,8 +93,8 @@ const isAdmin=()=>{
 
     <el-menu-item index="1" route="/video">视频</el-menu-item>
 
-    <el-menu-item index="2" route="/article?type=">课件</el-menu-item>
-    <el-menu-item index="3" route="/question?type=">一线需求</el-menu-item>
+    <el-menu-item index="2" route="/article?type=默认">课件</el-menu-item>
+    <el-menu-item index="3" route="/question?type=默认">一线需求</el-menu-item>
     <el-menu-item  index="4" route="/question/check?isChecked=0"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'">一线需求审核</el-menu-item> 
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->
 

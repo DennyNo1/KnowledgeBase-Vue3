@@ -21,7 +21,7 @@ function submitSearch() {
     <el-row class="sub-container">
       <el-input
         v-model="searchInput"
-        placeholder="请输入想搜索的内容"
+        placeholder="请输入想要搜索的内容"
         class="input-with-select"
         size="large"
         @keyup.enter="submitSearch"
