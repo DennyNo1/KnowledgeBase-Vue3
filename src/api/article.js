@@ -12,6 +12,16 @@ export async function userArticleListService(page, pageSize, queryName, type) {
   });
 }
 
+export async function userOneArticleService(articleId,userId) {
+  return await request({
+    method: "GET",
+    url: "/article",
+    params: {
+      articleId,userId
+    },
+  });
+}
+
 export async function useraddArticleService(uploaderId, type, title, content) {
   return await request({
     method: "POST",
@@ -34,3 +44,5 @@ export async function useraddAttachmentService(articleId, url, alt, href) {
     },
   });
 }
+
+

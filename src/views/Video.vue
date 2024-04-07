@@ -321,7 +321,7 @@ const clearForm = () => {
               </el-text> -->
               <el-text>
                 <el-button text :icon="View">
-                  <!-- {{ item.article.clickCount }} -->1
+                  {{ item.video.clickCount }}
                 </el-button>
                 <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
               </el-text>

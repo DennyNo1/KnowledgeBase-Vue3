@@ -1,19 +1,22 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { ChatLineRound, View } from "@element-plus/icons-vue";
+import { ChatLineRound, Chicken, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import {userArticleListService} from '@/api/article.js'
 import { useLoginStore } from "@/store/login";
-
+const router = useRouter();
+const total=ref()
 const loginStore=useLoginStore()
 const articleData=ref({})
+const route = useRoute();
 async function getArticleList(page,pageSize,queryName,type){
   try{
     const response=await userArticleListService(page,pageSize,queryName,type)
     // console.log(response.data)
     articleData.value=response.data.records
+    total.value=response.data.total
     console.log(articleData.value)
 
   }
@@ -25,120 +28,8 @@ async function getArticleList(page,pageSize,queryName,type){
 onMounted(() => {
   getArticleList("1", "6", null, null);
 });
-// const articleData = ref([
-//   {
-//     article: {
-//       id: 1,
-//       type: "装维",
-//       uploaderId: 2,
-//       date: "2024-01-17T09:42:28",
-//       content:
-//         "近日，中国电信联合清华大学等相关单位制定的《人工智能-大模型预训练模型-服务能力成熟度评估》标准，顺利通过工业和信息化部认证，成为国家级标准，并在工信部人工智能检验检测基础服务平台发布。标准为评估大模型能力水平提供了全面的检测手段，对行业大模型的发展具有重要意义。\r\n\r\n\r\n\r\n标准提出了大模型预训练服务能力成熟度评估框架，规定了大模型预训练模型服务的能力要求、成熟度等级及评估方法。\r\n\r\n在服务能力方面，预训练成熟度能力域包括平台、开发定制、推理及应用等服务，预训练大模型平台服务关注大模型开发定制的IT环境，模型开发定制服务关注大模型开发状态，模型推理及应用域关注大模型的运行状态。\r\n\r\n在成熟度等级方面，模型服务成熟度等级划分为基础应用级、协同优化级、自定义生产级三类，对预训练模型基础技术、服务复杂度和定制化能力等要求逐步提高。\r\n\r\n在评估方法方面，标准对预训练服务能力进行全面评估，提出各成熟等级应具备的预训练能力和关键性能指标，为大模型预训练服务能力建设提供指导。\r\n\r\n以大模型为代表的新一轮人工智能技术是科技革命和产业变革的重要驱动力。中国电信持续加强核心技术攻关,重点推动基础通用大模型向垂直行业大模型的纵深演进，围绕教育、政务、农业、应急等行业领域，预计将发布精准教学大模型、政务服务大模型、神农一号大模型、应急大模型等共计40个行业大模型。",
-//       clickCount: 10,
-//       title:
-//         "测试标题长度。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。中国电信联合发布国家级人工智能大模型服务能力成熟度评估标准",
-//       commentCount: 1,
-//     },
-//     nickName: "李松泽",
-//     department: "软研中心",
-//   },
-//   {
-//     article: {
-//       id: 2,
-//       type: "营业员",
-//       uploaderId: 3,
-//       date: "2024-01-25T16:30:46",
-//       content:
-//         "2024年1月23日2时09分，新疆阿克苏地区乌什县（北纬41.26度，东经78.63度）发生7.1级地震。地震发生后，中国电信新疆阿克苏分公司第一时间启动地震应急通信保障预案，携应急保障车奔赴乌什地震指挥部现场指挥。\r\n\r\n\r\n\r\n\r\n\r\n乌什县网络保障人员从凌晨2时20分开始，在全县开展网络机房巡检，对震区网络指标加强监测，确保当地网络畅通。截至早晨6时，累计安排53名应急保障人员、应急通信车7辆、发电机4台、卫星电话10部，恢复退服基站27处，修复电力故障8处，目前乌什通信网络正在有序恢复中。",
-//       clickCount: 99,
-//       title:
-//         "新疆乌什县突发7.1级地震，中国电信连夜出动，确保地震灾害地区通信畅通",
-//       commentCount: 0,
-//     },
-//     nickName: "张睿阳",
-//     department: "软研中心",
-//   },
-//   {
-//     article: {
-//       id: 3,
-//       type: "装维",
-//       uploaderId: 2,
-//       date: "2024-01-17T09:42:28",
-//       content:
-//         "近日，中国电信联合清华大学等相关单位制定的《人工智能-大模型预训练模型-服务能力成熟度评估》标准，顺利通过工业和信息化部认证，成为国家级标准，并在工信部人工智能检验检测基础服务平台发布。标准为评估大模型能力水平提供了全面的检测手段，对行业大模型的发展具有重要意义。\r\n\r\n\r\n\r\n标准提出了大模型预训练服务能力成熟度评估框架，规定了大模型预训练模型服务的能力要求、成熟度等级及评估方法。\r\n\r\n在服务能力方面，预训练成熟度能力域包括平台、开发定制、推理及应用等服务，预训练大模型平台服务关注大模型开发定制的IT环境，模型开发定制服务关注大模型开发状态，模型推理及应用域关注大模型的运行状态。\r\n\r\n在成熟度等级方面，模型服务成熟度等级划分为基础应用级、协同优化级、自定义生产级三类，对预训练模型基础技术、服务复杂度和定制化能力等要求逐步提高。\r\n\r\n在评估方法方面，标准对预训练服务能力进行全面评估，提出各成熟等级应具备的预训练能力和关键性能指标，为大模型预训练服务能力建设提供指导。\r\n\r\n以大模型为代表的新一轮人工智能技术是科技革命和产业变革的重要驱动力。中国电信持续加强核心技术攻关,重点推动基础通用大模型向垂直行业大模型的纵深演进，围绕教育、政务、农业、应急等行业领域，预计将发布精准教学大模型、政务服务大模型、神农一号大模型、应急大模型等共计40个行业大模型。",
-//       clickCount: 10,
-//       title: "中国电信联合发布国家级人工智能大模型服务能力成熟度评估标准",
-//       commentCount: 1,
-//     },
-//     nickName: "李松泽",
-//     department: "软研中心",
-//   },
-//   {
-//     article: {
-//       id: 4,
-//       type: "装维",
-//       uploaderId: 2,
-//       date: "2024-01-17T09:42:28",
-//       content:
-//         "近日，中国电信联合清华大学等相关单位制定的《人工智能-大模型预训练模型-服务能力成熟度评估》标准，顺利通过工业和信息化部认证，成为国家级标准，并在工信部人工智能检验检测基础服务平台发布。标准为评估大模型能力水平提供了全面的检测手段，对行业大模型的发展具有重要意义。\r\n\r\n\r\n\r\n标准提出了大模型预训练服务能力成熟度评估框架，规定了大模型预训练模型服务的能力要求、成熟度等级及评估方法。\r\n\r\n在服务能力方面，预训练成熟度能力域包括平台、开发定制、推理及应用等服务，预训练大模型平台服务关注大模型开发定制的IT环境，模型开发定制服务关注大模型开发状态，模型推理及应用域关注大模型的运行状态。\r\n\r\n在成熟度等级方面，模型服务成熟度等级划分为基础应用级、协同优化级、自定义生产级三类，对预训练模型基础技术、服务复杂度和定制化能力等要求逐步提高。\r\n\r\n在评估方法方面，标准对预训练服务能力进行全面评估，提出各成熟等级应具备的预训练能力和关键性能指标，为大模型预训练服务能力建设提供指导。\r\n\r\n以大模型为代表的新一轮人工智能技术是科技革命和产业变革的重要驱动力。中国电信持续加强核心技术攻关,重点推动基础通用大模型向垂直行业大模型的纵深演进，围绕教育、政务、农业、应急等行业领域，预计将发布精准教学大模型、政务服务大模型、神农一号大模型、应急大模型等共计40个行业大模型。",
-//       clickCount: 10,
-//       title: "中国电信联合发布国家级人工智能大模型服务能力成熟度评估标准",
-//       commentCount: 1,
-//     },
-//     nickName: "李松泽",
-//     department: "软研中心",
-//   },
-//   {
-//     article: {
-//       id: 5,
-//       type: "装维",
-//       uploaderId: 2,
-//       date: "2024-01-17T09:42:28",
-//       content:
-//         "近日，中国电信联合清华大学等相关单位制定的《人工智能-大模型预训练模型-服务能力成熟度评估》标准，顺利通过工业和信息化部认证，成为国家级标准，并在工信部人工智能检验检测基础服务平台发布。标准为评估大模型能力水平提供了全面的检测手段，对行业大模型的发展具有重要意义。\r\n\r\n\r\n\r\n标准提出了大模型预训练服务能力成熟度评估框架，规定了大模型预训练模型服务的能力要求、成熟度等级及评估方法。\r\n\r\n在服务能力方面，预训练成熟度能力域包括平台、开发定制、推理及应用等服务，预训练大模型平台服务关注大模型开发定制的IT环境，模型开发定制服务关注大模型开发状态，模型推理及应用域关注大模型的运行状态。\r\n\r\n在成熟度等级方面，模型服务成熟度等级划分为基础应用级、协同优化级、自定义生产级三类，对预训练模型基础技术、服务复杂度和定制化能力等要求逐步提高。\r\n\r\n在评估方法方面，标准对预训练服务能力进行全面评估，提出各成熟等级应具备的预训练能力和关键性能指标，为大模型预训练服务能力建设提供指导。\r\n\r\n以大模型为代表的新一轮人工智能技术是科技革命和产业变革的重要驱动力。中国电信持续加强核心技术攻关,重点推动基础通用大模型向垂直行业大模型的纵深演进，围绕教育、政务、农业、应急等行业领域，预计将发布精准教学大模型、政务服务大模型、神农一号大模型、应急大模型等共计40个行业大模型。",
-//       clickCount: 10,
-//       title: "中国电信联合发布国家级人工智能大模型服务能力成熟度评估标准",
-//       commentCount: 1,
-//     },
-//     nickName: "李松泽",
-//     department: "软研中心",
-//   },
-//   {
-//     article: {
-//       id: 6,
-//       type: "装维",
-//       uploaderId: 2,
-//       date: "2024-01-17T09:42:28",
-//       content:
-//         "近日，中国电信联合清华大学等相关单位制定的《人工智能-大模型预训练模型-服务能力成熟度评估》标准，顺利通过工业和信息化部认证，成为国家级标准，并在工信部人工智能检验检测基础服务平台发布。标准为评估大模型能力水平提供了全面的检测手段，对行业大模型的发展具有重要意义。\r\n\r\n\r\n\r\n标准提出了大模型预训练服务能力成熟度评估框架，规定了大模型预训练模型服务的能力要求、成熟度等级及评估方法。\r\n\r\n在服务能力方面，预训练成熟度能力域包括平台、开发定制、推理及应用等服务，预训练大模型平台服务关注大模型开发定制的IT环境，模型开发定制服务关注大模型开发状态，模型推理及应用域关注大模型的运行状态。\r\n\r\n在成熟度等级方面，模型服务成熟度等级划分为基础应用级、协同优化级、自定义生产级三类，对预训练模型基础技术、服务复杂度和定制化能力等要求逐步提高。\r\n\r\n在评估方法方面，标准对预训练服务能力进行全面评估，提出各成熟等级应具备的预训练能力和关键性能指标，为大模型预训练服务能力建设提供指导。\r\n\r\n以大模型为代表的新一轮人工智能技术是科技革命和产业变革的重要驱动力。中国电信持续加强核心技术攻关,重点推动基础通用大模型向垂直行业大模型的纵深演进，围绕教育、政务、农业、应急等行业领域，预计将发布精准教学大模型、政务服务大模型、神农一号大模型、应急大模型等共计40个行业大模型。",
-//       clickCount: 10,
-//       title: "中国电信联合发布国家级人工智能大模型服务能力成熟度评估标准",
-//       commentCount: 1,
-//     },
-//     nickName: "李松泽",
-//     department: "软研中心",
-//   },
-// ]);
-
-const router = useRouter();
-const route = useRoute();
 
 
-
-// onMounted(() => {
-//   getarticles()
-// })
-
-async function getarticles() {
-  try {
-    const response = await someArticles(page, pageSize, queryName);
-    // console.log(response.data);
-    articleData.value = response.data["records"];
-    totalPage.value = response.data.total;
-  } catch (error) {
-    console.log("请求失败！", error);
-  }
-}
 
 function handleClick(item) {
   // console.log('点击了卡片')
@@ -146,17 +37,24 @@ function handleClick(item) {
   router.push(`/article-page?id=${item.article.id}`);
 }
 
-function handleCurrentChange(currentPage) {
-  // 获取点击的页码
-  console.log(currentPage);
-  page = currentPage;
-  getarticles();
+async function handleCurrentChange(currentPage) {
+ // 获取点击的页码
+ console.log(currentPage);
+  //获取当前页数
+  if(route.query.type==''){
+    await getArticleList(currentPage, "6", null,null);
+  }
+  else {
+    await getArticleList(currentPage, "6", null,route.query.type);
+  }
+  
 }
 
-function handleItemClick(index) {
-  if (index !== queryName) {
-    queryName = index;
-    getarticles();
+async function handleItemClick(type) {
+  if(type=='')
+  await getArticleList("1", "6", null, null)
+  else{
+    await getArticleList("1", "6", null, type);
   }
 }
 
@@ -178,52 +76,52 @@ function handleUpload(){
     <el-col :span="20">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
         <el-menu
-          :default-active="`article${route.hash}`"
+          :default-active="`article?type=`+route.query.type"
           class="el-menu-demo"
           mode="horizontal"
           router
         >
-          <el-menu-item index="article" @click="handleItemClick('')"
+          <el-menu-item index="article?type=" @click="handleItemClick('')"
             >默认</el-menu-item
           >
           <el-menu-item
-            index="article#commend"
-            @click="handleItemClick('commend')"
+            index="article?type=热门知识"
+            @click="handleItemClick('热门知识')"
             >热门知识</el-menu-item
           >
           <el-menu-item
-            index="article#business"
-            @click="handleItemClick('business')"
+            index="article?type=营业"
+            @click="handleItemClick('营业')"
             >营业</el-menu-item
           >
           <el-menu-item
-            index="article#operation"
-            @click="handleItemClick('operation')"
+            index="article?type=装维"
+            @click="handleItemClick('装维')"
             >装维</el-menu-item
           >
           <el-menu-item
-            index="article#manager"
-            @click="handleItemClick('manager')"
+            index="article?type=政企客户经理"
+            @click="handleItemClick('政企客户经理')"
             >政企客户经理</el-menu-item
           >
           <el-menu-item
-            index="article#commissioner"
-            @click="handleItemClick('commissioner')"
+            index="article?type=客经专员"
+            @click="handleItemClick('客经专员')"
             >客经专员</el-menu-item
           >
           <el-menu-item
-            index="article#director"
-            @click="handleItemClick('director')"
+            index="article?type=支局长"
+            @click="handleItemClick('支局长')"
             >支局长</el-menu-item
           >
           <el-menu-item
-            index="article#distinct"
-            @click="handleItemClick('distinct')"
+            index="article?type=片区长"
+            @click="handleItemClick('片区长')"
             >片区长</el-menu-item
           >
           <el-menu-item
-            index="article#distinct"
-            @click="handleItemClick('vipManager')"
+            index="article?type=VIP客户经理"
+            @click="handleItemClick('VIP客户经理')"
             >VIP客户经理</el-menu-item
           >
         </el-menu>
@@ -258,7 +156,7 @@ function handleUpload(){
             <el-col :span="6">
               <el-text>部门： {{ item.user.department }}</el-text>
             </el-col>
-            <el-col :span="8">
+            <el-col :span="6">
               <el-text
                 >发布时间：
                 <time>{{
@@ -266,7 +164,7 @@ function handleUpload(){
                 }}</time></el-text
               >
             </el-col>
-            <el-col :span="4">
+            <el-col :span="6">
               <!--              <div class="flex-grid" />-->
               <!-- 谁在乎评论数？ -->
               <!-- <el-text>
@@ -281,6 +179,26 @@ function handleUpload(){
                 </el-button>
                 <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
               </el-text>
+
+
+              <el-text>
+                <el-button text ><el-icon><Star /></el-icon>
+                  {{ item.article.likeCount }}
+                </el-button>
+                <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
+              </el-text>
+            </el-col>
+
+            <el-col :span="4">
+              <!--              <div class="flex-grid" />-->
+              <!-- 谁在乎评论数？ -->
+              <!-- <el-text>
+                <el-button text :icon="ChatLineRound">
+                  {{ item.article.commentCount }}
+                </el-button>
+                
+              </el-text> -->
+
             </el-col>
           </el-row>
         </el-card>
@@ -301,7 +219,8 @@ function handleUpload(){
     <el-pagination
       background
       layout="prev, pager, next"
-      :page-count="totalPage"
+      :total="total"
+      :page-size="6"
       @current-change="handleCurrentChange"
     />
   </el-row>

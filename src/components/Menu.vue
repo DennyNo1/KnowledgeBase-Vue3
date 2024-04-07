@@ -67,7 +67,7 @@ const isAdmin=()=>{
 
     <el-menu-item index="1" route="/video">视频</el-menu-item>
 
-    <el-menu-item index="2" route="/article">课件</el-menu-item>
+    <el-menu-item index="2" route="/article?type=">课件</el-menu-item>
     <el-menu-item index="3" route="/question?type=">一线需求</el-menu-item>
     <el-menu-item  index="4" route="/question/check?isChecked=0"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'">一线需求审核</el-menu-item> 
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->
