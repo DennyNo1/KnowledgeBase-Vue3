@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive } from "vue";
+import { onMounted, ref, reactive,watch } from "vue";
 import { someVideos } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
@@ -35,13 +35,22 @@ const handleUpload = () => {
 const router = useRouter();
 const route = useRoute();
 
-let page = 1;
-let queryName = route.hash.substring(1);
-let pageSize = 12;
+
+//监控搜索名。实际上就是为了实现搜索功能。
+watch(
+  () => route.query.queryName, 
+  async (newId, oldId) => {
+    if (newId !== oldId) {
+      await getVideos(1, "6", route.query.queryName, route.query.type);
+    }
+  },
+  { immediate: true } // 设置immediate为true，表示在监听开始时立即执行一次
+);
+
 const totalPage = ref(1);
 
 onMounted(() => {
-  getVideos("1", "6", null, null);
+   getVideos("1", "6", route.query.queryName, route.query.type);
 });
 
 function handleClick(v: { video: { id: any } }) {
@@ -49,11 +58,8 @@ function handleClick(v: { video: { id: any } }) {
   router.push(`/video-page?id=${v.video.id}`);
 }
 
-function handleCurrentChange(currentPage: any) {
-  // // 获取点击的页码
-  // console.log(currentPage);
-  // page = currentPage;
-  // getVideos();
+async function handleCurrentChange(currentPage: any) {
+  await getVideos(currentPage, "6", route.query.queryName, route.query.type);
 }
 
 // 获取默认视频列表
@@ -64,7 +70,7 @@ async function getVideos(
   type: String
 ) {
   try {
-    console.log("t");
+    
     const response = await userVideoListService(
       page,
       pageSize,
@@ -81,8 +87,13 @@ async function getVideos(
   }
 }
 
-function handleItemClick(type: String) {
-  getVideos("1", "12", null, type);
+async function handleItemClick(type: String) {
+  // getVideos("1", "12", null, type);
+  await router.push({
+    path: `/video`,
+    query: { type, queryName:route.query.queryName },
+  });
+  await getVideos(1, "6", route.query.queryName, route.query.type);
 }
 
 //视频上传！！！
@@ -174,48 +185,48 @@ const clearForm = () => {
     <el-col :span="20">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
         <el-menu
-          :default-active="`video${route.hash}`"
+          :default-active="route.query.type"
           class="el-menu-demo"
           mode="horizontal"
           router
         >
-          <el-menu-item index="video" @click="handleItemClick(null)"
+          <el-menu-item index="默认" @click="handleItemClick('默认')"
             >默认</el-menu-item
           >
           <el-menu-item
-            index="video#commend"
+            index="热门知识"
             @click="handleItemClick('热门知识')"
             >热门知识</el-menu-item
           >
-          <el-menu-item index="video#business" @click="handleItemClick('营业')"
+          <el-menu-item index="营业" @click="handleItemClick('营业')"
             >营业</el-menu-item
           >
-          <el-menu-item index="video#operation" @click="handleItemClick('装维')"
+          <el-menu-item index="装维" @click="handleItemClick('装维')"
             >装维</el-menu-item
           >
           <el-menu-item
-            index="video#manager"
+            index="政企客户经理"
             @click="handleItemClick('政企客户经理')"
             >政企客户经理</el-menu-item
           >
           <el-menu-item
-            index="video#commissioner"
+            index="客经专员"
             @click="handleItemClick('客经专员')"
             >客经专员</el-menu-item
           >
           <el-menu-item
-            index="video#director"
+            index="支局长"
             @click="handleItemClick('支局长')"
             >支局长</el-menu-item
           >
           <el-menu-item
-            index="video#distinct"
+            index="片区长"
             @click="handleItemClick('片区长')"
             >片区长</el-menu-item
           >
 
           <el-menu-item
-            index="video#distinct"
+            index="VIP客户经理"
             @click="handleItemClick('VIP客户经理')"
             >VIP客户经理
           </el-menu-item>
@@ -284,6 +295,11 @@ const clearForm = () => {
   <el-row>
     <el-col :span="2" />
     <el-col :span="20">
+      <el-page-header :icon="ArrowLeft" v-if="route.query.queryName" @click="router.push('/')">
+        <template #content>
+          <span class="text-large font-600 mr-3" > 搜索结果 </span>
+        </template>
+      </el-page-header>
       <el-row class="cards" v-for="item in videos">
         <el-card class="box-card" shadow="hover" @click="handleClick(item)">
           <el-row>
@@ -344,7 +360,7 @@ const clearForm = () => {
   >
     <el-pagination
       layout="prev, pager, next"
-      :page-size="12"
+      :page-size="6"
       :total="totalPage"
       @current-change="handleCurrentChange"
       background

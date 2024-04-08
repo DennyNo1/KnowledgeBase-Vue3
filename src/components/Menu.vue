@@ -91,7 +91,7 @@ const isAdmin=()=>{
       </el-input>
     </div>
 
-    <el-menu-item index="1" route="/video">视频</el-menu-item>
+    <el-menu-item index="1" route="/video?type=默认">视频</el-menu-item>
 
     <el-menu-item index="2" route="/article?type=默认">课件</el-menu-item>
     <el-menu-item index="3" route="/question?type=默认">一线需求</el-menu-item>

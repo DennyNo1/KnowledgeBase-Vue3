@@ -79,7 +79,7 @@ function handleUpload() {
   }
 }
 
-//监控store里的用户id
+//监控搜索名。实际上就是为了实现搜索功能。
 watch(
   () => route.query.queryName, 
   async (newId, oldId) => {
@@ -178,7 +178,10 @@ watch(
                 }}</time></el-text
               >
             </el-col>
-            <el-col :span="6">
+            <el-col :span="4">
+              <el-text>类型： {{ item.article.type }}</el-text>
+            </el-col>
+            <el-col :span="2">
               <!--              <div class="flex-grid" />-->
               <!-- 谁在乎评论数？ -->
               <!-- <el-text>
@@ -196,14 +199,14 @@ watch(
 
               <el-text>
                 <el-button text
-                  ><el-icon><Star /></el-icon>
+                  ><el-icon><Medal /></el-icon>
                   {{ item.article.likeCount }}
                 </el-button>
                 <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
               </el-text>
             </el-col>
 
-            <el-col :span="4">
+            <el-col :span="2">
               <!--              <div class="flex-grid" />-->
               <!-- 谁在乎评论数？ -->
               <!-- <el-text>
