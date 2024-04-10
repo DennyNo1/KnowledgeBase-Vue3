@@ -21,12 +21,12 @@ const getQuestionList = async (page, pageSize, queryName, isChecked,type) => {
   
 };
 onMounted(() => {
-  if(route.query.type=='')
-  getQuestionList("1", "6", null, 1,null)
-  else{
-    getQuestionList("1", "6", null, 1,route.query.type);
-  }
-  
+  // if(route.query.type=='')
+  // getQuestionList("1", "6", null, 1,null)
+  // else{
+  //   getQuestionList("1", "6", null, 1,route.query.type);
+  // }
+  getQuestionList("1", "6", route.query.queryName, 1,route.query.type)
 });
 
 const questionData = ref();
@@ -55,12 +55,12 @@ function handleCurrentChange(currentPage) {
   
 }
 
-function handleItemClick(type) {
-  if(type=='')
-  getQuestionList("1", "6", null, 1,null)
-  else{
-    getQuestionList("1", "6", null, 1,type);
-  }
+async function handleItemClick(type) {
+  await router.push({
+    path: `/question`,
+    query: { type, queryName:route.query.queryName },
+  });
+  await getQuestionList(1, "6", route.query.queryName, 1,route.query.type);
 }
 
 const loginStore = useLoginStore();
@@ -83,51 +83,51 @@ function handleUpload(){
     <el-col :span="20">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
         <el-menu
-          :default-active="`question?type=`+route.query.type"
+          :default-active="route.query.type"
           class="el-menu-demo"
           mode="horizontal"
           router
         >
-          <el-menu-item index="question?type=" @click="handleItemClick('')"
+          <el-menu-item index="默认" @click="handleItemClick('默认')"
             >默认</el-menu-item
           >
           <el-menu-item
-            index="question?type=热门知识"
+            index="热门知识"
             @click="handleItemClick('热门知识')"
             >热门知识</el-menu-item
           >
           <el-menu-item
-            index="question?type=营业"
+            index="营业"
             @click="handleItemClick('营业')"
             >营业</el-menu-item
           >
           <el-menu-item
-            index="question?type=装维"
+            index="装维"
             @click="handleItemClick('装维')"
             >装维</el-menu-item
           >
           <el-menu-item
-            index="question?type=政企客户经理"
+            index="政企客户经理"
             @click="handleItemClick('政企客户经理')"
             >政企客户经理</el-menu-item
           >
           <el-menu-item
-            index="question?type=客经专员"
+            index="客经专员"
             @click="handleItemClick('客经专员')"
             >客经专员</el-menu-item
           >
           <el-menu-item
-            index="question?type=支局长"
+            index="支局长"
             @click="handleItemClick('支局长')"
             >支局长</el-menu-item
           >
           <el-menu-item
-            index="question?type=片区长"
+            index="片区长"
             @click="handleItemClick('片区长')"
             >片区长</el-menu-item
           >
           <el-menu-item
-            index="question?type=VIP客户经理"
+            index="VIP客户经理"
             @click="handleItemClick('VIP客户经理')"
             >VIP客户经理</el-menu-item
           >
@@ -149,6 +149,11 @@ function handleUpload(){
   <el-row>
     <el-col :span="2" />
     <el-col :span="20">
+      <el-page-header :icon="ArrowLeft" v-if="route.query.queryName" @click="router.push('/')">
+        <template #content>
+          <span class="text-large font-600 mr-3" > 搜索结果 </span>
+        </template>
+      </el-page-header>
       <el-row class="cards" v-for="item in questionData">
         <el-card class="box-card" shadow="hover" @click="handleClick(item)">
           <el-row>

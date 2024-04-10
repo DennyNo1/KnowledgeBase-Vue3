@@ -105,7 +105,7 @@ async function toggleLike(){
   }
   else{
     ElMessage({
-      message: "不可重复点赞回答",
+      message: "不可重复点赞文章",
       type: "primary",
     });
     return

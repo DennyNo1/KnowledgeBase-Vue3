@@ -12,12 +12,13 @@ const questionData = ref();
 const total = ref();
 
 
-const getQuestionList = async (page, pageSize, queryName, isChecked) => {
+const getQuestionList = async (page, pageSize, queryName, isChecked,type) => {
   const response = await userQuestionListService(
     page,
     pageSize,
     queryName,
-    isChecked
+    isChecked,
+    type
   );
   console.log(response.data);
   questionData.value = response.data.records;
@@ -26,11 +27,16 @@ const getQuestionList = async (page, pageSize, queryName, isChecked) => {
 
 onMounted(() => {
    // 提供默认值
-  getQuestionList("1", "6", null, route.query.isChecked);
+  getQuestionList("1", "6", null, route.query.isChecked,'默认');
 });
 
-const handleItemClick = (checkFlag) => {
-  getQuestionList("1", "6", null, checkFlag);
+const handleItemClick = async (checkFlag) => {
+  await router.push({
+    path: `/question/check`,
+    query: {isChecked:checkFlag },
+  });
+  await getQuestionList(1, "6", null, checkFlag,'默认');
+  
 };
 
 function handleClick(item) {
@@ -47,13 +53,13 @@ function handleClick(item) {
           class="el-menu-demo"
           mode="horizontal"
           router
-          :default-active="'check?isChecked='+route.query.isChecked"
+          :default-active="route.query.isChecked"
          
         >
-          <el-menu-item index="check?isChecked=0" @click="handleItemClick(0)"
+          <el-menu-item index="0" @click="handleItemClick(0)"
             >待审核</el-menu-item
           >
-          <el-menu-item index="check?isChecked=-1" @click="handleItemClick(-1)">审核未通过</el-menu-item>
+          <el-menu-item index="-1" @click="handleItemClick(-1)">审核未通过</el-menu-item>
         </el-menu>
       </el-card>
     </el-col>

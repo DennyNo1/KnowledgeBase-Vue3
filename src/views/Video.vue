@@ -239,6 +239,7 @@ const clearForm = () => {
       size="large"
       class="upload-button"
       @click="handleUpload"
+      v-if="loginStore.userInfo.role=='admin'"
     >
       上传视频<el-icon class="el-icon--right"><Upload /></el-icon>
     </el-button>

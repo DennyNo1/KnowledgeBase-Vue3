@@ -32,6 +32,11 @@ const loginStore=useLoginStore()
           class="custom-dropdown-item"
           >部门：{{loginStore.userInfo.department}}</el-dropdown-item
         >
+
+        <el-dropdown-item 
+          class="custom-dropdown-item"
+          >权限：{{loginStore.userInfo.role=='admin'?'管理员':'普通用户'}}</el-dropdown-item
+        >
       </el-dropdown-menu>
     </template>
   </el-dropdown>

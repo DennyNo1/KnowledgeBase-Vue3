@@ -28,7 +28,8 @@ const article = ref({
   title: "",
   contentHtml: "",
   type: "",
-  uploadIder:""
+  uploadIder:"",
+  top:"0"
 });
 const formRef = ref();
 
@@ -39,12 +40,12 @@ const editorRef = shallowRef();
 
 
 // 模拟 ajax 异步获取内容
-onMounted(() => {
-  setTimeout(() => {
+// onMounted(() => {
+//   setTimeout(() => {
     
     
-  }, 1500);
-});
+//   }, 15000);
+// });
 
 const toolbarConfig = {};
 //排除菜单的某些配置
@@ -209,6 +210,17 @@ const rules = {
             </template>
           </el-upload>
         </el-form-item>
+      <el-form-item>
+
+        <el-text>
+              置顶度(0-100)：<el-input-number
+                v-model="article.top"
+                
+                min="0"
+                max="100"
+              />
+            </el-text>
+      </el-form-item>
 
         <el-form-item>
           <el-button type="primary" @click="handleSubmit" size="large">提交</el-button>

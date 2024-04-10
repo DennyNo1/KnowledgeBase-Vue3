@@ -2,6 +2,14 @@
 import { ref } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
+import {
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElButton,
+  ElMessage,
+  ElMessageBox,
+} from "element-plus";
 
 const searchInput = ref("");
 const select = ref("");
@@ -9,7 +17,21 @@ const router = useRouter();
 
 function submitSearch() {
   // 默认搜索视频页面
-  router.push(`/${select.value || "video"}?search=${searchInput.value}`);
+  if (select.value=="") {
+    ElMessage({
+      message: "选择专栏类别后才能进行搜索操作",
+      type: "warning",
+    });
+    return;
+  }
+  if (searchInput.value=="") {
+    ElMessage({
+      message: "请输入您的搜索内容",
+      type: "warning",
+    });
+    return;
+  }
+  router.push(`/${select.value }?type=默认&queryName=${searchInput.value}`);
 }
 </script>
 
@@ -26,21 +48,24 @@ function submitSearch() {
         size="large"
         @keyup.enter="submitSearch"
       >
-        <template #prepend>
-          <el-button :icon="Search" @click="submitSearch" />
-        </template>
-        <template #append>
+        <template #prepend >
           <el-select
             v-model="select"
             placeholder="选择专栏"
-            style="width: 115px"
+            style="width: 115px;height: auto;"
+            size="large"
           >
             <el-option label="视频" value="video" />
             <el-option label="课件" value="article" />
             <el-option label="一线需求" value="question" />
           </el-select>
+          
+        </template>
+        <template #append>
+          <el-button :icon="Search" @click="submitSearch" />
         </template>
       </el-input>
+
     </el-row>
   </el-row>
 </template>
@@ -67,7 +92,7 @@ function submitSearch() {
 }
 
 .input-with-select {
-  height: 50px;
+  
   width: 50vw;
   border-radius: 1rem;
 }

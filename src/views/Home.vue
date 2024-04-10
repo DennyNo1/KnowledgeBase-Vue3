@@ -77,9 +77,10 @@ const register = async () => {
         
       </el-header>
       <el-container>
-        <el-aside width="25vw">
+        <!-- 把左侧边栏去掉没什么用 -->
+        <!-- <el-aside width="25vw">
           <Aside />
-        </el-aside>
+        </el-aside> -->
         <el-container>
           <el-main>
             <router-view />

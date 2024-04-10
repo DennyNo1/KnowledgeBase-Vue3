@@ -4,15 +4,15 @@ import { ChatLineRound, Chicken, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
-import { userArticleListService } from "@/api/article.js";
-import { useLoginStore } from "@/store/login";
-import { watch } from 'vue'
 
+import { userArticleListService, userModifyTopService} from "@/api/article.js";
+import { useLoginStore } from "@/store/login";
+import { watch } from "vue";
 
 const router = useRouter();
 const total = ref();
 const loginStore = useLoginStore();
-const articleData = ref({});
+const articleData = ref([]);
 const route = useRoute();
 async function getArticleList(page, pageSize, queryName, type) {
   try {
@@ -25,7 +25,7 @@ async function getArticleList(page, pageSize, queryName, type) {
     // console.log(response.data)
     articleData.value = response.data.records;
     total.value = response.data.total;
-    console.log(articleData.value);
+    console.log(articleData.value[0].user);
   } catch (error) {
     console.log("请求失败！", error);
   }
@@ -46,8 +46,12 @@ async function handleCurrentChange(currentPage) {
   console.log(currentPage);
   //获取当前页数
 
-    await getArticleList(currentPage, "6", route.query.queryName, route.query.type);
-  
+  await getArticleList(
+    currentPage,
+    "6",
+    route.query.queryName,
+    route.query.type
+  );
 }
 
 async function handleItemClick(type) {
@@ -63,7 +67,7 @@ async function handleItemClick(type) {
   // console.log(type)
   await router.push({
     path: `/article`,
-    query: { type, queryName:route.query.queryName },
+    query: { type, queryName: route.query.queryName },
   });
   await getArticleList(1, "6", route.query.queryName, route.query.type);
 }
@@ -81,7 +85,7 @@ function handleUpload() {
 
 //监控搜索名。实际上就是为了实现搜索功能。
 watch(
-  () => route.query.queryName, 
+  () => route.query.queryName,
   async (newId, oldId) => {
     if (newId !== oldId) {
       await getArticleList(1, "6", route.query.queryName, route.query.type);
@@ -89,6 +93,48 @@ watch(
   },
   { immediate: true } // 设置immediate为true，表示在监听开始时立即执行一次
 );
+
+//先给articleData每个元素赋值
+
+for (let i = 0; i < articleData.value.length; i++) {
+  articleData.value[i].hoverColor = "#646467";
+}
+// const hoverColor = ref("#646467");
+
+function setHoverColor(color, index) {
+  // hoverColor.value = color;
+  articleData.value[index].hoverColor = color;
+}
+
+const originalInput = ref();
+
+
+function modifyTop(item){
+  for (let i = 0; i < articleData.value.length; i++) {
+  if(articleData.value[i].isInputDisabled)
+  {
+    ElMessage({
+      message: "请完成上一次修改",
+      type: "warning",
+    });
+    return
+  }
+}
+
+  item.isInputDisabled = true;
+  
+  originalInput.value=item.article.top
+}
+function cancelInput(item) {
+  item.isInputDisabled = false;
+  item.article.top=originalInput.value
+  
+}
+async function sumbitInput(item){
+  await userModifyTopService(item.article.id,item.article.top)
+  getArticleList("1", "6", route.query.queryName, route.query.type);
+
+}
 </script>
 
 <template>
@@ -142,6 +188,7 @@ watch(
       size="large"
       class="upload-button"
       @click="handleUpload"
+      v-if="loginStore.userInfo.role=='admin'"
     >
       采编课件<el-icon><ZoomIn /></el-icon>
     </el-button>
@@ -151,17 +198,36 @@ watch(
     <el-col :span="2" />
 
     <el-col :span="20">
-      <el-page-header :icon="ArrowLeft" v-if="route.query.queryName" @click="router.push('/')">
+      <el-page-header
+        :icon="ArrowLeft"
+        v-if="route.query.queryName"
+        @click="router.push('/')"
+      >
         <template #content>
-          <span class="text-large font-600 mr-3" > 搜索结果 </span>
+          <span class="text-large font-600 mr-3"> 搜索结果 </span>
         </template>
       </el-page-header>
-      <el-row class="cards" v-for="item in articleData">
-        <el-card class="box-card" shadow="hover" @click="handleClick(item)">
+      <el-row class="cards" v-for="(item, index) in articleData">
+        <el-card class="box-card" shadow="hover">
           <el-row>
-            <el-text size="large" tag="b" line-clamp="1">
-              {{ item.article.title }}
-            </el-text>
+            <el-col :span="22">
+              <el-text
+                size="large"
+                tag="b"
+                line-clamp="1"
+                @click="handleClick(item)"
+                :style="{
+                  cursor: 'pointer',
+                  color: articleData[index].hoverColor,
+                }"
+                :key="index"
+                @mouseover="setHoverColor('#409eff', index)"
+                @mouseout="setHoverColor('#646467', index)"
+              >
+                {{ item.article.title }}
+                <!-- {{ articleData[index]}} -->
+              </el-text>
+            </el-col>
           </el-row>
           <el-row style="margin-top: 10px; align-items: center">
             <el-col :span="6">
@@ -216,6 +282,29 @@ watch(
                 
               </el-text> -->
             </el-col>
+          </el-row>
+          <el-row>
+            <p></p>
+          </el-row>
+
+          <!-- 置顶度 -->
+          <el-row v-if="loginStore.userInfo.role == 'admin' &&route.query.type!='默认'&&route.query.type!='热门知识'">
+            <el-text>
+              置顶度(0-100)：<el-input-number
+                v-model="item.article.top"
+                :disabled="!item.isInputDisabled"
+                min="0"
+                max="100"
+              />
+            </el-text>
+            <el-col :span="1"></el-col>
+            <el-button type="primary"  v-if="!item.isInputDisabled" @click="modifyTop(item)">
+              修改
+            </el-button>
+            <div v-else>
+              <el-button @click="sumbitInput(item)">确认</el-button>
+              <el-button @click="cancelInput(item)">返回</el-button>
+            </div>
           </el-row>
         </el-card>
       </el-row>
