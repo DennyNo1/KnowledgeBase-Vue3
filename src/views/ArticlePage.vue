@@ -117,10 +117,12 @@ async function toggleLike(){
   <el-row>
     <el-col :span="4" />
     <el-col :span="16">
+      
       <el-page-header :icon="ArrowLeft" @back="goBack">
+        
         <template #content>
           <!--          <span class="text-large"> {{ description.tittle }} </span>-->
-          <h2>{{ article.title }}</h2>
+          <h2 class="article-title-center"style="text-align: center;">{{ article.title }}</h2>
         </template>
       </el-page-header>
       <br />
@@ -137,7 +139,7 @@ async function toggleLike(){
         <el-descriptions-item label="分类">
           <el-tag size="small"> {{ article.type }} </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="知识标签">
+        <!-- <el-descriptions-item label="知识标签">
           <el-tag
             v-for="t in article.tag"
             :key="t.label"
@@ -147,7 +149,7 @@ async function toggleLike(){
             style="margin-right: 0.5rem"
             >{{ t.label }}</el-tag
           >
-        </el-descriptions-item>
+        </el-descriptions-item> -->
       </el-descriptions>
     </el-col>
     <el-col :span="4" />
@@ -185,7 +187,7 @@ async function toggleLike(){
   <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
-      <h3>评论</h3>
+      <h3>评论区</h3>
       <Comment :belongType="belongType" />
     </el-col>
     <el-col :span="4"></el-col>
@@ -199,6 +201,7 @@ async function toggleLike(){
   font-size: 24px;
 }
 */
+
 
 .article {
   display: block; /* 将 el-text 设置为块级元素 */

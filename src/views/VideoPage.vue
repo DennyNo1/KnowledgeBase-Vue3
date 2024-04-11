@@ -7,7 +7,8 @@ import { oneVideo } from "@/api/knowledgeBase.js";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import { userOneVideoService } from "@/api/video";
-
+import dayjs from "dayjs";
+import { ChatLineRound, Chicken, View } from "@element-plus/icons-vue";
 const loginStore = useLoginStore();
 
 //视频的数据.如果后端传过来的数据本身是对象，一定要加{}
@@ -75,31 +76,77 @@ const belongType = ref("video");
 </script>
 
 <template>
-  <el-row class="page-header">
-    
+  <!-- <el-row class="page-header">
     <el-col :span="4" />
     <el-col :span="16">
-      <div class="header-content" >
-        <div></div>
-        <el-button class="back"  @click="goBack" size="large"  style="font-size: 18px;">返回</el-button>
-        <h2 class="title">{{ videoData.title }}</h2>
+      <div class="header-content">
+        <span >
+          <el-button class="back" @click="goBack" style="font-size: 18px"
+            >返回</el-button>
+          <h1 class="title" >{{ videoData.title }}</h1>
+        </span>
 
         <div class="meta-info">
           <span>上传者：{{ uploaderData.nickName }}</span>
-          
+
           <span>部门：{{ uploaderData.department }}</span>
-          
+
           <span>上传时间：{{ videoData.date }}</span>
         </div>
-        </div>
+      </div>
+    </el-col>
+    <el-col :span="4" />
+  </el-row> -->
 
+  <el-row>
+    <el-col :span="5" />
+    <el-col :span="14">
+      
+      <!-- <el-page-header :icon="ArrowLeft" @back="goBack">
+        
+        <template #content>
+          
+          
+        </template>
+      </el-page-header> -->
+      <h2 class="article-title-center">{{ videoData.title }}</h2>
+      <br />
+      <el-descriptions title="视频信息" column="5" >
+        <el-descriptions-item label="发布时间" width="200" min-width="200">
+          {{ dayjs(videoData.date).format("YYYY-MM-DD") }}
+        </el-descriptions-item>
+        <el-descriptions-item label="作者" width="200" min-width="200">
+          {{ uploaderData.nickName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="部门" width="200" min-width="200">
+          {{ uploaderData.department }}
+        </el-descriptions-item>
+        <el-descriptions-item label="分类" width="200" min-width="200">
+          <el-tag > {{ videoData.type }} </el-tag>
+        </el-descriptions-item>
+        <el-descriptions-item  width="200" min-width="200">
+          <el-icon><View /></el-icon>&nbsp&nbsp{{videoData.clickCount}}
+        </el-descriptions-item>
+
+        <!-- <el-descriptions-item label="知识标签">
+          <el-tag
+            v-for="t in article.tag"
+            :key="t.label"
+            effect="plain"
+            :type="t.type"
+            :round="true"
+            style="margin-right: 0.5rem"
+            >{{ t.label }}</el-tag
+          >
+        </el-descriptions-item> -->
+      </el-descriptions>
     </el-col>
     <el-col :span="4" />
   </el-row>
-  
+
   <el-row>
-    <el-col :span="4" />
-    <el-col :span="16">
+    <el-col :span="5" />
+    <el-col :span="14">
       <!-- 添加 v-if="videoData.url" 是为了避免在视频数据加载完成之前尝试访问 videoData.url -->
       <video v-if="videoData.url" controls style="width: 100%" preload="auto">
         <source :src="videoData.url" type="video/mp4" />
@@ -114,10 +161,11 @@ const belongType = ref("video");
     </el-col>
     <el-col :span="4" />
   </el-row>
+
   <el-row>
-    <el-col :span="4" />
-    <el-col :span="16">
-      <h3>评论</h3>
+    <el-col :span="5" />
+    <el-col :span="14">
+      <h3>评论区</h3>
       <Comment :belongType="belongType" />
     </el-col>
     <el-col :span="4" />
@@ -126,8 +174,9 @@ const belongType = ref("video");
 
 <style scoped>
 .title {
-  text-align: center;
+  
   margin-bottom: 10px;
+  font-size: 2rem;
 }
 .meta-info {
   font-size: 0.9em;
@@ -137,6 +186,6 @@ const belongType = ref("video");
   margin-bottom: 10px;
 }
 .meta-info span:not(:last-child) {
-    margin-right: 10px; /* 调整此处的数值以适应您的需求 */
-  }
+  margin-right: 10px; /* 调整此处的数值以适应您的需求 */
+}
 </style>
