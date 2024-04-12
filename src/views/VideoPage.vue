@@ -98,10 +98,9 @@ const belongType = ref("video");
     <el-col :span="4" />
   </el-row> -->
 
-  <el-row>
+  <el-row style="margin-bottom: 2rem;">
     <el-col :span="5" />
     <el-col :span="14">
-      
       <!-- <el-page-header :icon="ArrowLeft" @back="goBack">
         
         <template #content>
@@ -109,24 +108,27 @@ const belongType = ref("video");
           
         </template>
       </el-page-header> -->
-      <h2 class="article-title-center">{{ videoData.title }}</h2>
+      <h2 style="font-size: 2rem;margin-bottom: 0rem;">{{ videoData.title }}</h2>
       <br />
-      <el-descriptions title="视频信息" column="5" >
-        <el-descriptions-item label="发布时间" width="200" min-width="200">
-          {{ dayjs(videoData.date).format("YYYY-MM-DD") }}
+      <el-descriptions title="视频信息" column="5" style="margin-bottom: 0%;">
+        <el-descriptions-item>
+          <el-icon><View /></el-icon>&nbsp&nbsp{{ videoData.clickCount }}
         </el-descriptions-item>
-        <el-descriptions-item label="作者" width="200" min-width="200">
+        <el-descriptions-item label="发布人">
           {{ uploaderData.nickName }}
         </el-descriptions-item>
-        <el-descriptions-item label="部门" width="200" min-width="200">
+        <el-descriptions-item label="部门">
           {{ uploaderData.department }}
         </el-descriptions-item>
-        <el-descriptions-item label="分类" width="200" min-width="200">
-          <el-tag > {{ videoData.type }} </el-tag>
+        <el-descriptions-item label="分类">
+          <el-tag> {{ videoData.type }} </el-tag>
         </el-descriptions-item>
-        <el-descriptions-item  width="200" min-width="200">
-          <el-icon><View /></el-icon>&nbsp&nbsp{{videoData.clickCount}}
+
+        <el-descriptions-item label="发布时间">
+          <!-- {{ dayjs(videoData.date).format("YYYY-MM-DD") }} -->
+          {{ videoData.date }}
         </el-descriptions-item>
+
 
         <!-- <el-descriptions-item label="知识标签">
           <el-tag
@@ -144,7 +146,7 @@ const belongType = ref("video");
     <el-col :span="4" />
   </el-row>
 
-  <el-row>
+  <el-row style="margin-top: 1rem; margin-bottom: 10px">
     <el-col :span="5" />
     <el-col :span="14">
       <!-- 添加 v-if="videoData.url" 是为了避免在视频数据加载完成之前尝试访问 videoData.url -->
@@ -174,7 +176,6 @@ const belongType = ref("video");
 
 <style scoped>
 .title {
-  
   margin-bottom: 10px;
   font-size: 2rem;
 }

@@ -217,29 +217,39 @@ watch(
 </script>
 
 <template>
-  <el-row class="page-header">
+  <el-row style="margin-bottom: 1rem;">
     <el-col :span="4" />
 
     <el-col :span="16">
-      <div class="header-content">
-        <el-button @click="goBack" size="large" style="font-size: 18px"
-          >返回</el-button
-        >
-        <h2 class="title">{{ question.title }}</h2>
 
-        <div class="meta-info">
-          <span>上传者：{{ user.nickName }}</span>
+      <h2 style="font-size: 2rem;margin-bottom: 0%">{{ question.title }}</h2>
+      <br />
+      <el-descriptions title="问题信息" column="5">
+        <el-descriptions-item>
+          <el-icon><View /></el-icon>&nbsp&nbsp{{ question.clickCount }}
+        </el-descriptions-item>
+        <el-descriptions-item label="发布人">
+          {{ user.nickName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="部门">
+          {{ user.department }}
+        </el-descriptions-item>
+        <el-descriptions-item label="分类">
+          <el-tag> {{ question.type }} </el-tag>
+        </el-descriptions-item>
 
-          <span>部门：{{ user.department }}</span>
+        <el-descriptions-item label="发布时间">
+          <!-- {{ dayjs(videoData.date).format("YYYY-MM-DD") }} -->
+          {{ question.date }}
+        </el-descriptions-item>
+      </el-descriptions>
 
-          <span>上传时间：{{ question.date }}</span>
-        </div>
-      </div>
+
     </el-col>
     <el-col :span="4" />
   </el-row>
 
-  <el-row>
+  <el-row style="margin-bottom: 0%;">
     <el-col :span="4"></el-col>
     <el-col :span="16">
       <el-descriptions title="问题描述"> </el-descriptions>
@@ -247,7 +257,7 @@ watch(
     <el-col :span="4"></el-col>
   </el-row>
 
-  <el-row>
+  <el-row >
     <el-col :span="4"></el-col>
     <el-col :span="16">
       <el-text class="article" size="large"> {{ question.content }}</el-text>

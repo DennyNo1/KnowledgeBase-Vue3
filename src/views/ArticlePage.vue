@@ -18,7 +18,7 @@ const route = useRoute();
 const router = useRouter();
 const id = route.query.id;
 const article = ref({});
-const attachmentList = ref();
+const attachmentList = ref([]);
 const user = ref({});
 //登录的用户是否已经点过赞
 const like = ref();
@@ -114,24 +114,29 @@ async function toggleLike(){
 </script>
 
 <template>
-  <el-row>
+  <el-row style="margin-bottom: 1rem;">
     <el-col :span="4" />
     <el-col :span="16">
       
-      <el-page-header :icon="ArrowLeft" @back="goBack">
+      <!-- <el-page-header :icon="ArrowLeft" @back="goBack">
         
         <template #content>
-          <!--          <span class="text-large"> {{ description.tittle }} </span>-->
+          
           <h2 class="article-title-center"style="text-align: center;">{{ article.title }}</h2>
         </template>
-      </el-page-header>
+      </el-page-header> -->
+
+      <h2 style="font-size: 2rem;margin-bottom: 0%">{{ article.title }}</h2>
       <br />
-      <el-descriptions title="文章信息" :column="4">
-        <el-descriptions-item label="发布时间">
-          {{ dayjs(article.date).format("YYYY-MM-DD") }}
+      <el-descriptions title="文章信息" :column="6">
+        <el-descriptions-item>
+          <el-icon><View /></el-icon>&nbsp&nbsp{{ article.clickCount }}
         </el-descriptions-item>
-        <el-descriptions-item label="作者">
+        <el-descriptions-item label="发布人">
           {{ user.nickName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="市区公司">
+          {{ user.location }}
         </el-descriptions-item>
         <el-descriptions-item label="部门">
           {{ user.department }}
@@ -139,6 +144,11 @@ async function toggleLike(){
         <el-descriptions-item label="分类">
           <el-tag size="small"> {{ article.type }} </el-tag>
         </el-descriptions-item>
+        <el-descriptions-item label="发布时间">
+          <!-- {{ dayjs(article.date).format("YYYY-MM-DD") }} -->
+          {{article.date}}
+        </el-descriptions-item>
+
         <!-- <el-descriptions-item label="知识标签">
           <el-tag
             v-for="t in article.tag"
@@ -151,14 +161,24 @@ async function toggleLike(){
           >
         </el-descriptions-item> -->
       </el-descriptions>
+      
     </el-col>
     <el-col :span="4" />
   </el-row>
 
+  <el-row >
+    <el-col :span="4"></el-col>
+    <el-col :span="16">
+      <el-descriptions title="正文内容"> </el-descriptions>
+    </el-col>
+    <el-col :span="4"></el-col>
+  </el-row>
+
   <!-- 正文 -->
-  <el-row style="margin-top: 30px; margin-bottom: 10px">
+  <el-row >
     <el-col :span="4" />
     <el-col :span="16">
+      
       <div class="article" v-html="article.content"></div>
       <el-divider style="margin-top: 30px" />
     </el-col>
@@ -168,7 +188,7 @@ async function toggleLike(){
   <el-row style="margin-top: 30px; margin-bottom: 10px">
     <el-col :span="14" />
     <!-- 附件栏 -->
-    <div>
+    <div v-if="attachmentList.length>0">
       附件列表
       <div class="attachment" v-for="attachment in attachmentList">
         <span class="attachment-name"></span>

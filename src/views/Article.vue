@@ -256,11 +256,11 @@ async function sumbitInput(item){
                 </el-button>
                 
               </el-text> -->
-              <el-text>
+              <!-- <el-text>
                 <el-button text :icon="View">
                   {{ item.article.clickCount }}
                 </el-button>
-                <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
+               
               </el-text>
 
               <el-text>
@@ -268,8 +268,8 @@ async function sumbitInput(item){
                   ><el-icon><Medal /></el-icon>
                   {{ item.article.likeCount }}
                 </el-button>
-                <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
-              </el-text>
+                
+              </el-text> -->
             </el-col>
 
             <el-col :span="2">

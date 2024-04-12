@@ -336,12 +336,14 @@ const clearForm = () => {
                 </el-button>
                 
               </el-text> -->
-              <el-text>
+
+              <!-- 浏览量依照b站，还是不在列表显示了 -->
+              <!-- <el-text>
                 <el-button text :icon="View">
                   {{ item.video.clickCount }}
                 </el-button>
-                <!--                <View style="width: 1rem; height: 1em; margin-right: 4px" /> {{ item.commentVolume }}-->
-              </el-text>
+                
+              </el-text> -->
             </el-col>
           </el-row>
         </el-card>
