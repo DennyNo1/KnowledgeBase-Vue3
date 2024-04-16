@@ -7,7 +7,7 @@ import RichText from "@/components/RichText.vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "@/store/login.js";
-
+import avatar from '@/assets/default.png'
 import dayjs from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 import { useRouter } from "vue-router";
@@ -20,9 +20,9 @@ import {
 import { ElMessage } from "element-plus";
 import { watch } from 'vue'
 import{userLikeService} from '@/api/comment.js'
+const loginStore=useLoginStore()
 
 
-const loginStore = useLoginStore();
 const router = useRouter();
 
 // dayjs.extend(duration);
@@ -139,12 +139,13 @@ const getCommentsSection = async () => {
 //提交回答或回复
 async function commit(commentId)
 {
-  //先做登录判断
-  if (!loginStore.isLoggedIn) {
+  //先做回复权限的判断
+  if (question.assignedTo!=loginStore.userInfo.role) {
     ElMessage({
-      message: "登录后才能进行该操作",
+      message: "管理员并没有将这个问题派单给您，请联系管理员后再进行操作",
       type: "warning",
     });
+    return
   } else {
     //不能提交空评论
     if (valueHtml.value == "") {
@@ -224,12 +225,15 @@ watch(
 
       <h2 style="font-size: 2rem;margin-bottom: 0%">{{ question.title }}</h2>
       <br />
-      <el-descriptions title="问题信息" column="5">
+      <el-descriptions title="问题信息" column="6">
         <el-descriptions-item>
           <el-icon><View /></el-icon>&nbsp&nbsp{{ question.clickCount }}
         </el-descriptions-item>
         <el-descriptions-item label="发布人">
           {{ user.nickName }}
+        </el-descriptions-item>
+        <el-descriptions-item label="手机号">
+          {{ user.phone }}
         </el-descriptions-item>
         <el-descriptions-item label="部门">
           {{ user.department }}
@@ -266,6 +270,7 @@ watch(
     <el-col :span="4"></el-col>
   </el-row>
 
+
   <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
@@ -274,7 +279,59 @@ watch(
     <el-col :span="4"></el-col>
   </el-row>
 
-  <!-- 评论区 -->
+  <!-- <el-row style="margin-bottom:0" v-if="loginStore.userInfo.isLoggedIn&&loginStore.userInfo.admin!='user'">
+    <el-col :span="4"></el-col>
+    <el-col :span="16">
+      <h4>添加回复</h4>
+    </el-col>
+    <el-col :span="4"></el-col>
+  </el-row> -->
+
+  <!-- 添加回复框，游客和普通用户是无法看到回复框的 -->
+  <el-row v-if="loginStore.isLoggedIn&&loginStore.userInfo.role!='user'">
+    <el-col :span="4" ></el-col>
+    <el-col :span="16">
+      <!-- 放置富文本组件 -->
+      <!-- <RichText
+        v-model="valueHtml"
+        :editor="editorRef"
+        :defaultConfig="toolbarConfig"
+        :mode="mode"
+      /> -->
+      <el-input
+        v-model="valueHtml"
+        type="textarea"
+        placeholder="请输入你的回复..."
+        resize="none"
+        maxlength="1000"
+        show-word-limit
+        :autosize="{ minRows: 6, maxRows: 50 }"
+      />
+    </el-col>
+    <el-col :span="4"></el-col>
+  </el-row>
+
+  <el-row v-if="loginStore.isLoggedIn&&loginStore.userInfo.role!='user'">
+    <el-col :span="4"></el-col>
+    <el-col :span="16">
+      <el-row>
+        <div class="flex-grow" />
+        <!-- <el-button type="primary" @click="cancel">取消</el-button> -->
+        <el-button type="primary" @click="commit()">提交</el-button>
+      </el-row>
+    </el-col>
+    <el-col :span="4"></el-col>
+  </el-row>
+
+
+
+
+
+
+
+  
+
+  <!-- 回复区 -->
   <el-row>
     <el-col :span="3"></el-col>
     <el-col :span="17">
@@ -286,18 +343,30 @@ watch(
         >
           <el-card shadow="hover" style="border-radius: 0.5rem">
             <div class="replyHeader">
-              <el-avatar class="" :size="32" :src="t.user.avatar" />
+              <!-- 都先采用默认头像 -->
+              <el-avatar class="" :size="32" :src="avatar" />
               <span class="text-large"> {{ t.user.nickName }} </span>
+<!--               
               <span
                 class="text-small"
                 style="color: var(--el-text-color-regular)"
               >
-              </span>
+              </span> -->
+              <span v-if="t.user.role=='admin'">慧问工作室</span>
+              <span v-if="t.user.role=='business'">营业专家</span>
+              <span v-if="t.user.role=='maintain'">装维专家</span>
+              <span v-if="t.user.role=='govermentManager'">政企客户经理专家</span>
+              <span v-if="t.user.role=='customerManager'">客经专员专家</span>
+              <span v-if="t.user.role=='director'">支局长专家</span>
+              <span v-if="t.user.role=='areaManager'">片区长专家</span>
+              <span v-if="t.user.role=='VIPManager'">VIP客户经理专家</span>
+              
+              <span>{{t.user.phone}}</span>
               <el-tag v-if="t.user.tag">{{ t.user.tag }}</el-tag>
               <div class="flex-grow" />
-              <el-button type="primary" text @click="handleRepl(t)"
+              <!-- <el-button type="primary" text @click="handleRepl(t)"
                 >回复</el-button
-              >
+              > -->
             </div>
 
             <!-- <h4>{{ t.title }}</h4> -->
@@ -311,7 +380,7 @@ watch(
                 >赞同&nbsp;{{ t.comment.likeCount }}
               </el-button>
 
-              <el-badge
+              <!-- <el-badge
                 :value="t.replyDTOList.length"
                 v-if="t.replyDTOList"
                 class=""
@@ -321,10 +390,10 @@ watch(
                   @click="t.openRepl = !t.openRepl"
                   >展开回复</el-button
                 >
-              </el-badge>
+              </el-badge> -->
             </div>
 
-            <div v-if="t.replyDTOList.length > 0">
+            <!-- <div v-if="t.replyDTOList.length > 0">
               <div v-show="t.openRepl">
                 <el-row>
                   <div style="margin-top: 20px; width: 100%"></div>
@@ -343,14 +412,7 @@ watch(
                           </span>
 
                           <div class="flex-grow"></div>
-                          <!-- 先不做评论的点赞功能 -->
-                          <!-- <el-button
-                            type="primary"
-                            text
-                            @click="toggleLike2(item)"
-                            :icon="item.isLiked ? HeartFilled : Heart"
-                            >{{ item.commend }}
-                          </el-button> -->
+
                         </div>
                         <el-row>
                           <el-col :span="1"></el-col>
@@ -365,7 +427,7 @@ watch(
                   </el-col>
                 </el-row>
               </div>
-            </div>
+            </div> -->
             <!-- 评论框 -->
             <div v-if="t.openText" style="margin-top: 20px">
               <!-- <RichText
@@ -398,48 +460,7 @@ watch(
     <el-col :span="4"></el-col>
   </el-row>
 
-  <el-row>
-    <el-col :span="4"></el-col>
-    <el-col :span="16">
-      <h4>添加回答</h4>
-    </el-col>
-    <el-col :span="4"></el-col>
-  </el-row>
-
-  <el-row>
-    <el-col :span="4"></el-col>
-    <el-col :span="16">
-      <!-- 放置富文本组件 -->
-      <!-- <RichText
-        v-model="valueHtml"
-        :editor="editorRef"
-        :defaultConfig="toolbarConfig"
-        :mode="mode"
-      /> -->
-      <el-input
-        v-model="valueHtml"
-        type="textarea"
-        placeholder="请输入你的回答..."
-        resize="none"
-        maxlength="1000"
-        show-word-limit
-        :autosize="{ minRows: 6, maxRows: 50 }"
-      />
-    </el-col>
-    <el-col :span="4"></el-col>
-  </el-row>
-
-  <el-row>
-    <el-col :span="4"></el-col>
-    <el-col :span="16">
-      <el-row>
-        <div class="flex-grow" />
-        <!-- <el-button type="primary" @click="cancel">取消</el-button> -->
-        <el-button type="primary" @click="commit()">提交</el-button>
-      </el-row>
-    </el-col>
-    <el-col :span="4"></el-col>
-  </el-row>
+  
 </template>
 
 <style scoped>
@@ -460,8 +481,9 @@ watch(
 
 .replyHeader {
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+  /* align-items: center;
+  margin-bottom: 10px; */
+  align-items: flex-end; 
 }
 
 /* .replyFooter{

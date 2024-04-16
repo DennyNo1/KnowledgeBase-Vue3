@@ -207,7 +207,7 @@ async function toggleLike(){
   <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
-      <h3>评论区</h3>
+      <h3>评论</h3>
       <Comment :belongType="belongType" />
     </el-col>
     <el-col :span="4"></el-col>

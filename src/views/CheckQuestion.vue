@@ -1,5 +1,5 @@
 <script setup>
-import { userQuestionListService } from "@/api/question.js";
+import { userQuestionListService,userQuestionWithoutCommentListService } from "@/api/question.js";
 import { onMounted, ref } from "vue";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
@@ -25,9 +25,25 @@ const getQuestionList = async (page, pageSize, queryName, isChecked,type) => {
   total.value = response.data.total;
 };
 
+
+
+const getQuestionWithoutCommentList= async (page, pageSize, type,assignedTo) => {
+  const response=await userQuestionWithoutCommentListService(
+    page, pageSize, type,assignedTo
+  )
+  questionData.value = response.data.records;
+  total.value = response.data.total;
+}
+
 onMounted(() => {
    // 提供默认值
-  getQuestionList("1", "6", null, route.query.isChecked,'默认');
+  if(route.query.isChecked){
+    getQuestionList("1", "6", null, route.query.isChecked,'默认');
+  }
+  else{
+    getQuestionWithoutCommentList("1", "6",'默认',route.query.role)
+  }
+  
 });
 
 const handleItemClick = async (checkFlag) => {
@@ -45,7 +61,8 @@ function handleClick(item) {
 </script>
 
 <template>
-  <el-row>
+  <!-- 审核 -->
+  <el-row v-if="route.query.isChecked">
     <el-col :span="2" />
     <el-col :span="20">
       <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
@@ -66,6 +83,32 @@ function handleClick(item) {
     <el-col :span="2" />
   </el-row>
 
+  <!-- 待处理问题 -->
+  <el-row v-if="route.query.role">
+    <el-col :span="2" />
+    <el-col :span="20">
+      <el-card shadow="always" class="top" :body-style="{ padding: '0' }">
+        <el-menu
+          class="el-menu-demo"
+          mode="horizontal"
+          router
+          :default-active="route.query.isChecked"
+         
+        >
+          <el-menu-item index="0" @click="handleItemClick(0)"
+            >待审核</el-menu-item
+          >
+          <el-menu-item index="-1" @click="handleItemClick(-1)">审核未通过</el-menu-item>
+        </el-menu>
+      </el-card>
+    </el-col>
+    <el-col :span="2" />
+  </el-row>
+
+
+
+
+  <!-- 问题列表 -->
   <el-row>
     <el-col :span="2" />
     <el-col :span="20">

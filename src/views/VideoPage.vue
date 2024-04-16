@@ -167,7 +167,7 @@ const belongType = ref("video");
   <el-row>
     <el-col :span="5" />
     <el-col :span="14">
-      <h3>评论区</h3>
+      <h3>评论</h3>
       <Comment :belongType="belongType" />
     </el-col>
     <el-col :span="4" />

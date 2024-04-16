@@ -56,10 +56,27 @@ const isAdmin=()=>{
  return false
 
 }
+const handleRoute=(v)=>{
+  if(v!='solve'&&v!='check')
+  {
+    router.push(`/${v}?type=默认`);
+  }
+  else if(v=='check')
+  {
+    router.push('/question/check?isChecked=0')
+  }
+  else if(v=='solve'){
+    router.push(`/question/check?role=${loginStore.userInfo.role}`);
+  }
+  selected.value=v
+  
+  
+}
+const selected=ref("video")
 </script>
 
 <template>
-  <el-menu default-active="true" mode="horizontal" :ellipsis="false" router>
+  <el-menu :default-active="selected" mode="horizontal" :ellipsis="false" router>
     <el-menu-item index="0" route="/">
       <img style="height: 100%" src="@/assets/logo.png" alt="Element logo" />
       <el-text type="primary" size="large" tag="b">知识库首页</el-text>
@@ -91,11 +108,13 @@ const isAdmin=()=>{
       </el-input>
     </div>
 
-    <el-menu-item index="1" route="/video?type=默认">视频</el-menu-item>
+    <el-menu-item index="video"  @click="handleRoute('video')">视频</el-menu-item>
 
-    <el-menu-item index="2" route="/article?type=默认">课件</el-menu-item>
-    <el-menu-item index="3" route="/question?type=默认">一线需求</el-menu-item>
-    <el-menu-item  index="4" route="/question/check?isChecked=0"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'">一线需求审核</el-menu-item> 
+    <el-menu-item index="article" @click="handleRoute('article')" >课件</el-menu-item>
+    <el-menu-item index="question" @click="handleRoute('question')" >一线需求</el-menu-item>
+    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" >一线需求审核</el-menu-item>
+    <el-menu-item  index="solve"  @click="handleRoute('solve')" v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我待处理的需求</el-menu-item>
+
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->
 
     <el-menu-item v-if="loginStore.isLoggedIn">

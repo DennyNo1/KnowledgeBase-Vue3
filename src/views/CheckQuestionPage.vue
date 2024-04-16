@@ -2,13 +2,13 @@
 import { handleError, onMounted, ref } from "vue";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
-import {userCheckService} from "@/api/question.js";
+import { userCheckService } from "@/api/question.js";
 import { userOneQuestionService } from "@/api/question.js";
 const router = useRouter();
 const route = useRoute();
 const id = route.query.id;
 const question = ref({});
-const user=ref({})
+const user = ref({});
 const getQuestion = async () => {
   try {
     const response = await userOneQuestionService(id);
@@ -22,35 +22,69 @@ const getQuestion = async () => {
 
 onMounted(() => {
   getQuestion();
- 
 });
-
-
-
 
 function goBack() {
   // console.log(videoData.value.url)
   router.back();
 }
-const handleCheck=(isChecked)=>{
-    const questionId=router.currentRoute.value.query.id;
-    console.log(isChecked)
-    userCheckService(questionId,isChecked)
-    goBack()
-}
+const stringQuestionId = router.currentRoute.value.query.id;
+  const questionId = parseInt(stringQuestionId, 10);
+const handleCheck = (isChecked, assignedTo) => {
 
+
+  userCheckService(questionId, isChecked, assignedTo);
+  if (assignedTo != "admin") {
+    goBack();
+  } else {
+    router.push(`/question-page?id=${questionId}`);
+  }
+};
+const assign = ref();
+const assignInChinese = ref();
+
+const handleCommand = (command) => {
+  assign.value = command;
+  switch (command) {
+    case "bussiness":
+      assignInChinese.value = "营业专家";
+      break;
+    case "maintain":
+      assignInChinese.value = "装维专家";
+      break;
+    case "govermentManager":
+      assignInChinese.value = "政企客户经理";
+      break;
+    case "customerManager":
+      assignInChinese.value = "客户经理专家";
+      break;
+    case "director":
+      assignInChinese.value = "支局长专家";
+      break;
+    case "areaManager":
+      assignInChinese.value = "片区张专家";
+      break;
+    case "VIPManager":
+      assignInChinese.value = "VIP客户经理专家";
+      break;
+  }
+
+  dialogVisible.value = true;
+};
+const dialogVisible = ref(false);
+const handleConfirm=async ()=>{
+  
+  await userCheckService(questionId, 1, assign.value);
+  goBack()
+}
 </script>
 
-
-
 <template>
-  
-  <el-row style="margin-bottom: 1rem;">
+  <el-row style="margin-bottom: 1rem">
     <el-col :span="4" />
 
     <el-col :span="16">
-
-      <h2 style="font-size: 2rem;margin-bottom: 0%">{{ question.title }}</h2>
+      <h2 style="font-size: 2rem; margin-bottom: 0%">{{ question.title }}</h2>
       <br />
       <el-descriptions title="问题信息" column="5">
         <el-descriptions-item>
@@ -71,13 +105,11 @@ const handleCheck=(isChecked)=>{
           {{ question.date }}
         </el-descriptions-item>
       </el-descriptions>
-
-
     </el-col>
     <el-col :span="4" />
   </el-row>
 
-  <el-row style="margin-bottom: 0%;">
+  <el-row style="margin-bottom: 0%">
     <el-col :span="4"></el-col>
     <el-col :span="16">
       <el-descriptions title="问题描述"> </el-descriptions>
@@ -85,7 +117,7 @@ const handleCheck=(isChecked)=>{
     <el-col :span="4"></el-col>
   </el-row>
 
-  <el-row >
+  <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
       <el-text class="article" size="large"> {{ question.content }}</el-text>
@@ -95,15 +127,57 @@ const handleCheck=(isChecked)=>{
   </el-row>
 
   <!-- 审核按钮 -->
-  <el-row v-if="question.isChecked==0">
+  <el-row v-if="question.isChecked == 0">
     <el-col :span="4"></el-col>
     <el-col :span="16">
-      <el-button type="success" size="large" class="check-pass" @click="handleCheck(1)">审核通过</el-button>
-      <el-button type="info" size="large"  @click="handleCheck(-1)">审核不予通过</el-button>
-      </el-col>
-    </el-row>
-    
-  
+      <el-dropdown class="check-pass" @command="handleCommand">
+        <el-button type="success" size="large">
+          审核通过并派单<el-icon><arrow-down /></el-icon>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="bussiness">营业专家</el-dropdown-item>
+            <el-dropdown-item command="maintain">装维专家</el-dropdown-item>
+            <el-dropdown-item command="govermentManager"
+              >政企客户经理专家</el-dropdown-item
+            >
+            <el-dropdown-item command="customerManager"
+              >客户经理专家</el-dropdown-item
+            >
+            <el-dropdown-item command="director">支局长专家</el-dropdown-item>
+            <el-dropdown-item command="areaManager"
+              >片区长专家</el-dropdown-item
+            >
+            <el-dropdown-item command="VIPManager"
+              >VIP客户经理专家</el-dropdown-item
+            >
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
+      <el-button
+        type="primary"
+        size="large"
+        class="check-pass"
+        @click="handleCheck(1, 'admin')"
+        >审核通过并由慧问工作室回复</el-button
+      >
+
+      <el-button type="info" size="large" @click="handleCheck(-1, null)"
+        >审核不予通过</el-button
+      >
+    </el-col>
+  </el-row>
+
+  <el-dialog v-model="dialogVisible" title="提示" width="500">
+    <span>您确定派单给{{ assignInChinese }}</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="handleConfirm" type="primary">确定</el-button>
+        <el-button @click="dialogVisible = false"> 返回 </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <style scoped>
@@ -121,7 +195,7 @@ const handleCheck=(isChecked)=>{
 .meta-info span:not(:last-child) {
   margin-right: 10px; /* 调整此处的数值以适应您的需求 */
 }
-.check-pass{
-    margin-right: 20px;
+.check-pass {
+  margin-right: 20px;
 }
 </style>
