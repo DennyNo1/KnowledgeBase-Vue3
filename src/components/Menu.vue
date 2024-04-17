@@ -63,11 +63,12 @@ const handleRoute=(v)=>{
   }
   else if(v=='check')
   {
-    router.push('/question/check?isChecked=0')
+    // router.push('/question/check?isChecked=0')
+    router.push(`/question/check?role=${loginStore.userInfo.role}&isSolved=0`);
   }
-  else if(v=='solve'){
-    router.push(`/question/check?role=${loginStore.userInfo.role}`);
-  }
+  // else if(v=='solve'){
+  //   router.push(`/question/check?role=${loginStore.userInfo.role}`);
+  // }
   selected.value=v
   
   
@@ -112,8 +113,8 @@ const selected=ref("video")
 
     <el-menu-item index="article" @click="handleRoute('article')" >课件</el-menu-item>
     <el-menu-item index="question" @click="handleRoute('question')" >一线需求</el-menu-item>
-    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" >一线需求审核</el-menu-item>
-    <el-menu-item  index="solve"  @click="handleRoute('solve')" v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我待处理的需求</el-menu-item>
+    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我的需求</el-menu-item>
+    
 
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->
 

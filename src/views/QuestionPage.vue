@@ -140,7 +140,9 @@ const getCommentsSection = async () => {
 async function commit(commentId)
 {
   //先做回复权限的判断
-  if (question.assignedTo!=loginStore.userInfo.role) {
+  if (question.value.assignTo!=loginStore.userInfo.role&&loginStore.userInfo.role!='admin') {
+    // console.log(question.value)
+    // console.log(loginStore.userInfo.role)
     ElMessage({
       message: "管理员并没有将这个问题派单给您，请联系管理员后再进行操作",
       type: "warning",

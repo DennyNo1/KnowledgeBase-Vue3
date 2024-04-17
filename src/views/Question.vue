@@ -181,14 +181,14 @@ function handleUpload(){
             </el-col>
             <el-col :span="2">
               <!--              <div class="flex-grid" />-->
-              <!-- <el-text>
+              <el-text>
                 <el-tag
-                  :type="item.question.isSolved ? 'success' : 'danger'"
+                  :type="item.question.isSolved ? 'success' : 'warning'"
                   round
                 >
-                  {{ item.question.isSolved ? "已解决" : "未解决" }}
+                  {{ item.question.isSolved ? "已回复" : "待回复" }}
                 </el-tag>
-              </el-text> -->
+              </el-text>
             </el-col>
           </el-row>
         </el-card>

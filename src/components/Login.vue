@@ -255,7 +255,7 @@ const register = async () => {
 
       <!--登录表单底部-->
 
-      <div class="dialog-footer">
+      <div class="dialog-footer" style="margin-bottom: 1rem;">
         <el-button
           type="primary"
           size="large"
@@ -265,7 +265,7 @@ const register = async () => {
         >
       </div>
 
-      <div class="navigate-to-register">
+      <!-- <div class="navigate-to-register">
         <el-link
           type="primary"
           @click="navigateToRegister"
@@ -274,7 +274,7 @@ const register = async () => {
           @blur="handleBlur"
           >没有账号？点击注册</el-link
         >
-      </div>
+      </div> -->
     </el-form>
 
     <!--注册表单-->

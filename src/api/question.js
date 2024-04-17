@@ -17,8 +17,8 @@ export async function userOneQuestionService(
   });
 }
 
-export const userCheckService = (questionId, isChecked,assignedTo) =>
-  request.post("/question/check", { questionId, isChecked,assignedTo });
+export const userCheckService = (questionId, isChecked,assignTo) =>
+  request.post("/question/check", { questionId, isChecked,assignTo });
 
 
 export const userQuestionAddService = (questionerId, title, content,type) =>
@@ -50,7 +50,7 @@ export const userQuestionAddService = (questionerId, title, content,type) =>
     page,
     pageSize,
     type,
-    assignedTo
+    assignTo
   ) {
     return await request({
       method: "GET",
@@ -59,7 +59,7 @@ export const userQuestionAddService = (questionerId, title, content,type) =>
         page,
         pageSize,
         type,
-        assignedTo
+        assignTo
       },
     });
   }

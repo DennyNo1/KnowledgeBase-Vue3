@@ -30,11 +30,11 @@ function goBack() {
 }
 const stringQuestionId = router.currentRoute.value.query.id;
   const questionId = parseInt(stringQuestionId, 10);
-const handleCheck = (isChecked, assignedTo) => {
+const handleCheck = (isChecked, assignTo) => {
 
 
-  userCheckService(questionId, isChecked, assignedTo);
-  if (assignedTo != "admin") {
+  userCheckService(questionId, isChecked, assignTo);
+  if (assignTo != "admin") {
     goBack();
   } else {
     router.push(`/question-page?id=${questionId}`);
