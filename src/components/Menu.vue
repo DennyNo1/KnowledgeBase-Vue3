@@ -57,6 +57,7 @@ const isAdmin=()=>{
 
 }
 const handleRoute=(v)=>{
+  selected.value=v
   if(v!='solve'&&v!='check')
   {
     router.push(`/${v}?type=默认`);
@@ -69,11 +70,11 @@ const handleRoute=(v)=>{
   // else if(v=='solve'){
   //   router.push(`/question/check?role=${loginStore.userInfo.role}`);
   // }
-  selected.value=v
+ 
   
   
 }
-const selected=ref("video")
+const selected=ref("")
 </script>
 
 <template>

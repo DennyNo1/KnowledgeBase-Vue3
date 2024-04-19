@@ -15,6 +15,8 @@ import {useraddArticleService,useraddAttachmentService} from "@/api/article"
 import { onBeforeUnmount, ref, shallowRef, onMounted } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 
+import request from "@/utils/request";
+
 //菜单的配置
 const editorConfig = {
   MENU_CONF: {},

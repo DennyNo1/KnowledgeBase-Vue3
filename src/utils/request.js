@@ -5,8 +5,11 @@ import { storeToRefs } from "pinia";
 import { useLoginStore } from "@/store/login.js";
 
 const request = axios.create({
-  
+  // 开发环境
   baseURL: "http://localhost:8088",
+
+  //生产环境
+
   timeout: 10000,
   // headers: {
   //     'Content-Type': 'application/json',

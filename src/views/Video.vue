@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, reactive,watch } from "vue";
+import { onMounted, ref, reactive, watch } from "vue";
 import { someVideos } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
@@ -35,10 +35,9 @@ const handleUpload = () => {
 const router = useRouter();
 const route = useRoute();
 
-
 //监控搜索名。实际上就是为了实现搜索功能。
 watch(
-  () => route.query.queryName, 
+  () => route.query.queryName,
   async (newId, oldId) => {
     if (newId !== oldId) {
       await getVideos(1, "6", route.query.queryName, route.query.type);
@@ -50,7 +49,7 @@ watch(
 const totalPage = ref(1);
 
 onMounted(() => {
-   getVideos("1", "6", route.query.queryName, route.query.type);
+  getVideos("1", "6", route.query.queryName, route.query.type);
 });
 
 function handleClick(v: { video: { id: any } }) {
@@ -70,7 +69,6 @@ async function getVideos(
   type: String
 ) {
   try {
-    
     const response = await userVideoListService(
       page,
       pageSize,
@@ -91,7 +89,7 @@ async function handleItemClick(type: String) {
   // getVideos("1", "12", null, type);
   await router.push({
     path: `/video`,
-    query: { type, queryName:route.query.queryName },
+    query: { type, queryName: route.query.queryName },
   });
   await getVideos(1, "6", route.query.queryName, route.query.type);
 }
@@ -116,7 +114,8 @@ const submitUpload = async () => {
   await upload.value.submit();
 };
 
-// 处理上传成功的函数
+// 函数用于处理视频已存储到真实路径后，要将视频的相关信息特别是路径给后端接口，让它持久化到数据库。
+//我这里的想法，还是以后端来控制这些视频、图片、附件的展示路径
 async function handleUploadSuccess(response: {
   code: number;
   msg: MessageParamsWithType;
@@ -137,15 +136,15 @@ async function handleUploadSuccess(response: {
     );
   }
   clearForm();
-  console.log("clear!");
+  //获取新的视频数据
+  getVideos("1", "6", route.query.queryName, route.query.type);
 }
 //处理上传失败的函数
 async function handleUploadError(response: any) {
   console.log("上传失败", response);
   ElMessage.error("上传的文件大小超过限制或者服务器出错");
   clearForm();
-  //获取新的视频数据
-  getVideos("1", "12", null, null);
+
 }
 
 //上传视频表单的对象。这个主要用于表单验证。
@@ -193,9 +192,7 @@ const clearForm = () => {
           <el-menu-item index="默认" @click="handleItemClick('默认')"
             >默认</el-menu-item
           >
-          <el-menu-item
-            index="热门知识"
-            @click="handleItemClick('热门知识')"
+          <el-menu-item index="热门知识" @click="handleItemClick('热门知识')"
             >热门知识</el-menu-item
           >
           <el-menu-item index="营业" @click="handleItemClick('营业')"
@@ -209,19 +206,13 @@ const clearForm = () => {
             @click="handleItemClick('政企客户经理')"
             >政企客户经理</el-menu-item
           >
-          <el-menu-item
-            index="客经专员"
-            @click="handleItemClick('客经专员')"
+          <el-menu-item index="客经专员" @click="handleItemClick('客经专员')"
             >客经专员</el-menu-item
           >
-          <el-menu-item
-            index="支局长"
-            @click="handleItemClick('支局长')"
+          <el-menu-item index="支局长" @click="handleItemClick('支局长')"
             >支局长</el-menu-item
           >
-          <el-menu-item
-            index="片区长"
-            @click="handleItemClick('片区长')"
+          <el-menu-item index="片区长" @click="handleItemClick('片区长')"
             >片区长</el-menu-item
           >
 
@@ -239,7 +230,7 @@ const clearForm = () => {
       size="large"
       class="upload-button"
       @click="handleUpload"
-      v-if="loginStore.userInfo.role=='admin'"
+      v-if="loginStore.userInfo.role == 'admin'"
     >
       上传视频<el-icon class="el-icon--right"><Upload /></el-icon>
     </el-button>
@@ -296,9 +287,13 @@ const clearForm = () => {
   <el-row>
     <el-col :span="2" />
     <el-col :span="20">
-      <el-page-header :icon="ArrowLeft" v-if="route.query.queryName" @click="router.push('/')">
+      <el-page-header
+        :icon="ArrowLeft"
+        v-if="route.query.queryName"
+        @click="router.push('/')"
+      >
         <template #content>
-          <span class="text-large font-600 mr-3" > 搜索结果 </span>
+          <span class="text-large font-600 mr-3"> 搜索结果 </span>
         </template>
       </el-page-header>
       <el-row class="cards" v-for="item in videos">
