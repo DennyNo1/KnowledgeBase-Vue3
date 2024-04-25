@@ -67,12 +67,25 @@ const loginStore = useLoginStore();
 //点击提出需求按钮的逻辑
 function handleUpload(){
   if (loginStore.isLoggedIn) {
-    router.push('/question/create')
+    if(loginStore.userInfo.role=='user'||loginStore.userInfo.role=='admin')
+    {
+      router.push('/question/create')
+    }
+    else{
+      ElMessage({
+      message: "专家无法提出需求，请联系管理员",
+      type: "warning",
+      
+    });
+    return;
+    }
+    
   } else {
     ElMessage({
       message: "登录后才能新建需求",
       type: "warning",
     });
+    return
   }
 }
 </script>
@@ -140,6 +153,7 @@ function handleUpload(){
       size="large"
       class="upload-button"
       @click="handleUpload"
+      
     >
       新建需求<el-icon><EditPen /></el-icon>
     </el-button>

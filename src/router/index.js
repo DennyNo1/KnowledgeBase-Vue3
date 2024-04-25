@@ -22,10 +22,10 @@ const router = createRouter({
           name: "Search",
           component: Search,
         },
-        {
-          path: "/video",
-          component: Video,
-        },
+        // {
+        //   path: "/video",
+        //   component: Video,
+        // },
         {
           path: "/article",
           name: "article",
@@ -46,11 +46,11 @@ const router = createRouter({
           name: "question-page",
           component: () => import("@/views/QuestionPage.vue"),
         },
-        {
-          path: "/video-page",
-          name: "video-page",
-          component: () => import("@/views/VideoPage.vue"),
-        },
+        // {
+        //   path: "/video-page",
+        //   name: "video-page",
+        //   component: () => import("@/views/VideoPage.vue"),
+        // },
         {
           path:"/question/check",
           component:CheckQuestion

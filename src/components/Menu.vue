@@ -99,7 +99,7 @@ const selected=ref("")
       >
         <template #prepend>
           <el-select v-model="select" placeholder="选择专栏" style="width: 100px">
-            <el-option label="视频" value="video" />
+            <!-- <el-option label="视频" value="video" /> -->
             <el-option label="课件" value="article" />
             <el-option label="一线需求" value="question" />
           </el-select>
@@ -110,7 +110,7 @@ const selected=ref("")
       </el-input>
     </div>
 
-    <el-menu-item index="video"  @click="handleRoute('video')">视频</el-menu-item>
+    <!-- <el-menu-item index="video"  @click="handleRoute('video')">视频</el-menu-item> -->
 
     <el-menu-item index="article" @click="handleRoute('article')" >课件</el-menu-item>
     <el-menu-item index="question" @click="handleRoute('question')" >一线需求</el-menu-item>

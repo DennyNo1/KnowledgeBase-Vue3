@@ -50,10 +50,11 @@ const editorRef = shallowRef();
 // });
 
 const toolbarConfig = {};
-//排除菜单的某些配置
-toolbarConfig.excludeKeys = [
-  "group-video", // 排除菜单组，写菜单组 key 的值即可
-];
+
+//排除菜单的视频选项
+// toolbarConfig.excludeKeys = [
+//   "group-video", // 排除菜单组，写菜单组 key 的值即可
+// ];
 
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
@@ -112,6 +113,12 @@ editorConfig.MENU_CONF["uploadImage"] = {
   server: "http://localhost:8088/article/upload-image",
   fieldName: "image",
 };
+
+
+editorConfig.MENU_CONF['uploadVideo'] = {
+     server: "http://localhost:8088/article/upload-video",
+     fieldName: "video",
+}
 //整个上传模块的附件数据。这个里面已经保存着每次的response消息。
 const fileList = ref([
 ])
@@ -122,7 +129,7 @@ function handleExceed(){
       type: "warning",
     });
 }
-//通过uid遍历删除
+//通过uid遍历删除想要删除的上传文件
 function handleUploadRemove(uploadFile, uploadFiles){
   for (let i = 0; i < fileList.value.length; i++) {
   if (fileList.value[i].uid === uploadFile.uid) {

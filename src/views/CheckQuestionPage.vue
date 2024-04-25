@@ -46,7 +46,7 @@ const assignInChinese = ref();
 const handleCommand = (command) => {
   assign.value = command;
   switch (command) {
-    case "bussiness":
+    case "business":
       assignInChinese.value = "营业专家";
       break;
     case "maintain":
@@ -136,7 +136,7 @@ const handleConfirm=async ()=>{
         </el-button>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="bussiness">营业专家</el-dropdown-item>
+            <el-dropdown-item command="business">营业专家</el-dropdown-item>
             <el-dropdown-item command="maintain">装维专家</el-dropdown-item>
             <el-dropdown-item command="govermentManager"
               >政企客户经理专家</el-dropdown-item
