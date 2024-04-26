@@ -16,7 +16,7 @@ import {
 
 
 const searchInput = ref("");
-const select = ref("");
+const select = ref("article");
 const router = useRouter();
 const loginStore = useLoginStore();
 
@@ -98,7 +98,7 @@ const selected=ref("")
         @keyup.enter="submitSearch"
       >
         <template #prepend>
-          <el-select v-model="select" placeholder="选择专栏" style="width: 100px">
+          <el-select v-model="select" placeholder="课件" style="width: 100px">
             <!-- <el-option label="视频" value="video" /> -->
             <el-option label="课件" value="article" />
             <el-option label="一线需求" value="question" />
@@ -114,7 +114,7 @@ const selected=ref("")
 
     <el-menu-item index="article" @click="handleRoute('article')" >课件</el-menu-item>
     <el-menu-item index="question" @click="handleRoute('question')" >一线需求</el-menu-item>
-    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我的需求</el-menu-item>
+    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我的</el-menu-item>
     
 
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->

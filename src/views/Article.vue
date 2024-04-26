@@ -287,8 +287,8 @@ async function sumbitInput(item){
             <p></p>
           </el-row>
 
-          <!-- 置顶度 -->
-          <el-row v-if="loginStore.userInfo.role == 'admin' &&route.query.type!='默认'&&route.query.type!='热门知识'">
+          <!-- 置顶度，现在放在管理界面修改 -->
+          <!-- <el-row v-if="loginStore.userInfo.role == 'admin' &&route.query.type!='默认'&&route.query.type!='热门知识'">
             <el-text>
               置顶度(0-100)：<el-input-number
                 v-model="item.article.top"
@@ -305,7 +305,7 @@ async function sumbitInput(item){
               <el-button @click="sumbitInput(item)">确认</el-button>
               <el-button @click="cancelInput(item)">返回</el-button>
             </div>
-          </el-row>
+          </el-row> -->
         </el-card>
       </el-row>
     </el-col>

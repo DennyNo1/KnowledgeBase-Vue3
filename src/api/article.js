@@ -1,5 +1,11 @@
 import request from "@/utils/request";
-export async function userArticleListService(page, pageSize, queryName, type) {
+export async function userArticleListService(
+  page,
+  pageSize,
+  queryName,
+  type,
+  uploaderId
+) {
   return await request({
     method: "GET",
     url: "/article/some",
@@ -8,6 +14,7 @@ export async function userArticleListService(page, pageSize, queryName, type) {
       queryName,
       pageSize,
       type,
+      uploaderId,
     },
   });
 }
@@ -23,7 +30,13 @@ export async function userOneArticleService(articleId, userId) {
   });
 }
 
-export async function useraddArticleService(uploaderId, type, title, content,top) {
+export async function useraddArticleService(
+  uploaderId,
+  type,
+  title,
+  content,
+  top
+) {
   return await request({
     method: "POST",
     url: "/article/add",
@@ -32,7 +45,7 @@ export async function useraddArticleService(uploaderId, type, title, content,top
       type,
       title,
       content,
-      top
+      top,
     },
   });
 }
@@ -49,7 +62,6 @@ export async function useraddAttachmentService(articleId, url, alt, href) {
     },
   });
 }
-
 
 export async function userModifyTopService(id, top) {
   return await request({

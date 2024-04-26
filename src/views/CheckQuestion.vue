@@ -66,7 +66,8 @@ const handleItemClick = async (checkFlag) => {
     });
     await getQuestionWithoutCommentList("1", "6", "默认", route.query.role);
     index.value = "comment";
-  } else {
+  }
+  if (checkFlag == 0 || checkFlag == 1) {
     await router.push({
       path: `/question/check`,
       query: { isChecked: checkFlag },
@@ -78,7 +79,10 @@ const handleItemClick = async (checkFlag) => {
       index.value = "nopass";
     }
   }
-  console.log(loginStore.userInfo.role)
+  if(checkFlag=='publish'){
+    
+  }
+  console.log(loginStore.userInfo.role);
 };
 
 function handleClick(item) {
@@ -94,13 +98,22 @@ const index = ref("comment");
 //切换页码
 async function handleCurrentChange(currentPage) {
   //获取当前页数
-  if(route.query.isChecked){
-    
-
-  await getQuestionList(currentPage, "6", null, route.query.isChecked, "默认");
-}else{
-  await getQuestionWithoutCommentList(currentPage, "6", "默认", route.query.role);
-}
+  if (route.query.isChecked) {
+    await getQuestionList(
+      currentPage,
+      "6",
+      null,
+      route.query.isChecked,
+      "默认"
+    );
+  } else {
+    await getQuestionWithoutCommentList(
+      currentPage,
+      "6",
+      "默认",
+      route.query.role
+    );
+  }
 }
 </script>
 
@@ -128,8 +141,14 @@ async function handleCurrentChange(currentPage) {
           <el-menu-item
             index="nopass"
             @click="handleItemClick(-1)"
-            v-if="loginStore.userInfo.role =='admin'"
+            v-if="loginStore.userInfo.role == 'admin'"
             >审核未通过</el-menu-item
+          >
+          <el-menu-item
+            index="publish"
+            @click="handleItemClick('publish')"
+            v-if="loginStore.userInfo.role == 'admin'"
+            >我发布的课件</el-menu-item
           >
         </el-menu>
       </el-card>

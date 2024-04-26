@@ -12,7 +12,7 @@ import { useLoginStore } from "@/store/login";
 import { useRoute, useRouter } from "vue-router";
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import {useraddArticleService,useraddAttachmentService} from "@/api/article"
-import { onBeforeUnmount, ref, shallowRef, onMounted } from "vue";
+import { onBeforeUnmount, ref, shallowRef, onMounted,watch } from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 
 import request from "@/utils/request";
@@ -86,10 +86,19 @@ const handleSubmit = async() => {
     });
     return;
   }
+  //对共享给其他岗位，做一个特殊处理
+  if(isShare)
+  {
+    article.value.type+='*';
+  }
+  
+
+
+
   article.value.uploaderId=loginStore.userInfo.id;
   // console.log(article.value.id)
   //将文章除附件外持久化。后端还会返回持久化的文章实体的id。
-  const response=await useraddArticleService(article.value.uploaderId,article.value.type,article.value.title,article.value.contentHtml);
+  const response=await useraddArticleService(article.value.uploaderId,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
   const articleId=response.data;
   //将附件持久化
   for (let i = 0; i < fileList.value.length; i++){
@@ -144,6 +153,16 @@ const rules = {
 
   type: [{ required: true, message: "课件的类型不可为空", trigger: "blur" }],
 };
+
+const isShare=ref(false)
+// 使用 watch 监听 isShare 变化
+watch(
+  () => isShare.value, // 需要监听的值，这里返回 ref 的 value
+  (newValue) => {
+    console.log('isShare 已更新为：', newValue);
+  },
+  { immediate: true } // 可选参数，如果设为 true，则在 watch 一开始就会触发回调一次
+);
 </script>
 <template>
 
@@ -158,10 +177,10 @@ const rules = {
         :rules="rules"
         ref="formRef"
       >
-        <el-form-item  label="类别"   prop="type">
-          <el-select placeholder="请选择课件类别" v-model="article.type">
-            <el-option lable="营业" value="营业"></el-option>
-            <el-option lable="装维" value="装维"></el-option>
+        <el-form-item  label="面向岗位"   prop="type" >
+          <el-select placeholder="请选择课件面向岗位" v-model="article.type" style="width: 86rem;" >
+            <el-option lable="营业" value="营业" key="1"></el-option>
+            <el-option lable="装维" value="装维" key="2"></el-option>
             <el-option lable="政企客户经理" value="政企客户经理"></el-option>
             <el-option lable="客经专员" value="客经专员"></el-option>
             <el-option lable="支局长" value="支局长"></el-option>
@@ -169,7 +188,7 @@ const rules = {
             <el-option lable="VIP客户经理" value="VIP客户经理"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item class="narrow-input" label="课件标题" size="large"  prop="title">
+        <el-form-item class="narrow-input" label="课件标题" size="large"  prop="title" >
           <el-input
             v-model="article.title"
             placeholder="请输入课件标题"
@@ -177,6 +196,8 @@ const rules = {
             :autosize="{ minRows: 1, maxRows: 2 }"
             maxlength="100"
             show-word-limit
+            style="width: 86rem;"
+            
           ></el-input>
         </el-form-item>
 
@@ -229,6 +250,9 @@ const rules = {
                 max="100"
               />
             </el-text>
+      </el-form-item>
+      <el-form-item>
+        <el-checkbox v-model="isShare" label="共享给其他岗位" size="large"  />
       </el-form-item>
 
         <el-form-item>

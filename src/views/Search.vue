@@ -12,7 +12,7 @@ import {
 } from "element-plus";
 
 const searchInput = ref("");
-const select = ref("");
+const select = ref("article");
 const router = useRouter();
 
 function submitSearch() {
@@ -52,7 +52,7 @@ function submitSearch() {
         <template #prepend>
           <el-select
             v-model="select"
-            placeholder="选择专栏"
+            placeholder="课件"
             style="width: 115px; height: auto"
             size="large"
           >
@@ -77,7 +77,7 @@ function submitSearch() {
         justify-content: center; /* 水平居中 */
         align-items: center; /* 垂直居中 */
       "
-      >网站使用指南:1、支持关键字搜索;2、课件浏览请点击右上角“课件”;3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
+      >网站使用指南:1、支持关键字搜索。默认搜索课件，点击更改为需求;2、课件浏览请点击右上角“课件”;3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
     >
   </el-row>
 </template>
