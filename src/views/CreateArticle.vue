@@ -11,9 +11,10 @@ import {
 import { useLoginStore } from "@/store/login";
 import { useRoute, useRouter } from "vue-router";
 import "@wangeditor/editor/dist/css/style.css"; // 引入 css
-import {useraddArticleService,useraddAttachmentService} from "@/api/article"
-import { onBeforeUnmount, ref, shallowRef, onMounted,watch } from "vue";
+import {useraddArticleService,useraddAttachmentService,userUpdateArticleService,userDeleteAllAttachmentService} from "@/api/article"
+import { onBeforeUnmount, ref, shallowRef, onMounted,watch,markRaw} from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import { userOneArticleService } from "@/api/article.js";
 
 import request from "@/utils/request";
 
@@ -34,6 +35,31 @@ const article = ref({
   top:"0"
 });
 const formRef = ref();
+const route = useRoute();
+onMounted(async () => {
+  if(route.query.articleId){
+    const response=await userOneArticleService(route.query.articleId)
+    console.log(response)
+    const articleEdit=response.data.articleListDTO.article;
+    article.value.title=articleEdit.title;
+    article.value.contentHtml=articleEdit.content
+    article.value.top=articleEdit.top
+    if(articleEdit.type.includes('*'))
+    {
+      isShare.value=true;
+      articleEdit.type = articleEdit.type.substring(0, articleEdit.type.length - 1);
+    }
+    article.value.type= articleEdit.type;
+    // 展示附件
+    
+    for (let i = 0; i < response.data.attachmentList.length; i++){
+
+     fileList.value.push(markRaw(response.data.attachmentList[i]))
+    }
+
+  
+  }
+});
 
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef();
@@ -67,6 +93,10 @@ const handleCreated = (editor) => {
   editorRef.value = editor; // 记录 editor 实例，重要！
 };
 
+
+
+
+//最终的提交文章
 const handleSubmit = async() => {
   // 查看工具栏key
   //     const editor = editorRef.value;
@@ -91,27 +121,30 @@ const handleSubmit = async() => {
   {
     article.value.type+='*';
   }
-  
-
-
 
   article.value.uploaderId=loginStore.userInfo.id;
   // console.log(article.value.id)
   //将文章除附件外持久化。后端还会返回持久化的文章实体的id。
   const response=await useraddArticleService(article.value.uploaderId,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
+  console.log(response)
+  //在后端，data已经被设置成aritle的id
   const articleId=response.data;
   //将附件持久化
   for (let i = 0; i < fileList.value.length; i++){
     //因为一次只传一个文件
-    const attachment=fileList.value[i].response[0].data
-    attachment.articleId=articleId;
-    await useraddAttachmentService(attachment.articleId,attachment.url,attachment.alt,attachment.href)
+    const attachment=fileList.value[i]
+    //因为用的是图片的附件接口，所以还是这样获取url
+    await useraddAttachmentService(articleId,attachment.response[0].data.url,attachment.name,attachment.uid)
   }
   goBack()
 
   
   
 };
+
+
+
+
 
 function goBack() {
   router.back();
@@ -138,9 +171,14 @@ function handleExceed(){
       type: "warning",
     });
 }
+//上传一个文件，就持久化一条记录。这个设计思想不想，因为此时文章还没创建，没有articleId，还是得创建文章后，把所有附件对象一起传过去。
+
+
 //通过uid遍历删除想要删除的上传文件
-function handleUploadRemove(uploadFile, uploadFiles){
+function handleUploadRemove(uploadFile){
+  console.log(uploadFile)
   for (let i = 0; i < fileList.value.length; i++) {
+    
   if (fileList.value[i].uid === uploadFile.uid) {
     fileList.value.splice(i, 1);
     break;
@@ -160,9 +198,56 @@ watch(
   () => isShare.value, // 需要监听的值，这里返回 ref 的 value
   (newValue) => {
     console.log('isShare 已更新为：', newValue);
+    console.log(article.value.type)
   },
   { immediate: true } // 可选参数，如果设为 true，则在 watch 一开始就会触发回调一次
 );
+watch(
+  ()=>fileList.value,
+  (newValue)=>{
+console.log(fileList.value)
+  },{ immediate: true }
+)
+
+
+//修改
+async function handleUpdate(){
+    //验证课件本身
+    await formRef.value.validate();
+
+
+
+      //对共享给其他岗位，做一个特殊处理
+  if(isShare)
+  {
+    article.value.type+='*';
+  }
+
+
+  await userUpdateArticleService(route.query.articleId,loginStore.userInfo.id,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
+  await userDeleteAllAttachmentService(route.query.articleId)
+  const articleId=route.query.articleId
+    //将附件持久化
+    for (let i = 0; i < fileList.value.length; i++){
+    //因为一次只传一个文件
+    const attachment=fileList.value[i]
+    //代表原有来的附件
+    if(attachment.articleId)
+    {
+      await useraddAttachmentService(attachment.articleId,attachment.url,attachment.name,attachment.uid)
+    }
+    //新上传的附件
+    else{
+      
+      await useraddAttachmentService(articleId,attachment.response[0].data.url,attachment.name,attachment.uid)
+  }
+  
+  }goBack()
+
+
+
+  
+}
 </script>
 <template>
 
@@ -228,8 +313,8 @@ watch(
             action=http://localhost:8088/article/upload-attachment
             :limit="5"
             :on-exceed="handleExceed"
-            
             :on-remove="handleUploadRemove"
+            :on-success="handleAfterUpload"
             
           >
             <el-button type="primary">点击上传</el-button>
@@ -256,7 +341,9 @@ watch(
       </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="handleSubmit" size="large">提交</el-button>
+          
+          <el-button type="primary" @click="handleUpdate" size="large" v-if="route.query.articleId">修改</el-button>
+          <el-button type="primary" @click="handleSubmit" size="large" v-else>提交</el-button>
           
           <el-button
          

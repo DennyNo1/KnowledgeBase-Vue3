@@ -114,7 +114,7 @@ const selected=ref("")
 
     <el-menu-item index="article" @click="handleRoute('article')" >课件</el-menu-item>
     <el-menu-item index="question" @click="handleRoute('question')" >一线需求</el-menu-item>
-    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我的</el-menu-item>
+    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我的需求</el-menu-item>
     
 
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->

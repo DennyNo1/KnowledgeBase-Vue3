@@ -30,6 +30,17 @@ export async function userOneArticleService(articleId, userId) {
   });
 }
 
+export async function userArticleLikeService(articleId, userId) {
+  return await request({
+    method: "GET",
+    url: "/like/article",
+    params: {
+      articleId,
+      userId,
+    },
+  });
+}
+
 export async function useraddArticleService(
   uploaderId,
   type,
@@ -50,26 +61,74 @@ export async function useraddArticleService(
   });
 }
 
-export async function useraddAttachmentService(articleId, url, alt, href) {
+export async function useraddAttachmentService(articleId, url, name, uid) {
   return await request({
     method: "POST",
     url: "/article/save_attachment",
     data: {
       articleId,
       url,
-      alt,
-      href,
+      name,
+      uid,
     },
   });
 }
 
-export async function userModifyTopService(id, top) {
+// export async function userModifyTopService(id, top) {
+//   return await request({
+//     method: "POST",
+//     url: "/article/top",
+//     data: {
+//       id,
+//       top,
+//     },
+//   });
+// }
+
+export async function userupdateAttachmentService(articleId, url, name, uid) {
   return await request({
     method: "POST",
-    url: "/article/top",
+    url: "/article/update_attachment",
+    data: [
+      {
+        articleId,
+        url,
+        name,
+        uid,
+      },
+    ]
+  });
+}
+export async function userUpdateArticleService(
+  id,
+ uploaderId,
+  type,
+  title,
+  content,
+  top
+) {
+  return await request({
+    method: "POST",
+    url: "/article/update",
     data: {
       id,
+      uploaderId,
+      type,
+      title,
+      content,
       top,
+    },
+  });
+}
+
+export async function userDeleteAllAttachmentService(
+articleId
+) {
+  return await request({
+    method: "POST",
+    url: "/article/delete_attachment",
+    data: {
+articleId
     },
   });
 }

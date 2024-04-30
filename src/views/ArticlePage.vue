@@ -8,7 +8,7 @@ import { storeToRefs } from "pinia";
 import { oneArticle } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRouter, useRoute } from "vue-router";
-import { userOneArticleService } from "@/api/article.js";
+import { userOneArticleService,userArticleLikeService } from "@/api/article.js";
 import{userLikeService} from '@/api/comment.js'
 import { ElMessage } from "element-plus";
 
@@ -50,11 +50,12 @@ onMounted(() => {
 // 如果登录状态变化，就重新获取文章区
 watch(
   () => loginStore.userInfo.id,
-  (newId, oldId) => {
+  async (newId, oldId) => {
     if (newId !== oldId) {
       //重新获取文章区
-      getArticle();
-      console.log('?')
+      const response=await userArticleLikeService(id, loginStore.userInfo.id);
+      like.value=response;
+      
     }
   },
   { immediate: true } // 设置immediate为true，表示在监听开始时立即执行一次
@@ -105,7 +106,7 @@ async function toggleLike(){
   }
   else{
     ElMessage({
-      message: "不可重复点赞文章",
+      message: "您已点赞过该课件",
       type: "primary",
     });
     return
@@ -193,7 +194,7 @@ async function toggleLike(){
       <div class="attachment" v-for="attachment in attachmentList">
         <span class="attachment-name"></span>
         <el-icon><Document /></el-icon>
-        <a :href="attachment.url" class="download-link">{{ attachment.alt }}</a>
+        <a :href="attachment.url" class="download-link">{{ attachment.name }}</a>
       </div>
     </div>
   </el-row>

@@ -4,8 +4,16 @@ import { ChatLineRound, Chicken, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
+import {
+  Check,
+  Delete,
+  Edit,
+  Message,
+  Search,
+  Star,
+} from "@element-plus/icons-vue";
 
-import { userArticleListService, userModifyTopService} from "@/api/article.js";
+import { userArticleListService, } from "@/api/article.js";
 import { useLoginStore } from "@/store/login";
 import { watch } from "vue";
 
@@ -108,31 +116,34 @@ function setHoverColor(color, index) {
 
 const originalInput = ref();
 
-
-function modifyTop(item){
+function modifyTop(item) {
   for (let i = 0; i < articleData.value.length; i++) {
-  if(articleData.value[i].isInputDisabled)
-  {
-    ElMessage({
-      message: "请完成上一次修改",
-      type: "warning",
-    });
-    return
+    if (articleData.value[i].isInputDisabled) {
+      ElMessage({
+        message: "请完成上一次修改",
+        type: "warning",
+      });
+      return;
+    }
   }
-}
 
   item.isInputDisabled = true;
-  
-  originalInput.value=item.article.top
+
+  originalInput.value = item.article.top;
 }
 function cancelInput(item) {
   item.isInputDisabled = false;
-  item.article.top=originalInput.value
-  
+  item.article.top = originalInput.value;
 }
-async function sumbitInput(item){
-  await userModifyTopService(item.article.id,item.article.top)
+async function sumbitInput(item) {
+  await userModifyTopService(item.article.id, item.article.top);
   getArticleList("1", "6", route.query.queryName, route.query.type);
+}
+async function handleEdit(articleId){
+  await router.push({
+      path: `/article/create`,
+      query: { articleId: articleId },
+    });
 
 }
 </script>
@@ -188,7 +199,7 @@ async function sumbitInput(item){
       size="large"
       class="upload-button"
       @click="handleUpload"
-      v-if="loginStore.userInfo.role=='admin'"
+      v-if="loginStore.userInfo.role == 'admin'"
     >
       采编课件<el-icon><ZoomIn /></el-icon>
     </el-button>
@@ -228,6 +239,16 @@ async function sumbitInput(item){
                 <!-- {{ articleData[index]}} -->
               </el-text>
             </el-col>
+            <el-button
+              type="primary"
+              :icon="Edit"
+              circle
+              @click="handleEdit(item.article.id)"
+              v-if="
+                loginStore.userInfo.role == 'admin' &&
+                item.article.uploaderId == loginStore.userInfo.id
+              "
+            />
           </el-row>
           <el-row style="margin-top: 10px; align-items: center">
             <el-col :span="6">
@@ -248,63 +269,31 @@ async function sumbitInput(item){
               <el-text>类型： {{ item.article.type }}</el-text>
             </el-col>
             <el-col :span="2">
-              <!--              <div class="flex-grid" />-->
-              <!-- 谁在乎评论数？ -->
-              <!-- <el-text>
-                <el-button text :icon="ChatLineRound">
-                  {{ item.article.commentCount }}
-                </el-button>
-                
-              </el-text> -->
-              <!-- <el-text>
-                <el-button text :icon="View">
-                  {{ item.article.clickCount }}
-                </el-button>
-               
-              </el-text>
-
-              <el-text>
-                <el-button text
-                  ><el-icon><Medal /></el-icon>
-                  {{ item.article.likeCount }}
-                </el-button>
-                
-              </el-text> -->
-            </el-col>
-
-            <el-col :span="2">
-              <!--              <div class="flex-grid" />-->
-              <!-- 谁在乎评论数？ -->
-              <!-- <el-text>
-                <el-button text :icon="ChatLineRound">
-                  {{ item.article.commentCount }}
-                </el-button>
-                
-              </el-text> -->
+              <el-tag
+                type="primary"
+                round
+                v-if="
+                  route.query.type != '默认' && route.query.type != '热门知识'
+                "
+              >
+                置顶度：{{ item.article.top }}
+              </el-tag>
+              <el-text v-if="route.query.type == '热门知识'"
+                ><el-icon><View /></el-icon>
+                {{ item.article.clickCount }}</el-text
+              >
             </el-col>
           </el-row>
-          <el-row>
-            <p></p>
-          </el-row>
 
-          <!-- 置顶度，现在放在管理界面修改 -->
-          <!-- <el-row v-if="loginStore.userInfo.role == 'admin' &&route.query.type!='默认'&&route.query.type!='热门知识'">
-            <el-text>
-              置顶度(0-100)：<el-input-number
-                v-model="item.article.top"
-                :disabled="!item.isInputDisabled"
-                min="0"
-                max="100"
-              />
-            </el-text>
-            <el-col :span="1"></el-col>
-            <el-button type="primary"  v-if="!item.isInputDisabled" @click="modifyTop(item)">
-              修改
-            </el-button>
-            <div v-else>
-              <el-button @click="sumbitInput(item)">确认</el-button>
-              <el-button @click="cancelInput(item)">返回</el-button>
-            </div>
+          <!-- <p></p>
+          
+          <el-row
+            v-if="
+              loginStore.userInfo.role == 'admin' &&
+              item.article.uploaderId == loginStore.userInfo.id
+            "
+          >
+            <el-button type="primary" @click="handleEdit">编辑</el-button>
           </el-row> -->
         </el-card>
       </el-row>

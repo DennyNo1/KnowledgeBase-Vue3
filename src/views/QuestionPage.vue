@@ -61,7 +61,7 @@ async function   toggleLike(commentId,liked) {
   }
   else{
     ElMessage({
-      message: "不可重复点赞回答",
+      message: "您已点赞过该回答",
       type: "primary",
     });
     return

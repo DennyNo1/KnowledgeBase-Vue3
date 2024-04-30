@@ -29,6 +29,7 @@ const getQuestionList = async (page, pageSize, queryName, isChecked, type) => {
   total.value = response.data.total;
 };
 
+//分配给某角色的问题
 const getQuestionWithoutCommentList = async (
   page,
   pageSize,
@@ -67,7 +68,7 @@ const handleItemClick = async (checkFlag) => {
     await getQuestionWithoutCommentList("1", "6", "默认", route.query.role);
     index.value = "comment";
   }
-  if (checkFlag == 0 || checkFlag == 1) {
+  if (checkFlag == 0 || checkFlag == -1) {
     await router.push({
       path: `/question/check`,
       query: { isChecked: checkFlag },
@@ -80,9 +81,12 @@ const handleItemClick = async (checkFlag) => {
     }
   }
   if(checkFlag=='publish'){
-    
+    await router.push({
+      path: `/article`,
+      
+    });
   }
-  console.log(loginStore.userInfo.role);
+  
 };
 
 function handleClick(item) {
@@ -144,12 +148,7 @@ async function handleCurrentChange(currentPage) {
             v-if="loginStore.userInfo.role == 'admin'"
             >审核未通过</el-menu-item
           >
-          <el-menu-item
-            index="publish"
-            @click="handleItemClick('publish')"
-            v-if="loginStore.userInfo.role == 'admin'"
-            >我发布的课件</el-menu-item
-          >
+
         </el-menu>
       </el-card>
     </el-col>
@@ -237,7 +236,7 @@ async function handleCurrentChange(currentPage) {
       layout="prev, pager, next"
       :total="total"
       @current-change="handleCurrentChange"
-      :page-size="6"
+      page-size="6"
     />
   </el-row>
 </template>
