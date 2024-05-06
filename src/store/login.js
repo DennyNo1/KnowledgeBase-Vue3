@@ -27,6 +27,7 @@ export const useLoginStore = defineStore('loginStore', () => {
         location: '',
         department: '',
     })
+    const jwt=ref('');
 
     // 创建一个响应式的isLoggedIn布尔变量，表示用户是否已登录，默认为false
     const isLoggedIn = ref(false)
@@ -38,5 +39,5 @@ export const useLoginStore = defineStore('loginStore', () => {
     const cookie = ref('')
 
     // 返回这个store需要暴露给外部使用的所有状态和属性
-    return { userInfo, isLoggedIn, isOpen, cookie }
+    return { userInfo, isLoggedIn, isOpen, cookie,jwt }
 });

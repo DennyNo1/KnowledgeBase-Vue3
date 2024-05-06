@@ -9,6 +9,7 @@ import CreateArticle from "@/views/CreateArticle.vue";
 
 
 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -53,11 +54,13 @@ const router = createRouter({
         // },
         {
           path:"/question/check",
-          component:CheckQuestion
+          component:CheckQuestion,
+          meta: { requiresAuth: true }
         },
         {
           path: "/question-page/check",
-          component:CheckQuestionPage
+          component:CheckQuestionPage,
+          meta: { requiresAuth: true }
         },
         {
           path:"/question/create",
@@ -65,7 +68,7 @@ const router = createRouter({
         },
         {
           path:"/article/create",
-          component:CreateArticle
+          component:CreateArticle, meta: { requiresAuth: true }
         }
 
 
@@ -86,6 +89,26 @@ const router = createRouter({
     //   component: () => import('../views/AboutView.vue')
     // }
   ],
+});
+
+import { useLoginStore } from "@/store/login.js";
+
+// 在router/index.js 或 router.ts 文件的末尾添加以下代码
+router.beforeEach(async (to, from, next) => {
+  const loginStore=useLoginStore()
+  // 检查目标路由是否需要认证
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  // 获取用户登录状态，这里假设你有一个方法可以从pinia或者全局状态中获取
+  
+
+  // 如果需要认证且用户未登录，则重定向到首页
+  if (loginStore.isLoggedIn&& requiresAuth  ) {
+    console.log("重定向")
+    next('/');
+  } else {
+    next(); // 其他情况正常跳转
+  }
 });
 
 export default router;

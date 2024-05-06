@@ -92,7 +92,8 @@ const login = async () => {
     //关闭窗口。数据应该不用清楚吧。
     loginStore.isOpen=false
     //存用户信息到pinia
-    loginStore.userInfo=res.data
+    loginStore.userInfo=res.data.userInfo
+    loginStore.jwt=res.data.jwt
     loginStore.isLoggedIn=true
     console.log( loginStore.userInfo)
     

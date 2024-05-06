@@ -16,6 +16,12 @@ const request = axios.create({
   // },
 });
 
+
+
+
+
+//以下目前没什么用了，权限控制不需要用到拦截器
+
 // 添加请求拦截器
 request.interceptors.request.use(
   function (config) {

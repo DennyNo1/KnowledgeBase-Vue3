@@ -116,6 +116,15 @@ const handleSubmit = async() => {
     });
     return;
   }
+  if(!loginStore.role=='admin')
+  {
+    ElMessage({
+      message: "您没有权限进行该操作",
+      type: "warning",
+    });
+    return;
+  }
+  
   //对共享给其他岗位，做一个特殊处理
   if(isShare)
   {
@@ -212,6 +221,16 @@ console.log(fileList.value)
 
 //修改
 async function handleUpdate(){
+  //禁止非管理员用户修改
+  if(!loginStore.role=='admin')
+  {
+    ElMessage({
+      message: "您没有权限进行该操作",
+      type: "warning",
+    });
+    return;
+  }
+  
     //验证课件本身
     await formRef.value.validate();
 

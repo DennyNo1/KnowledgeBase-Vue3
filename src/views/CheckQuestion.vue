@@ -133,7 +133,7 @@ async function handleCurrentChange(currentPage) {
           router
           :default-active="index"
         >
-          <el-menu-item index="comment" @click="handleItemClick('solve')"
+          <el-menu-item index="comment" @click="handleItemClick('solve')" v-if="loginStore.isLoggedIn&&loginStore.userInfo.role!='user'"
             >待回复</el-menu-item
           >
           <el-menu-item
