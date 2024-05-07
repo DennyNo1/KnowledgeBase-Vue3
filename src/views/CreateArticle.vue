@@ -161,13 +161,13 @@ function goBack() {
 
 // 表单数据域名设置为image
 editorConfig.MENU_CONF["uploadImage"] = {
-  server: "http://localhost:8088/article/upload-image",
+  server: "http://134.107.67.26:8088/article/upload-image",
   fieldName: "image",
 };
 
 
 editorConfig.MENU_CONF['uploadVideo'] = {
-     server: "http://localhost:8088/article/upload-video",
+     server: "http://134.107.67.26:8088/article/upload-video",
      fieldName: "video",
 }
 //整个上传模块的附件数据。这个里面已经保存着每次的response消息。
@@ -329,7 +329,7 @@ async function handleUpdate(){
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
-            action=http://localhost:8088/article/upload-attachment
+            action=http://134.107.67.26:8088/article/upload-attachment
             :limit="5"
             :on-exceed="handleExceed"
             :on-remove="handleUploadRemove"

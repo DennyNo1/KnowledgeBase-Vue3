@@ -6,7 +6,7 @@ import { useLoginStore } from "@/store/login.js";
 
 const request = axios.create({
   // 开发环境
-  baseURL: "http://localhost:8088",
+  baseURL: "http://134.107.67.26:8088",
 
   //生产环境
 
@@ -16,19 +16,17 @@ const request = axios.create({
   // },
 });
 
-
-
-
-
 //以下目前没什么用了，权限控制不需要用到拦截器
 
 // 添加请求拦截器
 request.interceptors.request.use(
   function (config) {
+    const loginStore = useLoginStore();
     // 在发送请求之前做些什么
     // 常用于判断是否为登录状态
-    if (Session.get("token")) {
-      config.headers["Authorization"] = `${Session.get("token")}`;
+
+    if (loginStore.jwt) {
+      config.headers.Authorization = `Bearer ${loginStore.jwt}`;
     }
     return config;
   },
