@@ -9,33 +9,39 @@ import {
   SwitchButton,
   CaretBottom,
 } from "@element-plus/icons-vue";
-import avatar from '@/assets/default.png'
+import avatar from "@/assets/default.png";
 import { useLoginStore } from "@/store/login.js";
-const loginStore=useLoginStore()
+const loginStore = useLoginStore();
 </script>
 <template>
-  <el-dropdown placement="bottom-end" >
+  <el-dropdown placement="bottom-end">
     <!-- 展示给用户，默认看到的 -->
-    <span class="el-dropdown__box" style="display: flex; align-items: center;">
-      <el-avatar :src="avatar" size="small" style="margin-right: 10px;"></el-avatar>
-      <el-text style="display: inline-block;">{{loginStore.userInfo.nickName}}</el-text>
+    <span class="el-dropdown__box" style="display: flex; align-items: center">
+      <el-avatar
+        :src="avatar"
+        size="small"
+        style="margin-right: 10px"
+      ></el-avatar>
+      <el-text style="display: inline-block">{{
+        loginStore.userInfo.nickName
+      }}</el-text>
     </span>
 
     <!-- 折叠的下拉部分 -->
     <template #dropdown>
       <el-dropdown-menu class="custom-dropdown-menu">
-        <el-dropdown-item 
-          class="custom-dropdown-item"
-          >市区公司：{{loginStore.userInfo.location}}</el-dropdown-item
+        <el-dropdown-item class="custom-dropdown-item"
+          >市区公司：{{ loginStore.userInfo.location }}</el-dropdown-item
         >
-        <el-dropdown-item 
-          class="custom-dropdown-item"
-          >部门：{{loginStore.userInfo.department}}</el-dropdown-item
+        <el-dropdown-item class="custom-dropdown-item"
+          >部门：{{ loginStore.userInfo.department }}</el-dropdown-item
         >
 
-        <el-dropdown-item 
-          class="custom-dropdown-item"
-          >权限：{{loginStore.userInfo.role=='admin'?'管理员':'普通用户'}}</el-dropdown-item
+        <el-dropdown-item class="custom-dropdown-item"
+          >身份：
+          <div v-if="loginStore.userInfo.role === 'admin'">管理员</div>
+          <div v-else-if="loginStore.userInfo.role === 'user'">普通用户</div>
+          <div v-else>专家</div></el-dropdown-item
         >
       </el-dropdown-menu>
     </template>

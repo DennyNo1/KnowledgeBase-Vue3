@@ -15,7 +15,7 @@ import { useRoute, useRouter } from "vue-router";
 import type { Action } from "element-plus";
 
 const router = useRouter();
-const questionAddService = userQuestionAddService();
+
 const loginStore = useLoginStore();
 const question = ref({
   title: "",
@@ -38,7 +38,8 @@ const handleSubmit = async () => {
   const res = await userQuestionAddService(
     loginStore.userInfo.id,
     question.value.title,
-    question.value.description
+    question.value.description,
+    question.value.type
   );
 
   // 清空表单

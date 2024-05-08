@@ -124,9 +124,9 @@ const handleSubmit = async() => {
     });
     return;
   }
-  
+ 
   //对共享给其他岗位，做一个特殊处理
-  if(isShare)
+  if(isShare.value)
   {
     article.value.type+='*';
   }
@@ -134,6 +134,7 @@ const handleSubmit = async() => {
   article.value.uploaderId=loginStore.userInfo.id;
   // console.log(article.value.id)
   //将文章除附件外持久化。后端还会返回持久化的文章实体的id。
+  
   const response=await useraddArticleService(article.value.uploaderId,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
   console.log(response)
   //在后端，data已经被设置成aritle的id
@@ -220,7 +221,8 @@ console.log(fileList.value)
 
 
 //修改
-async function handleUpdate(){
+async function handleUpdate()
+{
   //禁止非管理员用户修改
   if(!loginStore.role=='admin')
   {
@@ -237,7 +239,7 @@ async function handleUpdate(){
 
 
       //对共享给其他岗位，做一个特殊处理
-  if(isShare)
+  if(isShare.value)
   {
     article.value.type+='*';
   }
