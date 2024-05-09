@@ -40,20 +40,21 @@ function submitSearch() {
     <el-row class="sub-container">
       <el-text>欢迎使用中国电信知识库</el-text>
     </el-row>
-    
-    <el-row style="margin-top: 0rem; display: flex">
+
+    <el-row style="margin-top: 0rem; display: flex;" >
       <el-input
         v-model="searchInput"
         placeholder="请输入想要搜索的内容"
         class="input-with-select"
         size="large"
         @keyup.enter="submitSearch"
+
       >
         <template #prepend>
           <el-select
             v-model="select"
             placeholder="课件"
-            style="width: 115px; height: auto"
+            style="width: 115px; "
             size="large"
           >
             <!-- <el-option label="视频" value="video" /> -->
@@ -67,17 +68,20 @@ function submitSearch() {
       </el-input>
     </el-row>
   </el-row>
-  <el-row>
+
+  <el-row style="margin-top: 0rem">
     <el-text
       style="
-        font-size: small;
+        font-size: 1.5rem;
+        color: #409eff;
         width: 100%;
         height: 80%;
         display: flex;
         justify-content: center; /* 水平居中 */
         align-items: center; /* 垂直居中 */
+        margin-top: 2rem
       "
-      >网站使用指南:1、支持关键字搜索。默认搜索课件，点击更改为需求;2、课件浏览请点击右上角“课件”;3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
+      >网站使用指南:1、支持关键字搜索;2、课件浏览请点击右上角“课件”;3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
     >
   </el-row>
 </template>
@@ -101,7 +105,6 @@ function submitSearch() {
   display: flex;
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
-  
 }
 
 .input-with-select {

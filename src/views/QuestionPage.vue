@@ -7,7 +7,7 @@ import RichText from "@/components/RichText.vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useLoginStore } from "@/store/login.js";
-import avatar from '@/assets/default.png'
+import avatar from "@/assets/default.png";
 import dayjs from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 import { useRouter } from "vue-router";
@@ -18,10 +18,9 @@ import {
   useraddReplyService,
 } from "@/api/comment.js";
 import { ElMessage } from "element-plus";
-import { watch } from 'vue'
-import{userLikeService} from '@/api/comment.js'
-const loginStore=useLoginStore()
-
+import { watch } from "vue";
+import { userLikeService } from "@/api/comment.js";
+const loginStore = useLoginStore();
 
 const router = useRouter();
 
@@ -41,9 +40,9 @@ function cancel(item) {
 }
 
 //点赞回答
-async function   toggleLike(commentId,liked) {
-   console.log(commentId);
-   console.log(liked);
+async function toggleLike(commentId, liked) {
+  console.log(commentId);
+  console.log(liked);
 
   //先判断是否登录
   if (!loginStore.isLoggedIn) {
@@ -54,29 +53,17 @@ async function   toggleLike(commentId,liked) {
     return;
   }
   //如果从没点过赞
-  if(!liked)
-  {
-    await userLikeService(loginStore.userInfo.id,"comment",commentId)
-    await getCommentsSection()
-  }
-  else{
+  if (!liked) {
+    await userLikeService(loginStore.userInfo.id, "comment", commentId);
+    await getCommentsSection();
+  } else {
     ElMessage({
       message: "您已点赞过该回答",
       type: "primary",
     });
-    return
+    return;
   }
 }
-
-  
-
-
-
-
-
-
-
-
 
 // function toggleLike2(item) {
 //   // console.log(item);
@@ -128,7 +115,11 @@ const getQuestion = async () => {
 const commentData = ref({});
 const getCommentsSection = async () => {
   try {
-    const response = await userCommentAndReplyService("question", id,loginStore.userInfo.id);
+    const response = await userCommentAndReplyService(
+      "question",
+      id,
+      loginStore.userInfo.id
+    );
     console.log(response);
     commentData.value = response.data;
   } catch (error) {
@@ -137,17 +128,19 @@ const getCommentsSection = async () => {
 };
 
 //提交回答或回复
-async function commit(commentId)
-{
+async function commit(commentId) {
   //先做回复权限的判断
-  if (question.value.assignTo!=loginStore.userInfo.role&&loginStore.userInfo.role!='admin') {
+  if (
+    question.value.assignTo != loginStore.userInfo.role &&
+    loginStore.userInfo.role != "admin"
+  ) {
     // console.log(question.value)
     // console.log(loginStore.userInfo.role)
     ElMessage({
-      message: "管理员并没有将这个问题派单给您，请联系管理员后再进行操作",
+      message: "管理员并没有将这个需求派单给您，请联系管理员后再进行操作",
       type: "warning",
     });
-    return
+    return;
   } else {
     //不能提交空评论
     if (valueHtml.value == "") {
@@ -165,7 +158,6 @@ async function commit(commentId)
           id,
           loginStore.userInfo.id,
           valueHtml.value
-
         );
       } else {
         useraddReplyService(
@@ -174,8 +166,6 @@ async function commit(commentId)
           commentId,
           null
         );
-
-
       }
 
       await getCommentsSection();
@@ -189,14 +179,13 @@ watch(
   () => loginStore.userInfo.id,
   (newId, oldId) => {
     if (newId !== oldId) {
-     console.log(loginStore.userInfo.id)
-     //重新获取以下评论区的页面
-     getCommentsSection();
+      console.log(loginStore.userInfo.id);
+      //重新获取以下评论区的页面
+      getCommentsSection();
     }
   },
   { immediate: true } // 设置immediate为true，表示在监听开始时立即执行一次
 );
-
 
 //
 // function test() {
@@ -217,17 +206,21 @@ watch(
 //     return Math.floor(duration.asDays()) + " 天前";
 //   }
 // }
+
+const dialogVisible = ref(false)
+function returnQuestion(){
+  dialogVisible = false
+}
 </script>
 
 <template>
-  <el-row style="margin-bottom: 1rem;">
+  <el-row style="margin-bottom: 1rem">
     <el-col :span="4" />
 
     <el-col :span="16">
-
-      <h2 style="font-size: 2rem;margin-bottom: 0%">{{ question.title }}</h2>
+      <h2 style="font-size: 2rem; margin-bottom: 0%">{{ question.title }}</h2>
       <br />
-      <el-descriptions title="问题信息" column="6">
+      <el-descriptions title="需求信息" column="6">
         <el-descriptions-item>
           <el-icon><View /></el-icon>&nbsp&nbsp{{ question.clickCount }}
         </el-descriptions-item>
@@ -249,21 +242,19 @@ watch(
           {{ question.date }}
         </el-descriptions-item>
       </el-descriptions>
-
-
     </el-col>
     <el-col :span="4" />
   </el-row>
 
-  <el-row style="margin-bottom: 0%;">
+  <el-row style="margin-bottom: 0%">
     <el-col :span="4"></el-col>
     <el-col :span="16">
-      <el-descriptions title="问题描述"> </el-descriptions>
+      <el-descriptions title="需求描述"> </el-descriptions>
     </el-col>
     <el-col :span="4"></el-col>
   </el-row>
 
-  <el-row >
+  <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
       <el-text class="article" size="large"> {{ question.content }}</el-text>
@@ -272,6 +263,27 @@ watch(
     <el-col :span="4"></el-col>
   </el-row>
 
+  <el-row>
+    <el-col :span="4"></el-col>
+    <el-button type="warning" @click="dialogVisible = true">无法解决，请管理员重新派单</el-button>
+
+    <el-dialog
+    v-model="dialogVisible"
+    title="提示"
+    width="500"
+    :before-close="handleClose"
+  >
+    <span>您确认让管理员重新派单吗？</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
+  </el-row>
 
   <el-row>
     <el-col :span="4"></el-col>
@@ -290,8 +302,8 @@ watch(
   </el-row> -->
 
   <!-- 添加回复框，游客和普通用户是无法看到回复框的 -->
-  <el-row v-if="loginStore.isLoggedIn&&loginStore.userInfo.role!='user'">
-    <el-col :span="4" ></el-col>
+  <el-row v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'">
+    <el-col :span="4"></el-col>
     <el-col :span="16">
       <!-- 放置富文本组件 -->
       <!-- <RichText
@@ -313,7 +325,7 @@ watch(
     <el-col :span="4"></el-col>
   </el-row>
 
-  <el-row v-if="loginStore.isLoggedIn&&loginStore.userInfo.role!='user'">
+  <el-row v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'">
     <el-col :span="4"></el-col>
     <el-col :span="16">
       <el-row>
@@ -324,14 +336,6 @@ watch(
     </el-col>
     <el-col :span="4"></el-col>
   </el-row>
-
-
-
-
-
-
-
-  
 
   <!-- 回复区 -->
   <el-row>
@@ -348,22 +352,24 @@ watch(
               <!-- 都先采用默认头像 -->
               <el-avatar class="" :size="32" :src="avatar" />
               <span class="text-large"> {{ t.user.nickName }} </span>
-<!--               
+              <!--               
               <span
                 class="text-small"
                 style="color: var(--el-text-color-regular)"
               >
               </span> -->
-              <span v-if="t.user.role=='admin'">慧问工作室</span>
-              <span v-if="t.user.role=='business'">营业专家</span>
-              <span v-if="t.user.role=='maintain'">装维专家</span>
-              <span v-if="t.user.role=='govermentManager'">政企客户经理专家</span>
-              <span v-if="t.user.role=='customerManager'">客经专员专家</span>
-              <span v-if="t.user.role=='director'">支局长专家</span>
-              <span v-if="t.user.role=='areaManager'">片区长专家</span>
-              <span v-if="t.user.role=='VIPManager'">VIP客户经理专家</span>
-              
-              <span>{{t.user.phone}}</span>
+              <span v-if="t.user.role == 'admin'">慧问工作室</span>
+              <span v-if="t.user.role == 'business'">营业专家</span>
+              <span v-if="t.user.role == 'maintain'">装维专家</span>
+              <span v-if="t.user.role == 'govermentManager'"
+                >政企客户经理专家</span
+              >
+              <span v-if="t.user.role == 'customerManager'">客经专员专家</span>
+              <span v-if="t.user.role == 'director'">支局长专家</span>
+              <span v-if="t.user.role == 'areaManager'">片区长专家</span>
+              <span v-if="t.user.role == 'VIPManager'">VIP客户经理专家</span>
+
+              <span>{{ t.user.phone }}</span>
               <el-tag v-if="t.user.tag">{{ t.user.tag }}</el-tag>
               <div class="flex-grow" />
               <!-- <el-button type="primary" text @click="handleRepl(t)"
@@ -461,8 +467,6 @@ watch(
     </el-col>
     <el-col :span="4"></el-col>
   </el-row>
-
-  
 </template>
 
 <style scoped>
@@ -485,7 +489,7 @@ watch(
   display: flex;
   /* align-items: center;
   margin-bottom: 10px; */
-  align-items: flex-end; 
+  align-items: flex-end;
 }
 
 /* .replyFooter{

@@ -162,13 +162,13 @@ function goBack() {
 
 // 表单数据域名设置为image
 editorConfig.MENU_CONF["uploadImage"] = {
-  server: "http://134.107.67.26:8088/article/upload-image",
+  server: "http://localhost:8088/article/upload-image",
   fieldName: "image",
 };
 
 
 editorConfig.MENU_CONF['uploadVideo'] = {
-     server: "http://134.107.67.26:8088/article/upload-video",
+     server: "http://localhost:8088/article/upload-video",
      fieldName: "video",
 }
 //整个上传模块的附件数据。这个里面已经保存着每次的response消息。
@@ -331,7 +331,7 @@ async function handleUpdate()
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
-            action=http://134.107.67.26:8088/article/upload-attachment
+            action=http://localhost:8088/article/upload-attachment
             :limit="5"
             :on-exceed="handleExceed"
             :on-remove="handleUploadRemove"
@@ -363,7 +363,7 @@ async function handleUpdate()
 
         <el-form-item>
           
-          <el-button type="primary" @click="handleUpdate" size="large" v-if="route.query.articleId">修改</el-button>
+          <el-button type="primary" @click="handleUpdate" size="large" v-if="route.query.articleId">确认修改</el-button>
           <el-button type="primary" @click="handleSubmit" size="large" v-else>提交</el-button>
           
           <el-button

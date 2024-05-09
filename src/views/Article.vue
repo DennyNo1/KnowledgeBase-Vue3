@@ -199,7 +199,7 @@ async function handleEdit(articleId){
       size="large"
       class="upload-button"
       @click="handleUpload"
-      v-if="loginStore.userInfo.role == 'admin'"
+      v-if="loginStore.isLoggedIn &&loginStore.userInfo.role!='user'"
     >
       采编课件<el-icon><ZoomIn /></el-icon>
     </el-button>
@@ -245,7 +245,7 @@ async function handleEdit(articleId){
               circle
               @click="handleEdit(item.article.id)"
               v-if="
-                loginStore.userInfo.role == 'admin' &&
+                loginStore.userInfo.role == 'admin' ||
                 item.article.uploaderId == loginStore.userInfo.id
               "
             />

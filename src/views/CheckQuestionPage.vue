@@ -86,7 +86,7 @@ const handleConfirm=async ()=>{
     <el-col :span="16">
       <h2 style="font-size: 2rem; margin-bottom: 0%">{{ question.title }}</h2>
       <br />
-      <el-descriptions title="问题信息" column="5">
+      <el-descriptions title="需求信息" column="5">
         <el-descriptions-item>
           <el-icon><View /></el-icon>&nbsp&nbsp{{ question.clickCount }}
         </el-descriptions-item>
@@ -112,7 +112,7 @@ const handleConfirm=async ()=>{
   <el-row style="margin-bottom: 0%">
     <el-col :span="4"></el-col>
     <el-col :span="16">
-      <el-descriptions title="问题描述"> </el-descriptions>
+      <el-descriptions title="需求描述"> </el-descriptions>
     </el-col>
     <el-col :span="4"></el-col>
   </el-row>
