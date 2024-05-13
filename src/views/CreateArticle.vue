@@ -14,7 +14,7 @@ import "@wangeditor/editor/dist/css/style.css"; // 引入 css
 import {useraddArticleService,useraddAttachmentService,userUpdateArticleService,userDeleteAllAttachmentService} from "@/api/article"
 import { onBeforeUnmount, ref, shallowRef, onMounted,watch,markRaw} from "vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-import { userOneArticleService } from "@/api/article.js";
+import { userOneArticleService,userDeleteArticleService } from "@/api/article.js";
 
 import request from "@/utils/request";
 
@@ -245,7 +245,7 @@ async function handleUpdate()
   }
 
 
-  await userUpdateArticleService(route.query.articleId,loginStore.userInfo.id,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
+  const response=await userUpdateArticleService(route.query.articleId,loginStore.userInfo.id,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
   await userDeleteAllAttachmentService(route.query.articleId)
   const articleId=route.query.articleId
     //将附件持久化
@@ -265,9 +265,43 @@ async function handleUpdate()
   
   }goBack()
 
+  if (response.code==200) {
+    ElMessage({
+      message: response.msg,
+      type: "success",
+    });
+    return;
+  }
+  else{
+    ElMessage({
+      message: response.msg,
+      type: "error",
+    });
+  }
+
 
 
   
+}
+const dialogVisible = ref(false)
+async function handleDelete(){
+  dialogVisible.value=false;
+  const response=await userDeleteArticleService(route.query.articleId)
+  console.log(response)
+  goBack()
+  if (response.code==200) {
+    ElMessage({
+      message: response.msg,
+      type: "success",
+    });
+    return;
+  }
+  else{
+    ElMessage({
+      message: response.msg,
+      type: "error",
+    });
+  }
 }
 </script>
 <template>
@@ -367,14 +401,29 @@ async function handleUpdate()
           <el-button type="primary" @click="handleSubmit" size="large" v-else>提交</el-button>
           
           <el-button
-         
          @click="goBack"
          size="large"
-         
          >返回</el-button
        >
+       <el-button type="danger" size="large" @click="dialogVisible = true" v-if="route.query.articleId">删除课件</el-button>
           
         </el-form-item>
+        <el-dialog
+    v-model="dialogVisible"
+    title="提示"
+    width="500"
+    
+  >
+    <span>确认删除该课件？</span>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="danger" @click="handleDelete">
+          确认删除
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
         
 
         </el-form>

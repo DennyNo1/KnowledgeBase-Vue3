@@ -1,9 +1,6 @@
 <script setup>
-import {
-  userQuestionListService,
-  userQuestionWithoutCommentListService,
-} from "@/api/question.js";
-import { onMounted, ref } from "vue";
+import { userQuestionListService } from "@/api/question.js";
+import { onMounted, ref,watch } from "vue";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { useLoginStore } from "@/store/login";
@@ -16,58 +13,70 @@ const questionData = ref();
 //符合条件的问题总数
 const total = ref();
 
+//这个是获取待审核和审核未通过的问题列表的函数
 const getQuestionList = async (page, pageSize, queryName, isChecked, type) => {
   const response = await userQuestionListService(
     page,
     pageSize,
     queryName,
-    isChecked,
-    type
+    type,
+    isChecked
   );
-  console.log(response.data);
+
   questionData.value = response.data.records;
   total.value = response.data.total;
 };
 
-//分配给某角色的问题
-const getQuestionWithoutCommentList = async (
+//这个是获取某个权限下，未回复和已回复问题的问题列表函数
+const getQuestionListManaged = async (
   page,
   pageSize,
   type,
-  assignTo
+  assignTo,
+  isSolved
 ) => {
-  const response = await userQuestionWithoutCommentListService(
+  const response = await userQuestionListService(
     page,
     pageSize,
+    null,
     type,
+    "1",
+    isSolved,
     assignTo
   );
   questionData.value = response.data.records;
   total.value = response.data.total;
+  if(route.query.isSolved==0) numOfWait.value=response.data.total;
+  
 };
 
-onMounted(() => {
-  // 提供默认值
-  // console.log('3')
-  // if (route.query.isChecked) {
-  //   getQuestionList("1", "6", null, route.query.isChecked, "默认");
-  //   console.log('1')
-  // } else {
+onMounted(async () => {
+  //进入默认选择待回复
+  await getQuestionListManaged("1", "6", "默认", route.query.role, "0");
+  
+  
 
-  //因为专家和慧问都需要回复问题，所以第一个显示
-  console.log("2");
-  getQuestionWithoutCommentList("1", "6", "默认", route.query.role);
+
 });
 
 const handleItemClick = async (checkFlag) => {
-  if (checkFlag == "solve") {
+  if (checkFlag == "waitForReply") {
     await router.push({
       path: `/question/check`,
       query: { role: loginStore.userInfo.role, isSolved: 0 },
     });
-    await getQuestionWithoutCommentList("1", "6", "默认", route.query.role);
-    index.value = "comment";
+    await getQuestionListManaged("1", "6", "默认", route.query.role, "0");
+    index.value = "waitForReply";
   }
+  if (checkFlag == "alreadyReply") {
+    await router.push({
+      path: `/question/check`,
+      query: { role: loginStore.userInfo.role, isSolved: 1 },
+    });
+    await getQuestionListManaged("1", "6", "默认", route.query.role, "1");
+    index.value = "alreadyReply";
+  }
+
   if (checkFlag == 0 || checkFlag == -1) {
     await router.push({
       path: `/question/check`,
@@ -80,15 +89,9 @@ const handleItemClick = async (checkFlag) => {
       index.value = "nopass";
     }
   }
-  if(checkFlag=='publish'){
-    await router.push({
-      path: `/article`,
-      
-    });
-  }
-  
 };
 
+//点击单个问题
 function handleClick(item) {
   //如果URL中有isChecked，那就push到审核的路由。否则就是普通的回答页面。
   if (route.query.isChecked) {
@@ -97,7 +100,7 @@ function handleClick(item) {
     router.push(`/question-page?id=${item.question.id}`);
   }
 }
-const index = ref("comment");
+const index = ref("waitForReply");
 
 //切换页码
 async function handleCurrentChange(currentPage) {
@@ -111,14 +114,20 @@ async function handleCurrentChange(currentPage) {
       "默认"
     );
   } else {
-    await getQuestionWithoutCommentList(
+    await getQuestionListManaged(
       currentPage,
       "6",
       "默认",
-      route.query.role
+      route.query.role,
+      route.query.isSolved
     );
   }
 }
+//给待回复数量
+const numOfWait=ref("")
+
+//监控store里的用户id
+
 </script>
 
 <template>
@@ -133,9 +142,22 @@ async function handleCurrentChange(currentPage) {
           router
           :default-active="index"
         >
-          <el-menu-item index="comment" @click="handleItemClick('solve')" v-if="loginStore.isLoggedIn&&loginStore.userInfo.role!='user'"
-            >待回复</el-menu-item
+          <el-menu-item
+            index="waitForReply"
+            @click="handleItemClick('waitForReply')"
+            v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
+            >待回复
+            <el-badge :value="numOfWait" ></el-badge>
+              
+            
+          </el-menu-item>
+          <el-menu-item
+            index="alreadyReply"
+            @click="handleItemClick('alreadyReply')"
+            v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
+            >已回复</el-menu-item
           >
+
           <el-menu-item
             index="check"
             @click="handleItemClick(0)"
@@ -148,7 +170,6 @@ async function handleCurrentChange(currentPage) {
             v-if="loginStore.userInfo.role == 'admin'"
             >审核未通过</el-menu-item
           >
-
         </el-menu>
       </el-card>
     </el-col>
@@ -208,12 +229,16 @@ async function handleCurrentChange(currentPage) {
                 <el-tag
                   :type="item.question.isChecked == 0 ? 'warning' : 'info'"
                   round
+                  size="large"
                 >
                   {{ item.question.isChecked == 0 ? "待审核" : "未通过" }}
                 </el-tag>
               </el-text>
               <el-text v-else>
-                <el-tag type="warning" round> 待回复 </el-tag>
+                <el-tag type="warning" round v-if="route.query.isSolved == 0">
+                  待回复
+                </el-tag>
+                <el-tag type="success" round v-else> 已回复 </el-tag>
               </el-text>
             </el-col>
           </el-row>

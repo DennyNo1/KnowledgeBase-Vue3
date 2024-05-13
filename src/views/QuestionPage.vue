@@ -11,7 +11,7 @@ import avatar from "@/assets/default.png";
 import dayjs from "dayjs";
 import * as duration from "dayjs/plugin/duration";
 import { useRouter } from "vue-router";
-import { userOneQuestionService } from "@/api/question.js";
+import { userOneQuestionService, userCheckService } from "@/api/question.js";
 import {
   userCommentAndReplyService,
   useraddCommentService,
@@ -95,7 +95,7 @@ const id = route.query.id;
 const store = useLoginStore();
 const { userInfo } = storeToRefs(store);
 
-import { userQuestionListService } from "@/api/question";
+
 // 获取问题基本的数据
 const question = ref({});
 const user = ref({});
@@ -141,11 +141,13 @@ async function commit(commentId) {
       type: "warning",
     });
     return;
-  } else {
+  }
+  //权限通过了
+  else {
     //不能提交空评论
     if (valueHtml.value == "") {
       ElMessage({
-        message: "请输入内容",
+        message: "请输入回复内容",
         type: "warning",
       });
     }
@@ -153,23 +155,41 @@ async function commit(commentId) {
     else {
       //异步操作切记加入await
       if (commentId == null) {
-        await useraddCommentService(
+        const response = await useraddCommentService(
           "question",
           id,
           loginStore.userInfo.id,
           valueHtml.value
         );
+
+        if (response.code == 200) {
+        ElMessage({
+          message: response.msg,
+          type: "success",
+        });
+        
       } else {
-        useraddReplyService(
-          valueHtml.value,
-          await loginStore.userInfo.id,
-          commentId,
-          null
-        );
+        ElMessage({
+          message: response.msg,
+          type: "error",
+        });
       }
+      }
+      //目前这个回复评论的功能并不设计在问题模块中
+      // else {
+      //   useraddReplyService(
+      //     valueHtml.value,
+      //     await loginStore.userInfo.id,
+      //     commentId,
+      //     null
+      //   );
+      // }
 
       await getCommentsSection();
       valueHtml.value = "";
+
+
+      
     }
   }
 }
@@ -207,9 +227,12 @@ watch(
 //   }
 // }
 
-const dialogVisible = ref(false)
-function returnQuestion(){
-  dialogVisible = false
+//处理无法派单的函数
+const dialogVisible = ref(false);
+async function returnQuestion() {
+  dialogVisible.value = false;
+  await userCheckService(question.value.id, 0);
+  goBack();
 }
 </script>
 
@@ -263,26 +286,31 @@ function returnQuestion(){
     <el-col :span="4"></el-col>
   </el-row>
 
-  <el-row>
+  <!-- 没人回答并且问题是分配给这个专家 -->
+  <el-row
+    v-if="
+      commentData.length == 0 && question.assignTo == loginStore.userInfo.role
+    "
+  >
     <el-col :span="4"></el-col>
-    <el-button type="warning" @click="dialogVisible = true">无法解决，请管理员重新派单</el-button>
+    <el-button type="warning" @click="dialogVisible = true" size="large"
+      >无法解决，请管理员重新派单</el-button
+    >
 
     <el-dialog
-    v-model="dialogVisible"
-    title="提示"
-    width="500"
-    :before-close="handleClose"
-  >
-    <span>您确认让管理员重新派单吗？</span>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="">
-          确认
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
+      v-model="dialogVisible"
+      title="提示"
+      width="500"
+      :before-close="handleClose"
+    >
+      <span>您确认让管理员重新派单吗？</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="returnQuestion"> 确认 </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </el-row>
 
   <el-row>
@@ -436,14 +464,9 @@ function returnQuestion(){
                 </el-row>
               </div>
             </div> -->
-            <!-- 评论框 -->
-            <div v-if="t.openText" style="margin-top: 20px">
-              <!-- <RichText
-                v-model="valueHtml"
-                :editor="editorRef"
-                :defaultConfig="toolbarConfig"
-                :mode="mode"
-              /> -->
+            <!-- 评论框。问题的回复区目前不需要评论。 -->
+            <!-- <div v-if="t.openText" style="margin-top: 20px">
+
               <el-input
                 type="textarea"
                 placeholder="请输入你的回复..."
@@ -455,12 +478,12 @@ function returnQuestion(){
               ></el-input>
               <el-row style="margin-top: 15px">
                 <div class="flex-grow" />
-                <!-- <el-button @click="cancel(t)" text>取消</el-button> -->
+                
                 <el-button type="primary" @click="commit(t.comment.id)" text
                   >提交</el-button
                 >
               </el-row>
-            </div>
+            </div> -->
           </el-card>
         </el-timeline-item>
       </el-timeline>

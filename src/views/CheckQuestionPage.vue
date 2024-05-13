@@ -20,8 +20,36 @@ const getQuestion = async () => {
   }
 };
 
-onMounted(() => {
-  getQuestion();
+onMounted(async () => {
+  await getQuestion();
+  
+  if (question.value.assignTo) {
+    
+    switch (question.value.assignTo) {
+      case "business":
+        assignTo.value = "营业专家";
+        break;
+      case "maintain":
+        assignTo.value = "装维专家";
+        break;
+      case "governmentManager":
+        assignTo.value = "政企客户经理专家";
+        break;
+      case "customerManager":
+        assignTo.value = "客经专员专家";
+        break;
+      case "director":
+        assignTo.value = "支局长专家";
+        break;
+      case "areaManager":
+        assignTo.value = "片区长专家";
+        break;
+      case "VIPManager":
+        assignTo.value = "VIP客户经理专家";
+        break;
+    }
+  }
+  
 });
 
 function goBack() {
@@ -29,10 +57,8 @@ function goBack() {
   router.back();
 }
 const stringQuestionId = router.currentRoute.value.query.id;
-  const questionId = parseInt(stringQuestionId, 10);
+const questionId = parseInt(stringQuestionId, 10);
 const handleCheck = (isChecked, assignTo) => {
-
-
   userCheckService(questionId, isChecked, assignTo);
   if (assignTo != "admin") {
     goBack();
@@ -72,11 +98,13 @@ const handleCommand = (command) => {
   dialogVisible.value = true;
 };
 const dialogVisible = ref(false);
-const handleConfirm=async ()=>{
-  
+const handleConfirm = async () => {
   await userCheckService(questionId, 1, assign.value);
-  goBack()
-}
+  goBack();
+};
+
+// 被退单的需求才有的被分配给某专家
+const assignTo = ref("");
 </script>
 
 <template>
@@ -84,7 +112,11 @@ const handleConfirm=async ()=>{
     <el-col :span="4" />
 
     <el-col :span="16">
-      <h2 style="font-size: 2rem; margin-bottom: 0%">{{ question.title }}</h2>
+      <h2 style="font-size: 2rem; margin-bottom: 0%">
+        
+        {{ question.title }}<el-tag type="warning" v-if="assignTo">由{{ assignTo }}退单</el-tag>
+      </h2>
+
       <br />
       <el-descriptions title="需求信息" column="5">
         <el-descriptions-item>

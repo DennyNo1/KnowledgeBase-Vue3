@@ -96,12 +96,12 @@ export async function userupdateAttachmentService(articleId, url, name, uid) {
         name,
         uid,
       },
-    ]
+    ],
   });
 }
 export async function userUpdateArticleService(
   id,
- uploaderId,
+  uploaderId,
   type,
   title,
   content,
@@ -121,14 +121,22 @@ export async function userUpdateArticleService(
   });
 }
 
-export async function userDeleteAllAttachmentService(
-articleId
-) {
+export async function userDeleteAllAttachmentService(articleId) {
   return await request({
     method: "POST",
     url: "/article/delete_attachment",
     data: {
-articleId
+      articleId,
+    },
+  });
+}
+
+export async function userDeleteArticleService(id) {
+  return await request({
+    method: "DELETE",
+    url: "/article/delete",
+    data: {
+      id,
     },
   });
 }
