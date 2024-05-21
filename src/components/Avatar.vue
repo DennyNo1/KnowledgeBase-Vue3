@@ -30,15 +30,18 @@ const loginStore = useLoginStore();
     <!-- 折叠的下拉部分 -->
     <template #dropdown>
       <el-dropdown-menu class="custom-dropdown-menu">
-        <el-dropdown-item class="custom-dropdown-item"
+        <!-- <el-dropdown-item class="custom-dropdown-item"
           >市区公司：{{ loginStore.userInfo.location }}</el-dropdown-item
-        >
+        > -->
         <el-dropdown-item class="custom-dropdown-item"
           >部门：{{ loginStore.userInfo.department }}</el-dropdown-item
         >
+        <el-dropdown-item class="custom-dropdown-item"
+          >营销角色：{{ loginStore.userInfo.sale }}</el-dropdown-item
+        >
 
         <el-dropdown-item class="custom-dropdown-item"
-          >身份：
+          >权限：
           <div v-if="loginStore.userInfo.role === 'admin'">管理员</div>
           <div v-else-if="loginStore.userInfo.role === 'user'">普通用户</div>
           <div v-else>专家</div></el-dropdown-item

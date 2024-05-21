@@ -26,6 +26,7 @@ export const useLoginStore = defineStore('loginStore', () => {
         role: '',
         location: '',
         department: '',
+        sale:''
     })
     const jwt=ref('');
 

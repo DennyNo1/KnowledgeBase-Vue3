@@ -11,17 +11,18 @@ import {
   OfficeBuilding,
   Location,
   UserFilled,
+  ChatDotRound
 } from "@element-plus/icons-vue";
 import { ArrowDown } from "@element-plus/icons-vue";
-import { userRegisterService,userLoginrService } from "@/api/user";
+import { userCheckService, userLoginrService } from "@/api/user";
 import { ElMessage } from "element-plus";
-
+import { encryptData } from "@/utils/encrypt.js";
 const loginStore = useLoginStore();
 const isLogin = ref(true);
 const { userInfo, isLoggedIn, isOpen, cookie } = storeToRefs(loginStore);
 
-// // 获取router实例
-// const router = useRouter();
+// 获取router实例
+const router = useRouter();
 
 // 获取login仓库实例
 
@@ -47,10 +48,6 @@ const loginForm = ref({
   // validCode: "",
 });
 
-const type1 = ref("primary");
-const type2 = ref("");
-const usePassword = ref(true);
-
 // 登录表单的对象
 const loginFormRef = ref();
 
@@ -67,48 +64,32 @@ const loginRules = reactive({
       trigger: "blur",
     },
   ],
-
 });
-
-function enablePassword() {
-  usePassword.value = true;
-  type1.value = "primary";
-  type2.value = "";
-}
 
 //登录按钮
 const login = async () => {
   // 注册成功之前，先进行校验，校验成功 → 请求，校验失败 → 自动提示
   await loginFormRef.value.validate();
-  const res=await userLoginrService(loginForm.value);
+  //对密码进行加密处理
+  loginForm.value.password = encryptData(loginForm.value.password);
+
+  const res = await userLoginrService(loginForm.value);
   //登录失败
-  if(res.code!=200)
-  {
-    ElMessage.error(res.msg)
+  if (res.code != 200) {
+    ElMessage.error(res.msg);
   }
   //登录成功
   else {
-    ElMessage.success(res.msg)
+    ElMessage.success(res.msg);
     //关闭窗口。数据应该不用清楚吧。
-    loginStore.isOpen=false
+    loginStore.isOpen = false;
     //存用户信息到pinia
-    loginStore.userInfo=res.data.userInfo
-    loginStore.jwt=res.data.jwt
-    loginStore.isLoggedIn=true
-    console.log( loginStore.userInfo)
-    
+    loginStore.userInfo = res.data.userInfo;
+    loginStore.jwt = res.data.jwt;
+    loginStore.isLoggedIn = true;
+    console.log(loginStore.userInfo);
   }
-
 };
-
-
-
-
-
-
-
-
-
 
 //注册表单的对象、变量、函数
 const form = ref();
@@ -121,6 +102,9 @@ const formModel = ref({
   phone: "",
   location: "",
   department: "",
+  sale: "",
+  safeQuestion:"",
+  safeAnswer:"",
 });
 // 整个表单的校验规则
 // 1. 非空校验 required: true      message消息提示，  trigger触发校验的时机 blur change
@@ -136,8 +120,20 @@ const formModel = ref({
 const rules = {
   // 正常来说，这里还有一个用户名重复检测
   username: [
-    { required: true, message: "请输入用户名", trigger: "blur" },
-    { min: 4, max: 11, message: "用户名必须是 4-11位 的字符", trigger: "blur" },
+    { required: true, message: "请输入手机号", trigger: "blur" },
+    {
+      validator: (rule, value, callback) => {
+        const regex =
+          /^((13[0-9])|(14[5,7])|(15[^4])|(17[0-8])|(18[0-9])|166|198|199|(147))\d{8}$/;
+        if (regex.test(value)) {
+          callback();
+        } else {
+          callback(new Error("请输入正确的手机号"));
+          formMode;
+        }
+      },
+      trigger: "blur",
+    },
   ],
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
@@ -177,6 +173,7 @@ const rules = {
           callback();
         } else {
           callback(new Error("请输入正确的手机号"));
+          formMode;
         }
       },
       trigger: "blur",
@@ -194,6 +191,18 @@ const register = async () => {
   loginStore.isOpen = false;
   navigateToLogin;
 };
+const repasswordFormRef = ref();
+
+async function checkUsername() {
+  await repasswordFormRef.value.validate();
+  const response = await userCheckService(formModel.value.username);
+  console.log(response);
+  if (response.code == 200) {
+    formModel.value.safeQuestion = response.data.safeQuestion;
+  } else {
+    ElMessage.warning(response.msg);
+  }
+}
 </script>
 
 <!-- 模板 -->
@@ -215,48 +224,30 @@ const register = async () => {
       size="large"
       autocomplete="off"
     >
-        <div class="head">
-          <el-text size="large" tag="b" @click="enablePassword" :type="type1"
-            >账号密码登录</el-text
-          >
-        </div>
-      
+      <div class="head">
+        <el-text size="large" tag="b" type="primary">登录</el-text>
+      </div>
+
       <!--账号密码登录-->
-     
-        
-          <el-form-item  prop="username">
-            <el-input
-              :prefix-icon="User"
-              v-model="loginForm.username"
-              placeholder="请输入用户名"
-            ></el-input>
-          </el-form-item>
 
-          <el-form-item  prop="password">
-            <el-input
-              :prefix-icon="Lock"
-              v-model="loginForm.password"
-              show-password
-              placeholder="请输入密码"
-            ></el-input>
-          </el-form-item>
-        
-      
-      <!--手机号登录-->
-      <!-- <div v-else class="login">
-      <el-form ref="formRef" :rules="rules" status-icon :model="form">
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="form.phone" />
-        </el-form-item>
-        <el-form-item label="验证码" prop="validCode">
-          <el-input v-model="form.validCode" />
-        </el-form-item>
-      </el-form>
-    </div> -->
+      <el-form-item prop="username">
+        <el-input
+          :prefix-icon="User"
+          v-model="loginForm.username"
+          placeholder="请输入手机号"
+        ></el-input>
+      </el-form-item>
 
-      <!--登录表单底部-->
+      <el-form-item prop="password">
+        <el-input
+          :prefix-icon="Lock"
+          v-model="loginForm.password"
+          show-password
+          placeholder="请输入密码"
+        ></el-input>
+      </el-form-item>
 
-      <div class="dialog-footer" style="margin-bottom: 1rem;">
+      <div class="dialog-footer" style="margin-bottom: 1rem">
         <el-button
           type="primary"
           size="large"
@@ -266,44 +257,82 @@ const register = async () => {
         >
       </div>
 
-      <!-- <div class="navigate-to-register">
-        <el-link
-          type="primary"
-          @click="navigateToRegister"
-          :underline="focusState"
-          @focus="handleFocus"
-          @blur="handleBlur"
-          >没有账号？点击注册</el-link
-        >
-      </div> -->
+      <div class="navigate-to-register">
+        <el-link type="primary" @click="navigateToCheck">忘记密码？</el-link>
+      </div>
     </el-form>
 
-    <!--注册表单-->
+    <!-- 确认用户名表单 -->
+    <el-form
+      :model="formModel"
+      :rules="rules"
+      ref="repasswordFormRef"
+      size="large"
+      autocomplete="off"
+      class="form"
+    >
+      <div class="head">
+        <el-text size="large" tag="b" type="primary">重置密码</el-text>
+      </div>
+      <el-form-item prop="username">
+        <el-input
+          v-model="formModel.username"
+          :prefix-icon="User"
+          placeholder="请输入手机号"
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          @click="checkUsername"
+          class="button"
+          type="primary"
+          auto-insert-space
+          :style="{ width: '100%' }"
+          size="large"
+        >
+          确认
+        </el-button>
+      </el-form-item>
+      <div class="return">
+        <el-link type="info" :underline="false" @click="navigateToLogin">
+          返回
+        </el-link>
+      </div>
+    </el-form>
+
+    <!--重置密码表单-->
     <el-form
       :model="formModel"
       :rules="rules"
       ref="form"
       size="large"
       autocomplete="off"
-      v-else
       class="form"
     >
       <div class="head">
-        <el-text size="large" tag="b" :type="type1">新用户注册</el-text>
+        <el-text size="large" tag="b" type="primary">重置密码</el-text>
       </div>
-      <el-form-item prop="username">
+      <el-form-item >
+        安全问题：
+        <el-input v-model="formModel.safeQuestion" disabled="true"></el-input>
+        
+      </el-form-item>
+      <el-form-item prop="password">
         <el-input
-          v-model="formModel.username"
-          :prefix-icon="User"
-          placeholder="请输入用户名"
+          v-model="formModel.safeAnswer"
+          :prefix-icon="ChatDotRound"
+          type="password"
+          placeholder="请输入安全问题的答案"
+          show-password
         ></el-input>
       </el-form-item>
+
       <el-form-item prop="password">
         <el-input
           v-model="formModel.password"
           :prefix-icon="Lock"
           type="password"
-          placeholder="请输入密码"
+          placeholder="请输入新密码"
           show-password
         ></el-input>
       </el-form-item>
@@ -312,38 +341,8 @@ const register = async () => {
           v-model="formModel.repassword"
           :prefix-icon="Lock"
           type="password"
-          placeholder="请输入再次密码"
+          placeholder="请再次输入新密码"
           show-password
-        ></el-input>
-      </el-form-item>
-      <el-form-item prop="nickName">
-        <el-input
-          v-model="formModel.nickName"
-          :prefix-icon="UserFilled"
-          placeholder="请输入昵称"
-        ></el-input>
-      </el-form-item>
-      <el-form-item prop="phone">
-        <el-input
-          v-model="formModel.phone"
-          :prefix-icon="Iphone"
-          placeholder="请输入手机号"
-        ></el-input>
-      </el-form-item>
-      <el-form-item prop="location">
-        <el-select v-model="formModel.location" placeholder="请选择市区公司">
-          <el-option lable="市公司" value="市公司"></el-option>
-          <el-option lable="定海区" value="定海区"></el-option
-          ><el-option lable="普陀区" value="普陀区"></el-option
-          ><el-option lable="岱山县" value="岱山县"></el-option>
-          <el-option lable="嵊泗县" value="嵊泗县"></el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item prop="department">
-        <el-input
-          v-model="formModel.department"
-          :prefix-icon="OfficeBuilding"
-          placeholder="请输入部门"
         ></el-input>
       </el-form-item>
 
@@ -354,6 +353,7 @@ const register = async () => {
           type="primary"
           auto-insert-space
           :style="{ width: '100%' }"
+          size="large"
         >
           注册
         </el-button>
@@ -382,7 +382,6 @@ const register = async () => {
   display: flex;
   justify-content: center;
 }
-
 
 .navigate-to-register {
   margin-top: 20px; /* 调整间距 */
