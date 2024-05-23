@@ -142,15 +142,16 @@ const numOfWait=ref("")
           router
           :default-active="index"
         >
+        
           <el-menu-item
             index="waitForReply"
             @click="handleItemClick('waitForReply')"
             v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
             >待回复
-            <el-badge :value="numOfWait" ></el-badge>
+           
               
             
-          </el-menu-item>
+          </el-menu-item> <el-badge :value="numOfWait" ></el-badge>
           <el-menu-item
             index="alreadyReply"
             @click="handleItemClick('alreadyReply')"

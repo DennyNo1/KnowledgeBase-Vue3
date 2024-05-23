@@ -3,6 +3,7 @@ import { ref, reactive } from "vue";
 import { useRouter } from "vue-router"; //用于页面跳转
 import { useLoginStore } from "@/store/login.js";
 import { storeToRefs } from "pinia";
+import SetPassword from "@/components/SetPassword.vue";
 
 import {
   User,
@@ -24,7 +25,7 @@ import { ElMessage } from "element-plus";
 import { encryptData, decryptData } from "@/utils/encrypt.js";
 const loginStore = useLoginStore();
 const isLogin = ref(true);
-const { userInfo, isLoggedIn, isOpen, cookie } = storeToRefs(loginStore);
+const { userInfo, isLoggedIn, isOpen, cookie, isSet } = storeToRefs(loginStore);
 
 // 获取router实例
 const router = useRouter();
@@ -103,9 +104,7 @@ const login = async () => {
     const userPassword = decryptData(res.data.userInfo.password);
     // console.log(userPassword)
     if (userPassword == "Dx123456") {
-      isOpen.value = true;
-      isLogin.value = false;
-      isModify.value = true;
+      isSet.value = true;
     }
   }
 };
@@ -226,12 +225,13 @@ function clearForm() {
   isLogin.value = true;
   isCheck.value = false;
   isReset.value = false;
+  
 }
-const isModify = ref(false);
 </script>
 
 <!-- 模板 -->
 <template>
+  <SetPassword></SetPassword>
   <el-dialog
     v-model="isOpen"
     width="30%"
@@ -239,73 +239,7 @@ const isModify = ref(false);
     center
     @closed="clearForm"
   >
-    <el-form
-      :model="formModel"
-      :rules="rules"
-      ref="form"
-      size="large"
-      autocomplete="off"
-      class="form"
-      v-if="isModify"
-    >
-      <div class="head">
-        <el-text size="large" tag="b" type="primary">设定自己的密码</el-text>
-      </div>
 
-
-      <!-- 第一次登录时修改密码的表单 -->
-      <el-form-item>
-        <el-input prop="safeQuestion"
-          v-model="formModel.safeQuestion"
-          :prefix-icon="Notebook"
-          placeholder="请输入容易记忆的安全问题"
-        ></el-input>
-      </el-form-item>
-      <el-form-item prop="safeAnswer">
-        <el-input
-          v-model="formModel.safeAnswer"
-          :prefix-icon="ChatDotRound"
-          placeholder="请输入容易记忆的安全问题的答案"
-        ></el-input>
-      </el-form-item>
-
-      <el-form-item prop="password">
-        <el-input
-          v-model="formModel.password"
-          :prefix-icon="Lock"
-          type="password"
-          placeholder="请输入新密码"
-          show-password
-        ></el-input>
-      </el-form-item>
-      <el-form-item prop="repassword">
-        <el-input
-          v-model="formModel.repassword"
-          :prefix-icon="Lock"
-          type="password"
-          placeholder="请再次输入新密码"
-          show-password
-        ></el-input>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button
-          @click="reset"
-          class="button"
-          type="primary"
-          auto-insert-space
-          :style="{ width: '100%' }"
-          size="large"
-        >
-          确认设定
-        </el-button>
-      </el-form-item>
-      <div class="navigate-to-register">
-        <el-link type="primary"
-          >重置密码时需要安全问题和答案</el-link
-        >
-      </div>
-    </el-form>
 
     <el-form></el-form>
     <!--登录表单-->
@@ -453,7 +387,7 @@ const isModify = ref(false);
         </el-button>
       </el-form-item>
       <div class="navigate-to-register">
-        <el-link type="primary" 
+        <el-link type="primary"
           >如有问题请联系慧问工作室徐慧15305809539</el-link
         >
       </div>
