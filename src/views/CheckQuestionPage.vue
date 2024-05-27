@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { userCheckService } from "@/api/question.js";
 import { userOneQuestionService } from "@/api/question.js";
+import { useLoginStore } from "@/store/login.js";
 const router = useRouter();
 const route = useRoute();
 const id = route.query.id;
@@ -60,8 +61,10 @@ const stringQuestionId = router.currentRoute.value.query.id;
 const questionId = parseInt(stringQuestionId, 10);
 const handleCheck = (isChecked, assignTo) => {
   userCheckService(questionId, isChecked, assignTo);
+  //审核不予通过
   if (assignTo != "admin") {
-    goBack();
+    //重回我的需求首页
+    router.push(`/question/check?role=${useLoginStore().userInfo.role}&isSolved=0`);
   } else {
     router.push(`/question-page?id=${questionId}`);
   }
@@ -100,7 +103,8 @@ const handleCommand = (command) => {
 const dialogVisible = ref(false);
 const handleConfirm = async () => {
   await userCheckService(questionId, 1, assign.value);
-  goBack();
+  //重回我的需求首页吧
+  router.push(`/question/check?role=${useLoginStore().userInfo.role}&isSolved=0`);
 };
 
 // 被退单的需求才有的被分配给某专家

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { Search } from "@element-plus/icons-vue";
 import { useRouter } from "vue-router";
 import { useLoginStore } from "@/store/login";
@@ -13,7 +13,7 @@ import {
   ElMessage,
   ElMessageBox,
 } from "element-plus";
-
+import { QuestionWaitService } from "@/api/question";
 
 const searchInput = ref("");
 const select = ref("article");
@@ -22,63 +22,72 @@ const loginStore = useLoginStore();
 
 function submitSearch() {
   // 必须选择专栏的种类
-  console.log(select.value)
+  console.log(select.value);
 
-  if (select.value=="") {
+  if (select.value == "") {
     ElMessage({
       message: "选择专栏类别后才能进行搜索操作",
       type: "warning",
     });
     return;
   }
-  if (searchInput.value=="") {
+  if (searchInput.value == "") {
     ElMessage({
       message: "请输入您的搜索内容",
       type: "warning",
     });
     return;
   }
-  router.push(`/${select.value }?type=默认&queryName=${searchInput.value}`);
-
+  router.push(`/${select.value}?type=默认&queryName=${searchInput.value}`);
 }
 const showLogin = () => {
   loginStore.isOpen = true;
 };
-const isAdmin=()=>{
-  if(loginStore.isLoggedIn)
- {
-  if(loginStore.userInfo.role=='admin')
-  {
-    return true
+const isAdmin = () => {
+  if (loginStore.isLoggedIn) {
+    if (loginStore.userInfo.role == "admin") {
+      return true;
+    }
   }
-  
- }
- return false
-
-}
-const handleRoute=(v)=>{
-  selected.value=v
-  if(v!='solve'&&v!='check')
-  {
+  return false;
+};
+const handleRoute = (v) => {
+  selected.value = v;
+  if (v != "solve" && v != "check") {
     router.push(`/${v}?type=默认`);
-  }
-  else if(v=='check')
-  {
+  } else if (v == "check") {
     // router.push('/question/check?isChecked=0')
     router.push(`/question/check?role=${loginStore.userInfo.role}&isSolved=0`);
   }
   // else if(v=='solve'){
   //   router.push(`/question/check?role=${loginStore.userInfo.role}`);
   // }
- 
-  
-  
-}
-const selected=ref("")
+};
+const selected = ref("");
+const wait = ref(false);
+//监控store里的用户id
+watch(
+  () => loginStore.userInfo.role,
+  async (newRole, oldRole) => {
+    if (newRole !== oldRole) {
+      // console.log("1");
+      if (loginStore.isLoggedIn && loginStore.userInfo.role != "user") {
+        const response=await QuestionWaitService(loginStore.userInfo.role)
+        wait.value=response.data
+      }
+    }
+  },
+  { immediate: true } // 设置immediate为true，表示在监听开始时立即执行一次
+);
 </script>
 
 <template>
-  <el-menu :default-active="selected" mode="horizontal" :ellipsis="false" router>
+  <el-menu
+    :default-active="selected"
+    mode="horizontal"
+    :ellipsis="false"
+    router
+  >
     <el-menu-item index="0" route="/">
       <img style="height: 100%" src="@/assets/logo.png" alt="Element logo" />
       <el-text type="primary" size="large" tag="b">知识库首页</el-text>
@@ -112,10 +121,20 @@ const selected=ref("")
 
     <!-- <el-menu-item index="video"  @click="handleRoute('video')">视频</el-menu-item> -->
 
-    <el-menu-item index="article" @click="handleRoute('article')" >课件</el-menu-item>
-    <el-menu-item index="question" @click="handleRoute('question')" >一线需求</el-menu-item>
-    <el-menu-item  index="check" @click="handleRoute('check')"  v-if="loginStore.isLoggedIn && loginStore.userInfo.role!='user'" >我的需求</el-menu-item>
-    
+    <el-menu-item index="article" @click="handleRoute('article')"
+      >课件</el-menu-item
+    >
+    <el-menu-item index="question" @click="handleRoute('question')"
+      >一线需求</el-menu-item
+    >
+
+    <el-menu-item
+      index="check"
+      @click="handleRoute('check')"
+      v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
+      >我的需求</el-menu-item
+    >
+    <el-badge class="item" :is-dot="wait"></el-badge>
 
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->
 

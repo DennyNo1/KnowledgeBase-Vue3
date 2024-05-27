@@ -48,7 +48,7 @@ const handleSubmit = async () => {
     description: "",
     type: "",
   };
-  ElMessageBox.alert("您新建的需求已成功，等待管理员审核", "提示", {
+  ElMessageBox.alert("您已成功新建需求，请等待管理员审核", "提示", {
     // if you want to disable its autofocus
     // autofocus: false,
     confirmButtonText: "OK",

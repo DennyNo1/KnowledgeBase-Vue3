@@ -1,6 +1,6 @@
 <script setup>
 import { userQuestionListService } from "@/api/question.js";
-import { onMounted, ref,watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import dayjs from "dayjs";
 import { useRoute, useRouter } from "vue-router";
 import { useLoginStore } from "@/store/login";
@@ -10,7 +10,7 @@ const route = useRoute();
 const loginStore = useLoginStore();
 
 const questionData = ref();
-//符合条件的问题总数
+//total指四个类别下，各个页面中问题的数量
 const total = ref();
 
 //这个是获取待审核和审核未通过的问题列表的函数
@@ -25,6 +25,22 @@ const getQuestionList = async (page, pageSize, queryName, isChecked, type) => {
 
   questionData.value = response.data.records;
   total.value = response.data.total;
+};
+const getQuestionNumber = async (
+  page,
+  pageSize,
+  queryName,
+  type,
+  isChecked
+) => {
+  const response = await userQuestionListService(
+    page,
+    pageSize,
+    queryName,
+    type,
+    isChecked
+  );
+  numOfCheck.value = response.data.total;
 };
 
 //这个是获取某个权限下，未回复和已回复问题的问题列表函数
@@ -45,18 +61,17 @@ const getQuestionListManaged = async (
     assignTo
   );
   questionData.value = response.data.records;
-  total.value = response.data.total;
-  if(route.query.isSolved==0) numOfWait.value=response.data.total;
   
+  total.value = response.data.total;
+  console.log(total.value)
+  if (route.query.isSolved == 0) numOfWait.value = response.data.total;
 };
 
 onMounted(async () => {
   //进入默认选择待回复
+
   await getQuestionListManaged("1", "6", "默认", route.query.role, "0");
-  
-  
-
-
+  await getQuestionNumber("1", "6", null,null,"0");
 });
 
 const handleItemClick = async (checkFlag) => {
@@ -124,10 +139,9 @@ async function handleCurrentChange(currentPage) {
   }
 }
 //给待回复数量
-const numOfWait=ref("")
+const numOfWait = ref("");
 
-//监控store里的用户id
-
+const numOfCheck = ref("");
 </script>
 
 <template>
@@ -142,16 +156,13 @@ const numOfWait=ref("")
           router
           :default-active="index"
         >
-        
           <el-menu-item
             index="waitForReply"
             @click="handleItemClick('waitForReply')"
             v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
             >待回复
-           
-              
-            
-          </el-menu-item> <el-badge :value="numOfWait" ></el-badge>
+          </el-menu-item>
+          <el-badge :value="numOfWait" :show-zero="false"></el-badge>
           <el-menu-item
             index="alreadyReply"
             @click="handleItemClick('alreadyReply')"
@@ -164,7 +175,7 @@ const numOfWait=ref("")
             @click="handleItemClick(0)"
             v-if="loginStore.userInfo.role == 'admin'"
             >待审核</el-menu-item
-          >
+          ><el-badge :value="numOfCheck" :show-zero="false"></el-badge>
           <el-menu-item
             index="nopass"
             @click="handleItemClick(-1)"
@@ -262,7 +273,7 @@ const numOfWait=ref("")
       layout="prev, pager, next"
       :total="total"
       @current-change="handleCurrentChange"
-      page-size="6"
+      :page-size="6"
     />
   </el-row>
 </template>
