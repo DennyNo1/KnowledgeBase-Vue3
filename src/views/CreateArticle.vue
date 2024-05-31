@@ -170,6 +170,7 @@ editorConfig.MENU_CONF["uploadImage"] = {
 editorConfig.MENU_CONF['uploadVideo'] = {
      server: "http://localhost:8088/article/upload-video",
      fieldName: "video",
+     maxFileSize: 512 * 1024 * 1024, // 512M
 }
 //整个上传模块的附件数据。这个里面已经保存着每次的response消息。
 const fileList = ref([
