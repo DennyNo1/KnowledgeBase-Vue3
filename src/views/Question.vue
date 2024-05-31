@@ -63,6 +63,7 @@ async function handleItemClick(type) {
     query: { type, queryName: route.query.queryName },
   });
   await getQuestionList(1, "6", route.query.queryName, 1, route.query.type);
+  total.value=1
 }
 
 const loginStore = useLoginStore();

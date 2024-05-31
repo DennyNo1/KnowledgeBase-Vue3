@@ -78,6 +78,8 @@ async function handleItemClick(type) {
     query: { type, queryName: route.query.queryName },
   });
   await getArticleList(1, "6", route.query.queryName, route.query.type);
+  //每次切换类别时，需要把页码数重置为1
+  total.value=1
 }
 
 function handleUpload() {
