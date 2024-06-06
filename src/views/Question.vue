@@ -38,23 +38,26 @@ onMounted(() => {
 
 const questionData = ref();
 const total = ref();
+//这个是显示的页码
+const currentPage=ref(1)
 
 const router = useRouter();
+
 const route = useRoute();
 
 function handleClick(item) {
   router.push(`/question-page?id=${item.question.id}`);
 }
 
-function handleCurrentChange(currentPage) {
-  // 获取点击的页码
-  console.log(currentPage);
+function handleCurrentChange(truePage) {
+
   //获取当前页数
   if (route.query.type == "") {
-    getQuestionList(currentPage, "6", null, 1, null);
+    getQuestionList(truePage, "6", null, 1, null);
   } else {
-    getQuestionList(currentPage, "6", null, 1, route.query.type);
+    getQuestionList(truePage, "6", null, 1, route.query.type);
   }
+  currentPage.value=truePage
 }
 
 async function handleItemClick(type) {
@@ -63,7 +66,8 @@ async function handleItemClick(type) {
     query: { type, queryName: route.query.queryName },
   });
   await getQuestionList(1, "6", route.query.queryName, 1, route.query.type);
-  total.value=1
+//切换类别后，重置当前页数为1
+currentPage.value=1
 }
 
 const loginStore = useLoginStore();
@@ -158,7 +162,7 @@ function handleUpload() {
         @click="router.push('/')"
       >
         <template #content>
-          <span class="text-large font-600 mr-3"> 搜索结果 </span>
+          <b class="text-large font-600 mr-3"> 搜索结果 </b>
         </template>
       </el-page-header>
       <el-row class="cards" v-for="item in questionData">
@@ -217,6 +221,7 @@ function handleUpload() {
       :total="total"
       @current-change="handleCurrentChange"
       :page-size="6"
+      :current-page="currentPage"
     />
   </el-row>
 </template>

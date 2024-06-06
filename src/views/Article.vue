@@ -18,7 +18,11 @@ import { useLoginStore } from "@/store/login";
 import { watch } from "vue";
 
 const router = useRouter();
+//total代表的是总页数，而不是当前页数
 const total = ref();
+//这个是显示的页码
+const currentPage=ref(1)
+
 const loginStore = useLoginStore();
 const articleData = ref([]);
 const route = useRoute();
@@ -49,17 +53,19 @@ function handleClick(item) {
 }
 
 //切换页码
-async function handleCurrentChange(currentPage) {
+//（）的参数是组件传递给这个事件的真实的页数
+async function handleCurrentChange(truePage) {
   // 获取点击的页码
   console.log(currentPage);
   //获取当前页数
 
   await getArticleList(
-    currentPage,
+    truePage,
     "6",
     route.query.queryName,
     route.query.type
   );
+  currentPage.value=truePage
 }
 
 async function handleItemClick(type) {
@@ -78,8 +84,10 @@ async function handleItemClick(type) {
     query: { type, queryName: route.query.queryName },
   });
   await getArticleList(1, "6", route.query.queryName, route.query.type);
-  //每次切换类别时，需要把页码数重置为1
-  total.value=1
+  //每次切换类别时，需要把当前页码数重置为1
+  console.log('switch')
+  currentPage.value=1
+  
 }
 
 function handleUpload() {
@@ -217,7 +225,7 @@ async function handleEdit(articleId){
         @click="router.push('/')"
       >
         <template #content>
-          <span class="text-large font-600 mr-3"> 搜索结果 </span>
+          <b class="text-large font-600 mr-3"> 搜索结果 </b>
         </template>
       </el-page-header>
       <el-row class="cards" v-for="(item, index) in articleData">
@@ -315,6 +323,7 @@ async function handleEdit(articleId){
       background
       layout="prev, pager, next"
       :total="total"
+      :current-page="currentPage"
       :page-size="6"
       @current-change="handleCurrentChange"
     />

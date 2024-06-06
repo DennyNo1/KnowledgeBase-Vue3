@@ -44,6 +44,7 @@ onMounted(async () => {
     article.value.title=articleEdit.title;
     article.value.contentHtml=articleEdit.content
     article.value.top=articleEdit.top
+    article.value.uploaderId=articleEdit.uploaderId
     if(articleEdit.type.includes('*'))
     {
       isShare.value=true;
@@ -162,13 +163,13 @@ function goBack() {
 
 // 表单数据域名设置为image
 editorConfig.MENU_CONF["uploadImage"] = {
-  server: "http://localhost:8088/article/upload-image",
+  server: "http://134.107.67.26:8088/article/upload-image",
   fieldName: "image",
 };
 
 
 editorConfig.MENU_CONF['uploadVideo'] = {
-     server: "http://localhost:8088/article/upload-video",
+     server: "http://134.107.67.26:8088/article/upload-video",
      fieldName: "video",
      maxFileSize: 512 * 1024 * 1024, // 512M
 }
@@ -245,8 +246,8 @@ async function handleUpdate()
     article.value.type+='*';
   }
 
-
-  const response=await userUpdateArticleService(route.query.articleId,loginStore.userInfo.id,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
+//这里实际上上传者id和文章id都是保持不变的
+  const response=await userUpdateArticleService(route.query.articleId,article.value.uploaderId,article.value.type,article.value.title,article.value.contentHtml,article.value.top);
   await userDeleteAllAttachmentService(route.query.articleId)
   const articleId=route.query.articleId
     //将附件持久化
@@ -342,6 +343,7 @@ async function handleDelete(){
           ></el-input>
         </el-form-item>
 
+
         <el-form-item class="narrow-input" label="课件内容" size="large">
           <div style="border: 1px solid #ccc">
             <!-- 工具栏 -->
@@ -366,7 +368,7 @@ async function handleDelete(){
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
-            action=http://localhost:8088/article/upload-attachment
+            action=http://134.107.67.26:8088/article/upload-attachment
             :limit="5"
             :on-exceed="handleExceed"
             :on-remove="handleUploadRemove"

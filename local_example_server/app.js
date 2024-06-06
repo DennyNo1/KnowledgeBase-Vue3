@@ -421,7 +421,8 @@ const sampleOneVideoData = {
         },
         nickName: "张昊天",
         department: "云中台",
-        avatar: "http://localhost:8088/avatar/P020230724535949057216 (1).png",
+        avatar:
+          "http://134.107.67.26:8088/avatar/P020230724535949057216 (1).png",
         liked: true,
       },
       {
@@ -436,7 +437,8 @@ const sampleOneVideoData = {
         },
         nickName: "张昊天",
         department: "云中台",
-        avatar: "http://localhost:8088/avatar/P020230724535949057216 (1).png",
+        avatar:
+          "http://134.107.67.26:8088/avatar/P020230724535949057216 (1).png",
         liked: false,
       },
     ],
@@ -678,7 +680,7 @@ app.post("/login", (req, res) => {
 
 // 启动 Express 应用
 app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Server is running at http://134.107.67.26:${port}`);
 });
 
 app.listen(8088, "0.0.0.0"); // 监听在内网地址上

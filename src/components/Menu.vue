@@ -90,7 +90,7 @@ watch(
   >
     <el-menu-item index="0" route="/">
       <img style="height: 100%" src="@/assets/logo.png" alt="Element logo" />
-      <el-text type="primary" size="large" tag="b">知识库首页</el-text>
+      <el-text type="primary" size="large" tag="b">首页</el-text>
     </el-menu-item>
     <div class="flex-grow" />
     <!--    <el-input-->

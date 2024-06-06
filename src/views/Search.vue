@@ -38,7 +38,7 @@ function submitSearch() {
 <template>
   <el-row class="container">
     <el-row class="sub-container">
-      <el-text>欢迎使用中国电信知识库</el-text>
+      <el-text>欢迎使用中国电信舟山触点人员综合支撑平台</el-text>
     </el-row>
 
     <el-row style="margin-top: 0rem; display: flex;" >
