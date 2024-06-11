@@ -163,13 +163,13 @@ function goBack() {
 
 // 表单数据域名设置为image
 editorConfig.MENU_CONF["uploadImage"] = {
-  server: "http://134.107.67.26:8088/article/upload-image",
+  server: "http://localhost:8088/article/upload-image",
   fieldName: "image",
 };
 
 
 editorConfig.MENU_CONF['uploadVideo'] = {
-     server: "http://134.107.67.26:8088/article/upload-video",
+     server: "http://localhost:8088/article/upload-video",
      fieldName: "video",
      maxFileSize: 512 * 1024 * 1024, // 512M
 }
@@ -368,7 +368,7 @@ async function handleDelete(){
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
-            action=http://134.107.67.26:8088/article/upload-attachment
+            action=http://localhost:8088/article/upload-attachment
             :limit="5"
             :on-exceed="handleExceed"
             :on-remove="handleUploadRemove"

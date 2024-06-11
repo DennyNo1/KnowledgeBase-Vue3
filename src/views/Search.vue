@@ -36,9 +36,9 @@ function submitSearch() {
 </script>
 
 <template>
-  <el-row class="container">
+  <el-row class="container" >
     <el-row class="sub-container">
-      <el-text>欢迎使用中国电信舟山触点人员综合支撑平台</el-text>
+      <el-text style="color:white;">欢迎使用中国电信舟山触点人员综合支撑平台</el-text>
     </el-row>
 
     <el-row style="margin-top: 0rem; display: flex;" >
@@ -73,7 +73,7 @@ function submitSearch() {
     <el-text
       style="
         font-size: 1.5rem;
-        color: #409eff;
+        color: #2E6EBB;
         width: 100%;
         height: 80%;
         display: flex;
@@ -81,7 +81,7 @@ function submitSearch() {
         align-items: center; /* 垂直居中 */
         margin-top: 2rem
       "
-      >网站使用指南:1、支持关键字搜索;2、课件浏览请点击右上角“课件”;3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
+      >网站使用指南：1、支持关键字搜索;2、课件浏览请点击右上角“课件”;3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
     >
   </el-row>
 </template>
@@ -105,6 +105,8 @@ function submitSearch() {
   display: flex;
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
+  background-color: #2E6EBB; /* Blue background */
+  
 }
 
 .input-with-select {

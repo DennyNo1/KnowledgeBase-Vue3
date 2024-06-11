@@ -22,7 +22,7 @@ const loginStore = useLoginStore();
         size="small"
         style="margin-right: 10px"
       ></el-avatar>
-      <el-text style="display: inline-block">{{
+      <el-text style="display: inline-block;color: white;">{{
         loginStore.userInfo.nickName
       }}</el-text>
     </span>

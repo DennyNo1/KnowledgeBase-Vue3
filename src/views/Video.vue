@@ -126,7 +126,7 @@ async function handleUploadSuccess(response: {
   if (response.code == 400) ElMessage.error(response.msg);
   else {
     ElMessage.success(response.msg);
-    videoForm.value.url = "http://134.107.67.26:8088/videos/" + response.data;
+    videoForm.value.url = "http://localhost:8088/videos/" + response.data;
     videoForm.value.uploaderId = loginStore.userInfo.id;
     await useraddVideoService(
       videoForm.value.type,
@@ -394,7 +394,7 @@ const clearForm = () => {
       <el-upload
         ref="upload"
         class="upload-demo"
-        action="http://134.107.67.26:8088/video/upload"
+        action="http://localhost:8088/video/upload"
         :limit="1"
         :on-exceed="handleExceed"
         :auto-upload="false"

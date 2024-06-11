@@ -87,10 +87,11 @@ watch(
     mode="horizontal"
     :ellipsis="false"
     router
+    style="background-color: #2E6EBB;"
   >
     <el-menu-item index="0" route="/">
       <img style="height: 100%" src="@/assets/logo.png" alt="Element logo" />
-      <el-text type="primary" size="large" tag="b">首页</el-text>
+      <el-text type="primary" size="large" tag="b" style="color: white">首页</el-text>
     </el-menu-item>
     <div class="flex-grow" />
     <!--    <el-input-->
@@ -99,15 +100,16 @@ watch(
     <!--        placeholder="Type something"-->
     <!--        :prefix-icon="Search"-->
     <!--    />-->
-    <div class="search">
+    <div class="search" >
       <el-input
         v-model="searchInput"
         placeholder="请输入想要搜索的内容"
         class=""
         @keyup.enter="submitSearch"
+        
       >
-        <template #prepend>
-          <el-select v-model="select" placeholder="课件" style="width: 100px">
+        <template #prepend >
+          <el-select v-model="select" placeholder="课件" style="width: 100px " >
             <!-- <el-option label="视频" value="video" /> -->
             <el-option label="课件" value="article" />
             <el-option label="一线需求" value="question" />
@@ -121,10 +123,10 @@ watch(
 
     <!-- <el-menu-item index="video"  @click="handleRoute('video')">视频</el-menu-item> -->
 
-    <el-menu-item index="article" @click="handleRoute('article')"
+    <el-menu-item index="article" @click="handleRoute('article')" style="background-color: #2E6EBB; color: white;"
       >课件</el-menu-item
     >
-    <el-menu-item index="question" @click="handleRoute('question')"
+    <el-menu-item index="question" @click="handleRoute('question')" style="background-color: #2E6EBB; color: white;"
       >一线需求</el-menu-item
     >
 
@@ -132,6 +134,7 @@ watch(
       index="check"
       @click="handleRoute('check')"
       v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
+      style="background-color: #2E6EBB; color: white;"
       >我的需求</el-menu-item
     >
     <el-badge class="item" :is-dot="wait"></el-badge>
@@ -141,8 +144,8 @@ watch(
     <el-menu-item v-if="loginStore.isLoggedIn">
       <Avatar></Avatar>
     </el-menu-item>
-    <el-menu-item v-else>
-      <el-button @click="showLogin" type="primary">登录</el-button>
+    <el-menu-item v-else >
+      <el-button @click="showLogin" type="primary" >登录</el-button>
     </el-menu-item>
 
     <!-- <router-link to="/login" class="menu-login-item">
@@ -172,9 +175,12 @@ export default {
   margin-top: auto;
   margin-bottom: auto;
   margin-right: 2rem;
+  
 }
 
 .flex-grow {
   flex-grow: 1;
 }
+
+
 </style>
