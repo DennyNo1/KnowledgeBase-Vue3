@@ -106,6 +106,7 @@ function submitSearch() {
   justify-content: center; /* 水平居中 */
   align-items: center; /* 垂直居中 */
   background-color: #2E6EBB; /* Blue background */
+
   
 }
 

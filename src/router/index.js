@@ -7,6 +7,7 @@ import CheckQuestionPage from "@/views/CheckQuestionPage.vue";
 import CreateQuestion from "@/views/CreateQuestion.vue";
 import CreateArticle from "@/views/CreateArticle.vue";
 import { useLoginStore } from "@/store/login.js";
+import MyArticle from "@/views/MyArticle.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -69,6 +70,10 @@ const router = createRouter({
           component: CreateArticle,
           meta: { requiresAuth: true },
         },
+        {
+          path:"myArticle",
+          component:MyArticle
+        }
 
         // {
         //   path: "/login",
