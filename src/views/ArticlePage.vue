@@ -8,11 +8,14 @@ import { storeToRefs } from "pinia";
 import { oneArticle } from "@/api/knowledgeBase.js";
 import dayjs from "dayjs";
 import { useRouter, useRoute } from "vue-router";
-import { userOneArticleService,userArticleLikeService } from "@/api/article.js";
-import{userLikeService} from '@/api/comment.js'
+import {
+  userOneArticleService,
+  userArticleLikeService,
+} from "@/api/article.js";
+import { userLikeService } from "@/api/comment.js";
 import { ElMessage } from "element-plus";
 
-import { watch } from 'vue'
+import { watch } from "vue";
 const loginStore = useLoginStore();
 const route = useRoute();
 const router = useRouter();
@@ -32,7 +35,7 @@ const getArticle = async () => {
     // console.log(response.data.attachmentList);
     attachmentList.value = response.data.attachmentList;
     like.value = response.data.liked;
-    console.log(like.value)
+    console.log(like.value);
 
     // console.log(attachementList.value);
   } catch (error) {
@@ -53,9 +56,8 @@ watch(
   async (newId, oldId) => {
     if (newId !== oldId) {
       //重新获取文章区
-      const response=await userArticleLikeService(id, loginStore.userInfo.id);
-      like.value=response;
-      
+      const response = await userArticleLikeService(id, loginStore.userInfo.id);
+      like.value = response;
     }
   },
   { immediate: true } // 设置immediate为true，表示在监听开始时立即执行一次
@@ -90,35 +92,63 @@ const belongType = ref("article");
 
 const store = useLoginStore();
 const { userInfo } = storeToRefs(store);
-async function toggleLike(){
-    //先判断是否登录
-    if (!loginStore.isLoggedIn) {
+async function toggleLike() {
+  //先判断是否登录
+  if (!loginStore.isLoggedIn) {
     ElMessage({
       message: "登录后才能进行该操作",
       type: "warning",
     });
     return;
   }
-  if(!like.value)
-  {
-    await userLikeService(loginStore.userInfo.id,"article",route.query.id)
-    await getArticle()
-  }
-  else{
+  if (!like.value) {
+    await userLikeService(loginStore.userInfo.id, "article", route.query.id);
+    await getArticle();
+  } else {
     ElMessage({
       message: "您已点赞过该课件",
       type: "primary",
     });
-    return
+    return;
   }
 }
+const downloadFile = async (attachment) => {
+  try {
+    const response = await fetch(attachment.url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // 创建一个 Blob 对象
+    const blob = await response.blob();
+
+    // 创建一个对象URL
+    const url = URL.createObjectURL(blob);
+
+    // 创建一个隐藏的可下载链接
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', attachment.name); // 或者使用你想要的文件名
+
+    // 添加到 DOM
+    document.body.appendChild(link);
+
+    // 模拟点击
+    link.click();
+
+    // 清理
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download error:', error);
+  }
+};
 </script>
 
 <template>
-  <el-row style="margin-bottom: 1rem;">
+  <el-row style="margin-bottom: 1rem">
     <el-col :span="4" />
     <el-col :span="16">
-      
       <!-- <el-page-header :icon="ArrowLeft" @back="goBack">
         
         <template #content>
@@ -127,7 +157,7 @@ async function toggleLike(){
         </template>
       </el-page-header> -->
 
-      <h2 style="font-size: 2rem;margin-bottom: 0%">{{ article.title }}</h2>
+      <h2 style="font-size: 2rem; margin-bottom: 0%">{{ article.title }}</h2>
       <br />
       <el-descriptions title="文章信息" :column="6">
         <el-descriptions-item>
@@ -147,7 +177,7 @@ async function toggleLike(){
         </el-descriptions-item>
         <el-descriptions-item label="发布时间">
           <!-- {{ dayjs(article.date).format("YYYY-MM-DD") }} -->
-          {{article.date}}
+          {{ article.date }}
         </el-descriptions-item>
 
         <!-- <el-descriptions-item label="知识标签">
@@ -162,12 +192,11 @@ async function toggleLike(){
           >
         </el-descriptions-item> -->
       </el-descriptions>
-      
     </el-col>
     <el-col :span="4" />
   </el-row>
 
-  <el-row >
+  <el-row>
     <el-col :span="4"></el-col>
     <el-col :span="16">
       <el-descriptions title="正文内容"> </el-descriptions>
@@ -176,10 +205,9 @@ async function toggleLike(){
   </el-row>
 
   <!-- 正文 -->
-  <el-row >
+  <el-row>
     <el-col :span="4" />
     <el-col :span="16">
-      
       <div class="article" v-html="article.content"></div>
       <el-divider style="margin-top: 30px" />
     </el-col>
@@ -189,19 +217,28 @@ async function toggleLike(){
   <el-row style="margin-top: 30px; margin-bottom: 10px">
     <el-col :span="14" />
     <!-- 附件栏 -->
-    <div v-if="attachmentList.length>0">
+    <div v-if="attachmentList.length > 0">
       附件列表
       <div class="attachment" v-for="attachment in attachmentList">
         <span class="attachment-name"></span>
         <el-icon><Document /></el-icon>
-        <a :href="attachment.url" class="download-link">{{ attachment.name }}</a>
+        <a
+          class="download-link"
+          @click.prevent="downloadFile(attachment)"
+          >{{ attachment.name }}</a
+        >
       </div>
     </div>
   </el-row>
   <el-row style="margin-top: 30px; margin-bottom: 10px">
     <el-col :span="4" />
-    <el-button type="primary" :icon="CaretTop" size="large" :plain="!like"
-    @click="toggleLike()">点赞&nbsp;{{ article.likeCount }}
+    <el-button
+      type="primary"
+      :icon="CaretTop"
+      size="large"
+      :plain="!like"
+      @click="toggleLike()"
+      >点赞&nbsp;{{ article.likeCount }}
     </el-button></el-row
   >
 
@@ -222,7 +259,6 @@ async function toggleLike(){
   font-size: 24px;
 }
 */
-
 
 .article {
   display: block; /* 将 el-text 设置为块级元素 */
