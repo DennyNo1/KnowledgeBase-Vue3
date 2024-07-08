@@ -8,6 +8,7 @@ import CreateQuestion from "@/views/CreateQuestion.vue";
 import CreateArticle from "@/views/CreateArticle.vue";
 import { useLoginStore } from "@/store/login.js";
 import MyArticle from "@/views/MyArticle.vue";
+import SearchResult from "@/views/SearchResult.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -73,6 +74,10 @@ const router = createRouter({
         {
           path:"myArticle",
           component:MyArticle
+        },
+        {
+          path:"/search",
+          component:SearchResult
         }
 
         // {

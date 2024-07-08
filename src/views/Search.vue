@@ -44,7 +44,7 @@ function submitSearch() {
     <el-row style="margin-top: 0rem; display: flex;" >
       <el-input
         v-model="searchInput"
-        placeholder="请输入想要搜索的内容"
+        placeholder="请输入想要搜索的关键字"
         class="input-with-select"
         size="large"
         @keyup.enter="submitSearch"
@@ -81,7 +81,7 @@ function submitSearch() {
         align-items: center; /* 垂直居中 */
         margin-top: 2rem
       "
-      >网站使用指南：1、支持关键字搜索;2、课件浏览请点击右上角“课件”;3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
+      >网站使用指南：1、支持标题/上传者的关键字搜索；2、课件浏览请点击右上角“课件”；3、支撑需求提交请从右上角“一线需求”入口进入。</el-text
     >
   </el-row>
 </template>

@@ -70,3 +70,25 @@ export async function QuestionWaitService(role) {
     },
   });
 }
+export async function questionSearchTitleService(page, pageSize, queryName) {
+  return await request({
+    method: "GET",
+    url: "/question/some",
+    params: {
+      page,
+      pageSize,
+      queryName,
+    },
+  });
+}
+export async function questionSearchUploaderService(page, pageSize, queryName) {
+  return await request({
+    method: "GET",
+    url: "/question/some",
+    params: {
+      page,
+      pageSize,
+      queryUploader,
+    },
+  });
+}

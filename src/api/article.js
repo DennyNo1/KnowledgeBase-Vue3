@@ -140,3 +140,30 @@ export async function userDeleteArticleService(id) {
     },
   });
 }
+
+export async function articleSearchListService(page, pageSize, queryName) {
+  return await request({
+    method: "GET",
+    url: "/article/some",
+    params: {
+      page,
+      pageSize,
+      queryName,
+    },
+  });
+}
+export async function articleSearchUploaderService(
+  page,
+  pageSize,
+  queryUploader
+) {
+  return await request({
+    method: "GET",
+    url: "/article/some",
+    params: {
+      page,
+      pageSize,
+      queryUploader,
+    },
+  });
+}

@@ -16,7 +16,7 @@ import {
 import { QuestionWaitService } from "@/api/question";
 
 const searchInput = ref("");
-const select = ref("article");
+const select = ref("title");
 const router = useRouter();
 const loginStore = useLoginStore();
 
@@ -24,21 +24,30 @@ function submitSearch() {
   // 必须选择专栏的种类
   console.log(select.value);
 
-  if (select.value == "") {
-    ElMessage({
-      message: "选择专栏类别后才能进行搜索操作",
-      type: "warning",
-    });
-    return;
-  }
+  // if (select.value == "") {
+  //   ElMessage({
+  //     message: "选择专栏类别后才能进行搜索操作",
+  //     type: "warning",
+  //   });
+  //   return;
+  // }
   if (searchInput.value == "") {
     ElMessage({
-      message: "请输入您的搜索内容",
+      message: "请输入您要搜索的关键字",
       type: "warning",
     });
     return;
   }
-  router.push(`/${select.value}?type=默认&queryName=${searchInput.value}`);
+  if(select.value=='title')
+  {
+    router.push(`/search?queryName=${searchInput.value}`);
+    return
+  }
+  if(select.value=='uploader'){
+    router.push(`/search?queryUploader=${searchInput.value}`);
+    return
+  }
+  
 }
 const showLogin = () => {
   loginStore.isOpen = true;
@@ -109,15 +118,15 @@ watch(
     <div class="search">
       <el-input
         v-model="searchInput"
-        placeholder="请输入想要搜索的内容"
+        placeholder="请输入想要搜索的关键字"
         class=""
         @keyup.enter="submitSearch"
       >
         <template #prepend>
-          <el-select v-model="select" placeholder="课件" style="width: 100px">
+          <el-select v-model="select" placeholder="标题" style="width: 100px">
             <!-- <el-option label="视频" value="video" /> -->
-            <el-option label="课件" value="article" />
-            <el-option label="一线需求" value="question" />
+            <el-option label="标题" value="title" />
+            <el-option label="发布者" value="uploader" />
           </el-select>
         </template>
         <template #append>
