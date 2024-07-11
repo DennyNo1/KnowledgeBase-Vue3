@@ -10,8 +10,8 @@ import {
   questionSearchTitleService,
   questionSearchUploaderService,
 } from "@/api/question";
-import { watch, } from "vue";
-import { onBeforeRouteUpdate } from 'vue-router';
+import { watch } from "vue";
+import { onBeforeRouteUpdate } from "vue-router";
 
 const route = useRoute();
 const articleData = ref([]);
@@ -151,11 +151,37 @@ onBeforeRouteUpdate((to, from) => {
   // if (to.query.queryUploader !== from.query.queryUploader) {
   //   getArticleSearchUploaderService("1", "6", to.query.queryUploader);
   // }
-  console.log(to.query.queryName);
-  console.log(from.query.queryName);
-  console.log(to.query.queryUploade);
-  console.log(from.query.queryUploader);
+
+  // console.log(to.query);
+  // console.log(from.query);
+  // console.log(to.query.queryUploade);
+  // console.log(from.query.queryUploader);
+
+  if (to.query.queryName) {
+    console.log("queryName");
+    getArticleSearchList("1", "6", to.query.queryName);
+  }
+
+  if (to.query.queryUploader) {
+    console.log("queryUploader");
+    getArticleSearchQueryUploader("1", "6", to.query.queryUploader);
+  }
+
+  content.value='article'
+  currentPage.value=1
+
 });
+
+function setHoverColor(color, index) {
+  // hoverColor.value = color;
+  articleData.value[index].hoverColor = color;
+}
+
+//点击进入article详情页
+function handleClick(item) {
+
+  router.push(`/article-page?id=${item.article.id}`);
+}
 </script>
 <template>
   <el-row>

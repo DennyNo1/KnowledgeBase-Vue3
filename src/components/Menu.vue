@@ -126,7 +126,7 @@ watch(
           <el-select v-model="select" placeholder="标题" style="width: 100px">
             <!-- <el-option label="视频" value="video" /> -->
             <el-option label="标题" value="title" />
-            <el-option label="发布者" value="uploader" />
+            <el-option label="发布人" value="uploader" />
           </el-select>
         </template>
         <template #append>
