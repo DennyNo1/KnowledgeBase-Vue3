@@ -12,26 +12,28 @@ import {
 } from "element-plus";
 
 const searchInput = ref("");
-const select = ref("article");
+const select = ref("");
 const router = useRouter();
 
 function submitSearch() {
-  // 默认搜索视频页面
-  if (select.value == "") {
-    ElMessage({
-      message: "选择专栏类别后才能进行搜索操作",
-      type: "warning",
-    });
-    return;
-  }
+  console.log(select.value);
+  // 搜索内容不得为空
   if (searchInput.value == "") {
     ElMessage({
-      message: "请输入您的搜索内容",
+      message: "请输入您要搜索的关键字",
       type: "warning",
     });
     return;
   }
-  router.push(`/${select.value}?type=默认&queryName=${searchInput.value}`);
+  if(select.value=='title')
+  {
+    router.push(`/search?queryName=${searchInput.value}`);
+    return
+  }
+  if(select.value=='uploader'){
+    router.push(`/search?queryUploader=${searchInput.value}`);
+    return
+  }
 }
 </script>
 
@@ -53,13 +55,13 @@ function submitSearch() {
         <template #prepend>
           <el-select
             v-model="select"
-            placeholder="课件"
+            placeholder="标题"
             style="width: 115px; "
             size="large"
           >
             <!-- <el-option label="视频" value="video" /> -->
-            <el-option label="课件" value="article" />
-            <el-option label="一线需求" value="question" />
+            <el-option label="标题" value="title" />
+            <el-option label="发布人" value="uploader" />
           </el-select>
         </template>
         <template #append>
