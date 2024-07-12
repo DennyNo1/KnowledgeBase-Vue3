@@ -12,7 +12,7 @@ import {
 } from "element-plus";
 
 const searchInput = ref("");
-const select = ref("");
+const select = ref("title");
 const router = useRouter();
 
 function submitSearch() {

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref,onActivated,onDeactivated } from "vue";
 import { ChatLineRound, Chicken, View } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import dayjs from "dayjs";
@@ -13,19 +13,28 @@ import {
   Star,
 } from "@element-plus/icons-vue";
 
-import { userArticleListService, } from "@/api/article.js";
+import { userArticleListService } from "@/api/article.js";
 import { useLoginStore } from "@/store/login";
 import { watch } from "vue";
-
+import{useArticleStore} from "@/store/article"
+const route = useRoute();
 const router = useRouter();
+
+// const typeInUrl=ref()
+// typeInUrl.value=route.query.type
+
+
 //total代表的是总页数，而不是当前页数
 const total = ref();
 //这个是显示的页码
-const currentPage=ref(1)
+const currentPage = ref(5);
+// currentPage.value=route.query.page
 
 const loginStore = useLoginStore();
+const articleStore=useArticleStore()
+
 const articleData = ref([]);
-const route = useRoute();
+
 async function getArticleList(page, pageSize, queryName, type) {
   try {
     const response = await userArticleListService(
@@ -37,19 +46,41 @@ async function getArticleList(page, pageSize, queryName, type) {
     // console.log(response.data)
     articleData.value = response.data.records;
     total.value = response.data.total;
+    
     console.log(articleData.value[0].user);
   } catch (error) {
     console.log("请求失败！", error);
   }
 }
 onMounted(() => {
-  getArticleList("1", "6", route.query.queryName, route.query.type);
+  console.log('onMounted')
+  console.log(route.query.page)
+  getArticleList(route.query.page, 6, route.query.queryName, route.query.type);
+  console.log(route.query.page+'1212313213')
+  currentPage.value=parseInt(route.query.page)
 });
 
+onActivated(() => {
+  console.log('onActivated')
+  // getArticleList(articleStore.articleList.page,6,null,articleStore.articleList.type)
+});
+
+// 在组件被停用时保存当前页码到 pinia
+onDeactivated(() => {
+  console.log('onDeactivated')
+  // articleStore.articleList.type=typeInUrl.value
+  // articleStore.articleList.page=currentPage.value
+});
+
+//跳转到文章详情页
 function handleClick(item) {
   // console.log('点击了卡片')
   // console.log(item)
+
   router.push(`/article-page?id=${item.article.id}`);
+  // const route = `/article-page?id=${item.article.id}`;
+  // const fullUrl = router.resolve(route).href;
+  // window.open(fullUrl, '_blank');
 }
 
 //切换页码
@@ -58,17 +89,15 @@ async function handleCurrentChange(truePage) {
   // 获取点击的页码
   console.log(currentPage);
   //获取当前页数
-
-  await getArticleList(
-    truePage,
-    "6",
-    route.query.queryName,
-    route.query.type
-  );
-  currentPage.value=truePage
+  const currentType=route.query.type
+  router.replace(`/article?type=${currentType}&page=${truePage}`)
+  await getArticleList(truePage, "6", route.query.queryName, route.query.type);
+  console.log('切换页码')
+  currentPage.value = truePage;
 }
 
-async function handleItemClick(type) {
+//切换类别
+async function handleItemClick(currentType) {
   // if(type=='')
   // await getArticleList("1", "6", null, null)
   // else{
@@ -79,15 +108,12 @@ async function handleItemClick(type) {
   // const type = '营业'; // 或根据实际需求动态获取
 
   // console.log(type)
-  await router.push({
-    path: `/article`,
-    query: { type, queryName: route.query.queryName },
-  });
-  await getArticleList(1, "6", route.query.queryName, route.query.type);
-  //每次切换类别时，需要把当前页码数重置为1
-  console.log('switch')
-  currentPage.value=1
+  router.replace(`/article?type=${currentType}&page=1`)
   
+  await getArticleList(1, "6", route.query.queryName, currentType);
+  //每次切换类别时，需要把当前页码数重置为1
+  console.log("switch");
+  currentPage.value = 1;
 }
 
 function handleUpload() {
@@ -149,12 +175,11 @@ async function sumbitInput(item) {
   await userModifyTopService(item.article.id, item.article.top);
   getArticleList("1", "6", route.query.queryName, route.query.type);
 }
-async function handleEdit(articleId){
+async function handleEdit(articleId) {
   await router.push({
-      path: `/article/create`,
-      query: { articleId: articleId },
-    });
-
+    path: `/article/create`,
+    query: { articleId: articleId },
+  });
 }
 </script>
 
@@ -209,7 +234,7 @@ async function handleEdit(articleId){
       size="large"
       class="upload-button"
       @click="handleUpload"
-      v-if="loginStore.isLoggedIn &&loginStore.userInfo.role!='user'"
+      v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
     >
       采编课件<el-icon><ZoomIn /></el-icon>
     </el-button>

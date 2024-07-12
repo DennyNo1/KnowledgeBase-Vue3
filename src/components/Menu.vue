@@ -66,7 +66,7 @@ const handleRoute = (v) => {
     router.push(`/myArticle?uploaderId=${loginStore.userInfo.id}`)
   }
   if (v =='question'||v=='article') {
-    router.push(`/${v}?type=默认`);
+    router.push(`/${v}?type=默认&page=1`);
   } else if (v == "check") {
     // router.push('/question/check?isChecked=0')
     router.push(`/question/check?role=${loginStore.userInfo.role}&isSolved=0`);

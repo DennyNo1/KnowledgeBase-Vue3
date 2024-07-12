@@ -9,7 +9,8 @@ import CreateArticle from "@/views/CreateArticle.vue";
 import { useLoginStore } from "@/store/login.js";
 import MyArticle from "@/views/MyArticle.vue";
 import SearchResult from "@/views/SearchResult.vue";
-
+import Article from "@/views/Article.vue";
+import ArticlePage from "@/views/ArticlePage.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -29,8 +30,10 @@ const router = createRouter({
         // },
         {
           path: "/article",
-          name: "article",
-          component: () => import("@/views/Article.vue"),
+          name: "Article",
+          component: Article,
+          // meta: { keepAlive: true }
+          
         },
         {
           path: "/question",
@@ -39,8 +42,10 @@ const router = createRouter({
         },
         {
           path: "/article-page",
-          name: "article-page",
-          component: () => import("@/views/ArticlePage.vue"),
+          name: "ArticlePage",
+          component: ArticlePage,
+          
+          
         },
         {
           path: "/question-page",
