@@ -1,5 +1,3 @@
-<script setup></script>
-
 <template>
   <iframe
     src="http://172.27.20.24/chat/share?shared_id=ragflow-lmMTIyMTk0NDI1YjExZWY4YzYzMDI0Mm"
@@ -8,5 +6,3 @@
   >
   </iframe>
 </template>
-
-<style scoped></style>

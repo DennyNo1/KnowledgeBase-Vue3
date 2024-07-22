@@ -12,6 +12,15 @@ import {
 } from "@/api/question";
 import { watch } from "vue";
 import { onBeforeRouteUpdate } from "vue-router";
+import { useLoginStore } from "@/store/login";
+import {
+  Check,
+  Delete,
+  Edit,
+  Message,
+  Search,
+  Star,
+} from "@element-plus/icons-vue";
 
 const route = useRoute();
 const articleData = ref([]);
@@ -167,9 +176,8 @@ onBeforeRouteUpdate((to, from) => {
     getArticleSearchQueryUploader("1", "6", to.query.queryUploader);
   }
 
-  content.value='article'
-  currentPage.value=1
-
+  content.value = "article";
+  currentPage.value = 1;
 });
 
 function setHoverColor(color, index) {
@@ -179,9 +187,16 @@ function setHoverColor(color, index) {
 
 //点击进入article详情页
 function handleClick(item) {
-
   router.push(`/article-page?id=${item.article.id}`);
 }
+
+async function handleEdit(articleId) {
+  await router.push({
+    path: `/article/create`,
+    query: { articleId: articleId },
+  });
+}
+const loginStore = useLoginStore();
 </script>
 <template>
   <el-row>
@@ -237,8 +252,8 @@ function handleClick(item) {
                 <!-- {{ articlearticleData[index]}} -->
               </el-text>
             </el-col>
-            <!-- 搜索的结果还是不要编辑了 -->
-            <!-- <el-button
+
+            <el-button
               type="primary"
               :icon="Edit"
               circle
@@ -247,7 +262,7 @@ function handleClick(item) {
                 loginStore.userInfo.role == 'admin' ||
                 item.article.uploaderId == loginStore.userInfo.id
               "
-            /> -->
+            />
           </el-row>
           <el-row style="margin-top: 10px; align-items: center">
             <el-col :span="6">

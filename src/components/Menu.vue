@@ -38,16 +38,14 @@ function submitSearch() {
     });
     return;
   }
-  if(select.value=='title')
-  {
+  if (select.value == "title") {
     router.push(`/search?queryName=${searchInput.value}`);
-    return
+    return;
   }
-  if(select.value=='uploader'){
+  if (select.value == "uploader") {
     router.push(`/search?queryUploader=${searchInput.value}`);
-    return
+    return;
   }
-  
 }
 const showLogin = () => {
   loginStore.isOpen = true;
@@ -62,14 +60,18 @@ const isAdmin = () => {
 };
 const handleRoute = (v) => {
   selected.value = v;
-  if(v=="myArticle"){
-    router.push(`/myArticle?uploaderId=${loginStore.userInfo.id}`)
+  if (v == "myArticle") {
+    router.push(`/myArticle?uploaderId=${loginStore.userInfo.id}`);
   }
-  if (v =='question'||v=='article') {
+  if (v == "question" || v == "article") {
     router.push(`/${v}?type=默认&page=1`);
   } else if (v == "check") {
     // router.push('/question/check?isChecked=0')
     router.push(`/question/check?role=${loginStore.userInfo.role}&isSolved=0`);
+  }
+  if(v=='aiChat')
+  {
+    router.push(`/aiChat`);
   }
 
   // else if(v=='solve'){
@@ -108,7 +110,7 @@ watch(
         >首页</el-text
       >
     </el-menu-item>
-    <div class="flex-grow" />
+    <div class="flex-grow" ></div>
     <!--    <el-input-->
     <!--        v-model="input"-->
     <!--        class="w-50 m-2"-->
@@ -137,6 +139,13 @@ watch(
 
     <!-- <el-menu-item index="video"  @click="handleRoute('video')">视频</el-menu-item> -->
 
+    <!-- <el-menu-item
+      index="aiChat"
+      @click="handleRoute('aiChat')"
+      style="color: white"
+    >
+      标品助手
+    </el-menu-item> -->
     <el-menu-item
       index="article"
       @click="handleRoute('article')"

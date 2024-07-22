@@ -154,7 +154,7 @@ function toggleLike(item) {
 
 <template>
   <!-- 提交新评论框 -->
-  <el-card shadow="hover">
+  <el-card shadow="hover"  >
     <el-row class="mt-8">
       <div class="replyHeader">
         <!-- 都先采用默认头像 -->

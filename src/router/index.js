@@ -11,6 +11,8 @@ import MyArticle from "@/views/MyArticle.vue";
 import SearchResult from "@/views/SearchResult.vue";
 import Article from "@/views/Article.vue";
 import ArticlePage from "@/views/ArticlePage.vue";
+import BPChat from "@/views/BPChat.vue";
+import CDChat from "@/views/CDChat.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -83,7 +85,16 @@ const router = createRouter({
         {
           path:"/search",
           component:SearchResult
+        },
+        {
+          path:"/CDChat",
+          component:CDChat
+        },
+        {
+          path:"/BPChat",
+          component:BPChat
         }
+
 
         // {
         //   path: "/login",
