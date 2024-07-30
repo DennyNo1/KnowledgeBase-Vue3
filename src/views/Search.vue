@@ -91,6 +91,7 @@ function submitSearch() {
     <el-col :span="20"></el-col>
     <el-col :span="4">
       <div class="button-container">
+        <button class="custom-button" @click="router.push('/NewChat')">新聊天助手</button>
         <button class="custom-button" @click="router.push('/CDChat')">触点助手</button>
         <button class="custom-button" @click="router.push('/BPChat')">标品助手</button>
       </div></el-col

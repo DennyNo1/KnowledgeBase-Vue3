@@ -13,6 +13,7 @@ import Article from "@/views/Article.vue";
 import ArticlePage from "@/views/ArticlePage.vue";
 import BPChat from "@/views/BPChat.vue";
 import CDChat from "@/views/CDChat.vue";
+import NewChat from "@/views/NewChat.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -93,6 +94,10 @@ const router = createRouter({
         {
           path:"/BPChat",
           component:BPChat
+        },
+        {
+          path:"/NewChat",
+          component:NewChat
         }
 
 

@@ -26,7 +26,7 @@ const editorConfig = {
 
 const router = useRouter();
 const loginStore = useLoginStore();
-
+const uploadServer = ref(import.meta.env.VITE_ATTACHMENT_UPLOAD_SERVER);
 const article = ref({
   title: "",
   contentHtml: "",
@@ -163,13 +163,13 @@ function goBack() {
 
 // 表单数据域名设置为image
 editorConfig.MENU_CONF["uploadImage"] = {
-  server: "http://134.107.67.26:8088/article/upload-image",
+  server: import.meta.env.VITE_IMAGE_UPLOAD_SERVER,
   fieldName: "image",
 };
 
 
 editorConfig.MENU_CONF['uploadVideo'] = {
-     server: "http://134.107.67.26:8088/article/upload-video",
+     server: import.meta.env.VITE_VIDEO_UPLOAD_SERVER,
      fieldName: "video",
      maxFileSize: 512 * 1024 * 1024, // 512M
 }
@@ -368,7 +368,7 @@ async function handleDelete(){
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
-            action=http://134.107.67.26:8088/article/upload-attachment
+            :action=uploadServer
             :limit="5"
             :on-exceed="handleExceed"
             :on-remove="handleUploadRemove"
