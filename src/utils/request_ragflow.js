@@ -9,9 +9,11 @@ const apiClient = axios.create({
 });
 // 添加请求拦截器
 apiClient.interceptors.request.use(
+ 
     config => {
+
       // 获取 API key
-      const apiKey = 'ragflow-lmMTIyMTk0NDI1YjExZWY4YzYzMDI0Mm';
+      const apiKey = import.meta.env.VITE_APP_API_KEY;
       if (apiKey) {
         config.headers.Authorization = `Bearer ${apiKey}`;
       }

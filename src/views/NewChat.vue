@@ -1,7 +1,11 @@
 <script setup>
 import chatAvatar from "@/assets/chat.png";
 import { watch, ref, onMounted, onUnmounted } from "vue";
-import { userCreateConversation, userSendMessage } from "@/api/ragflow.js";
+import {
+  userCreateConversation,
+  userSendMessage,
+  userDissatisfiedAnswerService,
+} from "@/api/ragflow.js";
 import { Edit, View as IconView, Document } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 // 提问输入框
@@ -71,7 +75,7 @@ async function sendMessage(questionObject) {
 // 问题和回复的数组，每个对象包含问题和数组,用于页面展示
 const questionReplyArray = ref([]);
 
-//发送按钮
+//处理发送
 async function send() {
   // {"role": "user", "content": "How are you doing!"}这是提问者的问题格式
   const questionObject = {
@@ -98,6 +102,8 @@ async function send() {
   const finalReply = replyArray[replyArray.length - 2];
 
   oneQuestionReply.value.reply = finalReply;
+  // 让不满意的按钮只能点一次
+  oneQuestionReply.value.enable=true
 
   //拿到回复后，再补上覆盖原问题和回答
   questionReplyArray.value[questionReplyArray.length - 1] =
@@ -173,11 +179,19 @@ const downloadDocument = (doc_id, doc_name) => {
     });
 };
 //触发不满意
-function notSatisfied() {
+// q代表元素，包含问题和回答
+async function Dissatisfied(question, answer, reference,q) {
   ElMessage({
     message: "已收到您的反馈，我们会尽快处理",
     type: "warning",
   });
+  // reference是一个json对象，要转换成string再传输
+  const referenceString = JSON.stringify(reference);
+  q.enable=false
+  console.log(q.enable)
+  await userDissatisfiedAnswerService(question, answer, referenceString);
+  
+
 }
 </script>
 <template>
@@ -185,7 +199,6 @@ function notSatisfied() {
   <el-row>
     <el-col :span="3" />
     <el-col :span="19">
-      
       <!-- 首次进入时的默认提示词 -->
       <div>
         <el-row :style="{ width: '100%', fontSize: '1.2em' }">
@@ -204,14 +217,17 @@ function notSatisfied() {
         <el-row :style="{ width: '100%', fontSize: '1.2em' }">
           <el-col :span="23" />&nbsp&nbsp&nbsp
           <el-avatar :size="large" class="avatar">我</el-avatar>
-          <el-card style="width: 100%; text-align: right">{{
-            question.text
-          }}</el-card>
+          <el-card style="width: 100%; text-align: right">
+            <div class="text-wrapper">{{ question.text }}</div>
+          </el-card>
         </el-row>
         <!-- 回答 -->
         <el-row :style="{ width: '100%', fontSize: '1.2em' }">
           <el-avatar :size="large" :src="chatAvatar" class="avatar"></el-avatar>
-          <el-card style="width: 100%" v-if="!question.reply" v-loading="!question.reply"
+          <el-card
+            style="width: 100%"
+            v-if="!question.reply"
+            v-loading="!question.reply"
             >搜索中...</el-card
           >
           <el-card style="width: 100%" v-else>
@@ -234,7 +250,17 @@ function notSatisfied() {
                 >
               </div>
               <p>
-                <el-button :disabled="false" @click="notSatisfied" plain
+                <el-button
+                  :disabled="!question.enable"
+                  @click="
+                    Dissatisfied(
+                      question.text,
+                      question.reply.data.answer,
+                      question.reply.data.reference,
+                      question
+                    )
+                  "
+                  plain
                   >我不满意这个回答</el-button
                 >
               </p>
@@ -256,11 +282,15 @@ function notSatisfied() {
           placeholder="请输入您的问题..."
           :style="{ width: '100%', height: '100%', fontSize: '1.2em' }"
           :autosize="{ minRows: 2, maxRows: 6 }"
+          maxlength="800"
+          @keyup.enter="send"
         />
       </el-row>
       <el-row class="commit-button">
         <el-col :span="23" />
-        <el-button type="primary" @click="send">发送</el-button>
+        <el-button type="primary" @click="send" 
+          >发送</el-button
+        >
       </el-row>
     </el-col>
     <el-col :span="2" />
@@ -285,5 +315,9 @@ function notSatisfied() {
 }
 .custom-size .el-icon-document {
   font-size: 1.2em; /* 调整图标大小 */
+}
+.text-wrapper {
+  white-space: pre-wrap; /* 保持空格和换行符，同时允许文本换行 */
+  word-break: break-word; /* 如果一行无法显示所有内容，则会在单词之间换行 */
 }
 </style>

@@ -31,3 +31,7 @@ coverage
 
 # 本地服务器
 local_example_server/node_modules
+
+# Environment variables
+.env.development
+.env.production
