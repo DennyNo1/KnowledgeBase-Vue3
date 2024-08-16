@@ -13,13 +13,7 @@ const inputText = ref("");
 
 // 原始文本
 const initialText = ref();
-// 当前显示的文本
-const displayedText = ref("");
 
-// 字符显示速度 (毫秒)
-const typingSpeed = 100;
-// 定时器变量
-let timer;
 const conversationId = ref();
 
 // 存储所有消息的数组。第一个对象是有关初始回答的，第二个是有关问题，第三个有关回答。以此类推。
@@ -144,7 +138,7 @@ function parseDataString(dataString) {
 
 const downloadDocument = (doc_id, doc_name) => {
   // 使用Fetch API发起请求到后端API
-  fetch(`http://172.27.20.24/v1/document/get/${doc_id}`)
+  fetch(`${import.meta.env.VITE_RAGFLOW_API_URL}/document/get/${doc_id}`)
     .then((response) => {
       // 检查响应状态，如果响应成功则继续处理
       if (!response.ok) {
