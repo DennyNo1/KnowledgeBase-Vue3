@@ -69,8 +69,7 @@ const handleRoute = (v) => {
     // router.push('/question/check?isChecked=0')
     router.push(`/question/check?role=${loginStore.userInfo.role}&isSolved=0`);
   }
-  if(v=='aiChat')
-  {
+  if (v == "aiChat") {
     router.push(`/aiChat`);
   }
 
@@ -110,7 +109,7 @@ watch(
         >首页</el-text
       >
     </el-menu-item>
-    <div class="flex-grow" ></div>
+    <div class="flex-grow"></div>
     <!--    <el-input-->
     <!--        v-model="input"-->
     <!--        class="w-50 m-2"-->
@@ -125,9 +124,9 @@ watch(
         @keyup.enter="submitSearch"
       >
         <template #prepend>
-          <el-select v-model="select" placeholder="标题" style="width: 100px">
+          <el-select v-model="select" style="width: 8rem">
             <!-- <el-option label="视频" value="video" /> -->
-            <el-option label="标题" value="title" />
+            <el-option label="标题和内容" value="title" />
             <el-option label="发布人" value="uploader" />
           </el-select>
         </template>

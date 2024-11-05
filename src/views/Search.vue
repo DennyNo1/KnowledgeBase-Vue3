@@ -55,12 +55,12 @@ function submitSearch() {
         <template #prepend>
           <el-select
             v-model="select"
-            placeholder="标题"
-            style="width: 115px"
+ 
+            style="width: 8rem"
             size="large"
           >
             <!-- <el-option label="视频" value="video" /> -->
-            <el-option label="标题" value="title" />
+            <el-option label="标题和内容" value="title" />
             <el-option label="发布人" value="uploader" />
           </el-select>
         </template>
