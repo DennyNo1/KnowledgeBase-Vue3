@@ -72,6 +72,9 @@ const handleRoute = (v) => {
   if (v == "aiChat") {
     router.push(`/aiChat`);
   }
+  if (v == "clickData") {
+    router.push(`/clickData`);
+  }
 
   // else if(v=='solve'){
   //   router.push(`/question/check?role=${loginStore.userInfo.role}`);
@@ -173,6 +176,14 @@ watch(
       v-if="loginStore.isLoggedIn && loginStore.userInfo.role != 'user'"
       style="color: white"
       >我的课件</el-menu-item
+    >
+
+    <el-menu-item
+      index="clickData"
+      @click="handleRoute('clickData')"
+      v-if="loginStore.userInfo.role== 'admin'"
+      style="color: white"
+      >点击量统计</el-menu-item
     >
 
     <!-- v-if="loginStore.isLoggedIn && loginStore.userInfo.role=='admin'" -->

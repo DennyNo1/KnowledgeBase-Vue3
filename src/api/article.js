@@ -167,3 +167,10 @@ export async function articleSearchUploaderService(
     },
   });
 }
+
+export async function articleRankService() {
+  return await request({
+    method: "GET",
+    url: "/article/year_rank",
+  });
+}

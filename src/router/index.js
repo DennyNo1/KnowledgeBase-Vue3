@@ -14,6 +14,8 @@ import ArticlePage from "@/views/ArticlePage.vue";
 import BPChat from "@/views/BPChat.vue";
 import CDChat from "@/views/CDChat.vue";
 import NewChat from "@/views/NewChat.vue";
+import ClickData from "@/views/ClickData.vue"; 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -31,6 +33,13 @@ const router = createRouter({
         //   path: "/video",
         //   component: Video,
         // },
+
+        {
+          path: "/clickData",
+          name: "ClickData",
+          component: ClickData,
+          // meta: { keepAlive: true }
+        },
         {
           path: "/article",
           name: "Article",
