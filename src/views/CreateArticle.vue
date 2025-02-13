@@ -333,7 +333,7 @@ async function handleDelete(){
         <el-form-item class="narrow-input" label="课件标题" size="large"  prop="title" >
           <el-input
             v-model="article.title"
-            placeholder="请输入课件标题"
+            placeholder="请输入课件标题。如果代他人上传，强烈建议以*原作者*的格式。比如*徐慧*表示原作者是徐慧，否则不会被计入统计。"
             type="textarea"
             :autosize="{ minRows: 1, maxRows: 2 }"
             maxlength="100"

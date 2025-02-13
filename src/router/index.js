@@ -14,7 +14,9 @@ import ArticlePage from "@/views/ArticlePage.vue";
 import BPChat from "@/views/BPChat.vue";
 import CDChat from "@/views/CDChat.vue";
 import NewChat from "@/views/NewChat.vue";
-import ClickData from "@/views/ClickData.vue"; 
+import ClickData from "@/views/ClickData.vue";
+import ScoreQuery from "@/views/ScoreQuery.vue";
+import ScoreList from "@/views/ScoreList.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -45,7 +47,6 @@ const router = createRouter({
           name: "Article",
           component: Article,
           // meta: { keepAlive: true }
-          
         },
         {
           path: "/question",
@@ -56,8 +57,6 @@ const router = createRouter({
           path: "/article-page",
           name: "ArticlePage",
           component: ArticlePage,
-          
-          
         },
         {
           path: "/question-page",
@@ -89,26 +88,36 @@ const router = createRouter({
           meta: { requiresAuth: true },
         },
         {
-          path:"myArticle",
-          component:MyArticle
+          path: "myArticle",
+          component: MyArticle,
         },
         {
-          path:"/search",
-          component:SearchResult
+          path: "/search",
+          component: SearchResult,
         },
         {
-          path:"/CDChat",
-          component:CDChat
+          path: "/CDChat",
+          component: CDChat,
         },
         {
-          path:"/BPChat",
-          component:BPChat
+          path: "/BPChat",
+          component: BPChat,
         },
         {
-          path:"/NewChat",
-          component:NewChat
-        }
-
+          path: "/NewChat",
+          component: NewChat,
+        },
+        //启用路由导航守卫，需要在下方这个函数中进行逻辑判断即认证，具体说就是否登录
+        {
+          path: "/score/query",
+          component: ScoreQuery,
+          // meta: { requiresAuth: true },
+        },
+        // {
+        //   path: "/score/list",
+        //   component: ScoreList,
+        //   meta: { requiresAuth: true },
+        // },
 
         // {
         //   path: "/login",
@@ -128,9 +137,7 @@ const router = createRouter({
   ],
 });
 
-
-
-// 为了防止用户手动输入url，进入某些页面
+// 为了防止用户手动输入url，进入某些页面。这是路由导航守卫
 router.beforeEach(async (to, from, next) => {
   const loginStore = useLoginStore();
   // 检查目标路由是否需要认证
@@ -138,14 +145,12 @@ router.beforeEach(async (to, from, next) => {
 
   // 获取用户登录状态，这里假设你有一个方法可以从pinia或者全局状态中获取
 
- 
   // 如果需要认证且用户未登录，则重定向到首页
   //因为我把用户登录信息都储存在pinia中，而手动输入url相当于一次刷新页面，会重置pinia，因此这么做可以防止手动输入url或者未登录用户进入受限页面，实际上是前者。就是说哪怕你有权限，是admin，也不允许通过url手动进入。
   if (!loginStore.isLoggedIn && requiresAuth) {
     console.log("重定向");
     next("/");
   } else {
-    
     next(); // 其他情况正常跳转
   }
 });

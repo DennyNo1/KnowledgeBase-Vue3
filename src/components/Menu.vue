@@ -75,6 +75,17 @@ const handleRoute = (v) => {
   if (v == "clickData") {
     router.push(`/clickData`);
   }
+  //查积分必须先登录
+  if (v == "score") {
+    // if (!loginStore.isLoggedIn) {
+    //   ElMessage({
+    //     message: "请先登录",
+    //     type: "warning",
+    //   });
+    //   return;
+    // } else router.push(`/score/query`);
+    router.push(`/score/query`);
+  }
 
   // else if(v=='solve'){
   //   router.push(`/question/check?role=${loginStore.userInfo.role}`);
@@ -103,13 +114,12 @@ watch(
     :default-active="selected"
     mode="horizontal"
     :ellipsis="false"
-    router
     style="background-color: #2e6ebb"
   >
-    <el-menu-item index="0" route="/">
+    <el-menu-item @click="router.push(`/`)">
       <img style="height: 100%" src="@/assets/logo.png" alt="Element logo" />
-      <el-text type="primary" size="large" tag="b" style="color: white"
-        >首页</el-text
+      <el-text type="primary" size="large" tag="b" style="color: white">
+        首页</el-text
       >
     </el-menu-item>
     <div class="flex-grow"></div>
@@ -160,6 +170,12 @@ watch(
       style="color: white"
       >一线需求</el-menu-item
     >
+    <el-menu-item
+      index="score"
+      style="color: white"
+      @click="handleRoute('score')"
+      >查积分</el-menu-item
+    >
 
     <el-menu-item
       index="check"
@@ -181,7 +197,7 @@ watch(
     <el-menu-item
       index="clickData"
       @click="handleRoute('clickData')"
-      v-if="loginStore.userInfo.role== 'admin'"
+      v-if="loginStore.userInfo.role == 'admin'"
       style="color: white"
       >点击量统计</el-menu-item
     >
