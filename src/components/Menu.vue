@@ -77,13 +77,13 @@ const handleRoute = (v) => {
   }
   //查积分必须先登录
   if (v == "score") {
-    // if (!loginStore.isLoggedIn) {
-    //   ElMessage({
-    //     message: "请先登录",
-    //     type: "warning",
-    //   });
-    //   return;
-    // } else router.push(`/score/query`);
+    if (!loginStore.isLoggedIn) {
+      ElMessage({
+        message: "请先登录",
+        type: "warning",
+      });
+      return;
+    } else router.push(`/score/query`);
     router.push(`/score/query`);
   }
 

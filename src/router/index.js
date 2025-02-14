@@ -111,7 +111,7 @@ const router = createRouter({
         {
           path: "/score/query",
           component: ScoreQuery,
-          // meta: { requiresAuth: true },
+          meta: { requiresAuth: true },
         },
         // {
         //   path: "/score/list",
