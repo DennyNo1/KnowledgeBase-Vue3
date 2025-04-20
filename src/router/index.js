@@ -17,6 +17,7 @@ import NewChat from "@/views/NewChat.vue";
 import ClickData from "@/views/ClickData.vue";
 import ScoreQuery from "@/views/ScoreQuery.vue";
 import ScoreList from "@/views/ScoreList.vue";
+import SmartEngScore from "@/views/SmartEngScore.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -113,6 +114,11 @@ const router = createRouter({
           component: ScoreQuery,
           meta: { requiresAuth: true },
         },
+        {
+          path:"/smart-eng-score",
+          component: SmartEngScore,
+          // meta: { requiresAuth: true },
+        }
         // {
         //   path: "/score/list",
         //   component: ScoreList,

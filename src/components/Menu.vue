@@ -84,7 +84,18 @@ const handleRoute = (v) => {
       });
       return;
     } else router.push(`/score/query`);
-    router.push(`/score/query`);
+  }
+  //智企
+  if (v == "smart-eng-score") {
+    // if (!loginStore.isLoggedIn) {
+    //   ElMessage({
+    //     message: "请先登录",
+    //     type: "warning",
+    //   });
+    //   return;
+    // } else
+
+    router.push(`/smart-eng-score`);
   }
 
   // else if(v=='solve'){
@@ -175,6 +186,12 @@ watch(
       style="color: white"
       @click="handleRoute('score')"
       >查积分</el-menu-item
+    >
+    <el-menu-item
+      index="score"
+      style="color: white"
+      @click="handleRoute('smart-eng-score')"
+      >智企工程师积分</el-menu-item
     >
 
     <el-menu-item
